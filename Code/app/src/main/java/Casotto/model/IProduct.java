@@ -1,43 +1,51 @@
 package Casotto.model;
 
 /**
- * Rappresenta un singolo prodotto.
+ * Rappresenta un singolo prodotto tra quelli offerti nel servizio bar dello chalet.
  */
 public interface IProduct {
     
     /**
-     * @return ID del prodotto.
+     * Restituisce l'ID del prodotto.
+     * @return - ID
      */
     String getID();
 
     /**
-     * @return nome del prodotto.
+     * Restituisce il nome del prodotto.
+     * @return - nome
      */
     String getName();
 
     /**
-     * @return descrizione del prodotto.
+     * Restituisce la descrizione del prodotto.
+     * @return - descrizione
      */
     String getDescription();
 
     /**
-     * @return prezzo del prodotto.
+     * Restituisce il prezzo unitario del prodotto.
+     * @return - numero double rappresentate il prezzo
      */
     double getPrice();
 
     /**
-     * @return quantità di prodotto disponibile in magazzino.
+     * Restituisce la quantità di prodotto disponibile in magazzino.
+     * @return - numero intero rappresentante la quantità
      */
     int getQuantity();
 
     /**
-     * @return informazioni base di ogni prodotto.
+     * Restituisce informazioni base (nome, prezzo) del prodotto.
+     * @param product - prodotto 
+     * @return - array di stringhe contenente gli attributi del prodotto 
      */
-    String[] getProductsBasicInformations();
+    String[] getProductBasicInformations(Product product);
 
     /**
-     * @param product - uno specifico prodotto.
-     * @return informazioni dettagliate di uno specifico prodotto.
+     * Restituisce informazioni complete (ID, nome, descrizione, prezzo) del prodotto.
+     * @param product - prodotto 
+     * @return - array di stringhe contenente gli attributi del prodotto 
      */
     String[] getProductFullInformation(Product product);
 

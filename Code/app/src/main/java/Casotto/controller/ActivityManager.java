@@ -5,9 +5,6 @@ import Casotto.model.Activity;
 public class ActivityManager implements IActivityManager {
 
 
-
-
-    
     @Override
     public Activity getActivityInstance(String activityID) {
         // TODO Auto-generated method stub
@@ -25,7 +22,4 @@ public class ActivityManager implements IActivityManager {
         // TODO Auto-generated method stub
         return false;
     }
-
-    
-    
 }

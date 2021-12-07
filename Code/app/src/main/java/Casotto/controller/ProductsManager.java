@@ -6,20 +6,8 @@ public class ProductsManager implements IProductsManager {
 
 
 
-
-
-
-
-
-    
     @Override
     public Product getProductInstance(String productID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String[] getProductsBasicInformations() {
         // TODO Auto-generated method stub
         return null;
     }

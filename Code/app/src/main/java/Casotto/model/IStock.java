@@ -1,35 +1,38 @@
 package Casotto.model;
 
 /**
- * Rappresenta l'insieme di prodotti attualmente a disposizione dello chalet.
+ * Rappresenta il magazzino dello chalet, o anche l'insieme dei prodotti correntemente a disposione dello chalet.
  */
 public interface IStock {
 
     /**
-     * TODO
-     * @param product
-     * @return
+     * Restituisce la quantità presente in magazzino di un dato prodotto.
+     * @param product - prodotto
+     * @return - numero intero rappresentante la quantità
      */
     int getQuantity(Product product);
 
     /**
-     * TODO
-     * @param product
-     * @return 
+     * Aggiunge un dato prodotto in magazzino.
+     * @param product - prodotto
+     * @return - true se il prodotto è stato aggiunto correttamente, false altrimenti
      */
     boolean addProduct(Product product);
 
     /**
-     * TODO
-     * @param product
-     * @return
+     * Rimuove un dato prodotto dal magazzino.
+     * @param product - prodotto
+     * @return - true se il prodotto è stato rimosso correttamente, false altrimenti
      */
-    boolean subtractProduct(Product product);
+    boolean removeProduct(Product product);
 
     /**
-     * TODO
-     * @return
+     * Restituisce il numero totale di prodotti presenti in magazzino.
+     * @return - numero intero rappresentate il totale dei prodotti presenti
      */
     int getProductsNumber();
+
+
+    
     
 }

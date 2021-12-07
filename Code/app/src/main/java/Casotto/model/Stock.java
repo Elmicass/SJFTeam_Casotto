@@ -4,7 +4,7 @@ package Casotto.model;
  * Singleton pattern
  */
 public class Stock {
-   
+
     private static Stock stock;
 
 
@@ -18,7 +18,4 @@ public class Stock {
         }
         return stock;
     }
-    
-    
-    
 }

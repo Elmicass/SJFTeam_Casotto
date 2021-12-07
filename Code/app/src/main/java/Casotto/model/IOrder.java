@@ -1,37 +1,43 @@
 package Casotto.model;
 
 /**
- * TODO
+ * Rappresenta una singola ordinazione al servizio bar da parte di un cliente.
  */
 public interface IOrder {
 
     /**
-     * @return ID dell'ordinazione.
+     * Restituisce l'ID dell'ordinazione.
+     * @return - ID
      */
     String getID();
 
     /**
-     * @return il cliente associato all'ordinazione.
+     * Restituisce il cliente associato all'ordinazione.
+     * @return - cliente
      */
     Customer getClient();
 
     /**
-     * @return lista di prodotti ordinati.
+     * Restituisce la lista di prodotti associati all'ordinazione.
+     * @return - lista di prodotti
      */
     Product[] getProducts();
 
     /**
-     * @return il totale conto, dovuto dal cliente.
+     * Restituisce il saldo totale associato all'ordinazione.
+     * @return - totale ordinazione
      */
     double getDueAmount();
 
     /**
-     * TODO
+     * Aggiunge il prodotto selezionato alla lista dei prodotti associati all'ordinazione.
+     * @return - true se il prodotto è stato aggiunto correttamente, false altrimenti
      */
     boolean addProduct(Product product);
 
-    /**
-     * TODO
+     /**
+     * Rimuove il prodotto selezionato dalla lista dei prodotti associati all'ordinazione.
+     * @return - true se il prodotto è stato rimosso correttamente, false altrimenti
      */
     boolean rimuoviProdotto(Product product);
 

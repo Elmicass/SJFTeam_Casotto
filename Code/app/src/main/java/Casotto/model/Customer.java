@@ -9,6 +9,7 @@ public class Customer extends Guest implements ICustomer  {
     private String name;
     private String surname;
     private String email;
+	private BeachPlace beachPlace;
 
 	public Customer() {
 		this.ID = count.getAndIncrement();
@@ -56,7 +57,7 @@ public class Customer extends Guest implements ICustomer  {
 	}
 
 	@Override
-	public String getPostoSpiaggia() {
+	public BeachPlace getBeachPlace() {
 		// TODO Auto-generated method stub
 		return null;
 	}

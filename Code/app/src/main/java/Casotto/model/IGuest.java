@@ -6,34 +6,42 @@ package Casotto.model;
 public interface IGuest {
 
 /**
- * @return l'ID dell'ospite, assegnatogli al momento della registrazione.
+ * Restituisce l'ID dell'ospite, assegnatogli al momento della registrazione.
+ * @return - ID
  */
     int getID();
 
 /** 
- * @return il nome dell'ospite.
+ * Restituisce il nome dell'ospite.
+ * @return - nome
 */
     String getName();
 
 /** 
-* @return il cognome dell'ospite.
+ * Restituisce il cognome dell'ospite. 
+ * @return cognome
 */
     String getSurname();
 
 /**
- * @return l'email con cui l'ospite si è registrato.
+ * Restituisce l'email con cui l'ospite si è registrato.
+ * @return - email
  */
     String getEmail();
 
 /**
+ * 
  * @return // TODO
 */
     ActorRole getRole();
 
 /**
- * 
- * @param activityID
- * @return
+ * L'ospite si prenota per l'attività selezionata.
+ * @param activity - attività
+ * @return - true se la prenotazione è avvenuta con successo, false altrimenti
  */
-    boolean bookActivity(String activityID);
+    boolean bookActivity(Activity activity);
+
+
+    
 }

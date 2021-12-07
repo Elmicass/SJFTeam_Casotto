@@ -11,13 +11,12 @@ public class Guest implements IGuest {
     private String email;
     private ActorRole role;
 
-	public Guest() {
+	public Guest(String aName, String aSurname, String aEmail) {
 		this.ID = count.getAndIncrement();
-		// TODO 
-
-
-
-	
+		this.name = aName;
+		this.surname = aSurname;
+		this.email = aEmail;
+		this.role = ActorRole.GUEST;
 	}
 	
 	@Override
@@ -30,8 +29,8 @@ public class Guest implements IGuest {
 		return name;
 	}
 
-    public void setName(String name){
-        this.name = name;
+    public void setName(String aName){
+        this.name = aName;
     }
 
 	@Override
@@ -39,8 +38,8 @@ public class Guest implements IGuest {
 		return surname;
 	}
 
-    public void setSurname(String surname){
-        this.surname = surname;
+    public void setSurname(String aSurname){
+        this.surname = aSurname;
     }
 
 	@Override
@@ -48,8 +47,8 @@ public class Guest implements IGuest {
 		return email;
 	}
 
-    public void setEmail(String email){
-        this.email = email;
+    public void setEmail(String aEmail){
+        this.email = aEmail;
     }
 
 	@Override
@@ -63,6 +62,4 @@ public class Guest implements IGuest {
 		return false;
 	}
 
-
-    
 }

@@ -1,5 +1,7 @@
 package Casotto.model;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Activity implements IActivity {
@@ -7,17 +9,19 @@ public class Activity implements IActivity {
 	protected static final AtomicInteger count = new AtomicInteger(0);
 	private final int ID;
 	private String name;
+	private String description;
 	private Integer maxEntries;
-	private Integer participants;
+	private List<Guest> participants;
 
-	public Activity()  {
+	public Activity(String aName, String aDescription, Integer aMaxEntries) {
 		this.ID = count.getAndIncrement();
-
-
-
-	
+		this.name = aName;
+		this.description = aDescription;
+		this.maxEntries = aMaxEntries;
+		this.participants = new LinkedList<>();
 	}
 
+	
 	public int getID() {
 		return ID;
 	}
@@ -26,8 +30,8 @@ public class Activity implements IActivity {
 		return name;
 	}
 
-	public void setName(String name) {
-			this.name = name;
+	public void setName(String aName) {
+			this.name = aName;
 	}
 	
 	@Override
@@ -35,18 +39,17 @@ public class Activity implements IActivity {
 		return maxEntries;
 	}
 
-	public void setMaxEntries(Integer maxEntries) {
-		this.maxEntries = maxEntries;
+	public void setMaxEntries(Integer aMaxEntries) {
+		this.maxEntries = aMaxEntries;
 	}
 
-	public Integer getParticipants() {
+	public List<Guest> getParticipants() {
 		return participants;
 	}
 
 	@Override
 	public Integer getParticipantsNumber() {
-		// TODO Auto-generated method stub
-		return 0;
+		return participants.size();
 	}
 
 	@Override
@@ -60,5 +63,7 @@ public class Activity implements IActivity {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
 
 }
