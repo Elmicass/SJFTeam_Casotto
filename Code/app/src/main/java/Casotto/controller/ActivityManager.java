@@ -27,7 +27,7 @@ public class ActivityManager implements IActivityManager {
             activity.addReservation(guest);
             return true;
         }
-        if(activity.getMaxEntries() > activity.getParticipantsNumber()){
+        else if(activity.getMaxEntries() > activity.getParticipantsNumber()){
             activity.addReservation(guest);
             return true;
         }else

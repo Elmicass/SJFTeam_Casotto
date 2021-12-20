@@ -2,6 +2,8 @@ package Casotto.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Casotto.controller.ActivityManager;
+
 public class Guest implements IGuest {
 
 	protected static final AtomicInteger count = new AtomicInteger(0);
@@ -28,31 +30,46 @@ public class Guest implements IGuest {
 	}
 
 	/**
-	* @return - il name di Guest
-	*/
+	 * @return - il name di Guest
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Dato in input il nome il sistema setta il nome
+	 * Dato in input il nome, il sistema aggiorna il nome
 	 * 
-	 * @param name - nome
+	 * @param name - nome di Guest
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+
+	 /**
+	  *
+	  * @ return - cognome di Guest
+	  */
 	@Override
 	public String getSurname() {
 		return surname;
 	}
 
+     /**
+	  * Dato in input il cognome, il sistema aggiorna il cognome
+	  *
+	  * @param surname - cognome di Guest
+	  */
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
 
+
+		/**
+		* Restituisce l'email con cui l'ospite si è registrato.
+		* @return - email
+		*/
 	@Override
 	public String getEmail() {
 		return email;
@@ -68,15 +85,10 @@ public class Guest implements IGuest {
 	}
 
 	@Override
-	public boolean bookActivity(String activityID) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean bookActivity(Activity activity) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		ActivityManager activityManager = new ActivityManager();
+		return activityManager.newBooking(activity, this);
 	}
 
 }

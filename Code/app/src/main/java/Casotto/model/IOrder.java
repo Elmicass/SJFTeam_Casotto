@@ -1,5 +1,7 @@
 package Casotto.model;
 
+import java.util.List;
+
 /**
  * Rappresenta una singola ordinazione al servizio bar da parte di un cliente.
  */
@@ -15,13 +17,13 @@ public interface IOrder {
      * Restituisce il cliente associato all'ordinazione.
      * @return - cliente
      */
-    Customer getClient();
+    Customer getCustomer();
 
     /**
      * Restituisce la lista di prodotti associati all'ordinazione.
      * @return - lista di prodotti
      */
-    Product[] getProducts();
+    List<Product> getProducts();
 
     /**
      * Restituisce il saldo totale associato all'ordinazione.
@@ -33,7 +35,7 @@ public interface IOrder {
      * Aggiunge il prodotto selezionato alla lista dei prodotti associati all'ordinazione.
      * @return - true se il prodotto è stato aggiunto correttamente, false altrimenti
      */
-    boolean addProduct(Product product);
+    boolean addProduct(Product product, Integer productQuantity);
 
      /**
      * Rimuove il prodotto selezionato dalla lista dei prodotti associati all'ordinazione.

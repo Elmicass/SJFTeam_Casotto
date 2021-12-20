@@ -11,13 +11,13 @@ public class Activity implements IActivity {
 	private String name;
 	private String description;
 	private Integer maxEntries;
-	private List<Guest> participants;
+	private LinkedList<Guest> participants;
 
-	public Activity(String aName, String aDescription, Integer aMaxEntries) {
+	public Activity(String name, String description, Integer maxEntries) {
 		this.ID = count.getAndIncrement();
-		this.name = aName;
-		this.description = aDescription;
-		this.maxEntries = aMaxEntries;
+		this.name = name;
+		this.description = description;
+		this.maxEntries = maxEntries;
 		this.participants = new LinkedList<>();
 	}
 
@@ -30,8 +30,8 @@ public class Activity implements IActivity {
 		return name;
 	}
 
-	public void setName(String aName) {
-			this.name = aName;
+	public void setName(String name) {
+			this.name = name;
 	}
 	
 	@Override
@@ -39,11 +39,11 @@ public class Activity implements IActivity {
 		return maxEntries;
 	}
 
-	public void setMaxEntries(Integer aMaxEntries) {
-		this.maxEntries = aMaxEntries;
+	public void setMaxEntries(Integer maxEntries) {
+		this.maxEntries = maxEntries;
 	}
 
-	public List<Guest> getParticipants() {
+	public LinkedList<Guest> getParticipants() {
 		return participants;
 	}
 
@@ -53,14 +53,16 @@ public class Activity implements IActivity {
 	}
 
 	@Override
-	public boolean addReservation(Guest person) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean addReservation(Guest guest) {
+		this.participants.addLast(guest);
+		if(this.getParticipantsNumber() <= this.maxEntries)
+			return true;
+		else
+			return false;
 	}
 
 	@Override
-	public boolean removeReservation(Guest person) {
-		// TODO Auto-generated method stub
+	public boolean removeReservation(Guest guest) {
 		return false;
 	}
 

@@ -27,7 +27,7 @@ public interface IProduct {
      * Restituisce il prezzo unitario del prodotto.
      * @return - numero double rappresentate il prezzo
      */
-    double getPrice();
+    double getUnitPrice();
 
     /**
      * Restituisce la quantità di prodotto disponibile in magazzino.

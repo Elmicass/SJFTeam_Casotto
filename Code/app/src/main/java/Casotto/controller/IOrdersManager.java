@@ -17,34 +17,34 @@ public interface IOrdersManager {
 
     /**
      * Crea una nuova ordinazione vuota. L'ordinazione è associata al cliente corrispondente all'email passata.
-     * @param clientEmail - email del cliente
+     * @param customer - oggetto di tipo cliente
      * @return - true se l'ordinazione viene creata con successo, false altrimenti
      */
-    boolean openNewOrder(String clientEmail);
+    boolean openNewOrder(Customer customer);
 
     /**
      * Aggiunge un prodotto ad una determinata ordinazione.
-     * @param orderID - l'ID dell'ordinazione in corso di creazione
-     * @param productID - l'ID del prodotto selezionato
+     * @param order - oggetto ordine in corso di creazione
+     * @param product - oggetto prodotto selezionato
      * @return - true se il prodotto è stato aggiunto correttamente all'ordinazione, false altrimenti
      */
-    boolean addProduct(String orderID, String productID);
+    boolean addProduct(Order order, Product product);
 
     /**
      * Aggiunge la quantità di prodotto scelta ad una determinata ordinazione.
-     * @param productID - l'ID del prodotto selezionato
+     * @param product - l'oggetto prodotto selezionato
      * @param productQuantity - quantità del prodotto selezionata
      * @return - true se la quantità di prodotto è stata aggiunta correttamente all'ordinazione, false altrimenti
      */
-    boolean addProduct(String productID, int productQuantity);
+    boolean addProduct(Product product, Integer productQuantity);
 
     /**
      * Rimuove un prodotto da una determinata ordinazione.
-     * @param orderID - l'ID dell'ordinazione in corso di creazione
-     * @param productID - l'ID del prodotto selezionato
+     * @param order - l'oggetto ordine in corso di creazione
+     * @param product - l'oggetto prodotto selezionato
      * @return - true se il prodotto è stato rimosso correttamente dall'ordinazione, false altrimenti
      */
-    boolean removeProduct(String orderID, String productID);
+    boolean removeProduct(Order order, Product product);
 
 
 
