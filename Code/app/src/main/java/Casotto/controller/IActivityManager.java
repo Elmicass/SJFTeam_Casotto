@@ -10,7 +10,7 @@ public interface IActivityManager {
 
     /**
      * Restituisce un'istanza all'attività associata all'ID dato.
-     * @param ID - l'ID dell'attività cercata
+     * @param activityID - l'ID dell'attività cercata
      * @return un'istanza dell'attività
      */
     Activity getActivityInstance(String activityID);
