@@ -5,9 +5,7 @@ import Casotto.model.Guest;
 
 public class ActivityManager implements IActivityManager {
 
-
-    public ActivityManager(){
-
+    public ActivityManager() {
     }
 
     @Override
@@ -17,21 +15,26 @@ public class ActivityManager implements IActivityManager {
         return null;
     }
 
-
     @Override
     public boolean newBooking(Activity activity, Guest guest) {
-        //controlla il numero di iscrizioni massime per quell'attività
-		//se == 0 vuol dire che l'attività non ha un numero massimo di partecipanti
-        if(activity.getMaxEntries() == 0){
-            //aggiungi l'ospite all'attività
+        // controlla il numero di iscrizioni massime per quell'attività
+        // se == 0 vuol dire che l'attività non ha un numero massimo di partecipanti
+        if (activity.getMaxEntries() == 0 || activity.getParticipantsNumber() < activity.getMaxEntries()) {
+            // aggiungi l'ospite all'attività
             activity.addReservation(guest);
             return true;
         }
-        else if(activity.getMaxEntries() > activity.getParticipantsNumber()){
-            activity.addReservation(guest);
+        return false;
+    }
+
+    // TODO
+    @Override
+    public boolean deleteActivity(String activityID) {
+        if () {
+
             return true;
-        }else
-            return false;
+        }
+        return false;
     }
 
     @Override
@@ -39,4 +42,17 @@ public class ActivityManager implements IActivityManager {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean createNewActivity(String name, String description, int maxEntries) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean newBooking(String activityID, String email) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

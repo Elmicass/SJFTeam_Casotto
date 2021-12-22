@@ -46,30 +46,29 @@ public class Guest implements IGuest {
 		this.name = name;
 	}
 
-
-	 /**
-	  *
-	  * @ return - cognome di Guest
-	  */
+	/**
+	 *
+	 * @ return - cognome di Guest
+	 */
 	@Override
 	public String getSurname() {
 		return surname;
 	}
 
-     /**
-	  * Dato in input il cognome, il sistema aggiorna il cognome
-	  *
-	  * @param surname - cognome di Guest
-	  */
+	/**
+	 * Dato in input il cognome, il sistema aggiorna il cognome
+	 *
+	 * @param surname - cognome di Guest
+	 */
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
 
-
-		/**
-		* Restituisce l'email con cui l'ospite si è registrato.
-		* @return - email
-		*/
+	/**
+	 * Restituisce l'email con cui l'ospite si è registrato.
+	 * 
+	 * @return - email
+	 */
 	@Override
 	public String getEmail() {
 		return email;
@@ -86,9 +85,9 @@ public class Guest implements IGuest {
 
 	@Override
 	public boolean bookActivity(Activity activity) {
-		
+
 		ActivityManager activityManager = new ActivityManager();
-		return activityManager.newBooking(activity, this);
+		return activity.newBooking(this);
 	}
 
 }

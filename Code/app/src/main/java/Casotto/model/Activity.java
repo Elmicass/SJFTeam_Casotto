@@ -21,7 +21,6 @@ public class Activity implements IActivity {
 		this.participants = new LinkedList<>();
 	}
 
-	
 	public int getID() {
 		return ID;
 	}
@@ -31,9 +30,9 @@ public class Activity implements IActivity {
 	}
 
 	public void setName(String name) {
-			this.name = name;
+		this.name = name;
 	}
-	
+
 	@Override
 	public Integer getMaxEntries() {
 		return maxEntries;
@@ -49,23 +48,32 @@ public class Activity implements IActivity {
 
 	@Override
 	public Integer getParticipantsNumber() {
-		return participants.size();
+		return this.participants.size();
 	}
 
 	@Override
 	public boolean addReservation(Guest guest) {
-		this.participants.addLast(guest);
-		if(this.getParticipantsNumber() <= this.maxEntries)
+		// se il numero di partecipanti è minore di quello massimo
+		// aggiungo il partecipante
+		if (this.getParticipantsNumber() <= this.maxEntries) {
+			this.participants.addLast(guest);
 			return true;
-		else
-			return false;
-	}
-
-	@Override
-	public boolean removeReservation(Guest guest) {
+		}
 		return false;
 	}
 
+	@Override
+	public boolean removeReservation(Guest user) {
+		// se l'utente è nella lista, si rimuove tale utente dalla lista.
+		if (this.participants.contains(user)) {
+			this.participants.remove(user);
+			return true;
+		}
+		return false;
+	}
 
+	public String getDescription() {
+		return this.description;
+	}
 
 }
