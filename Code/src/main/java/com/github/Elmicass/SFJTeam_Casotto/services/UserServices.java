@@ -1,19 +1,19 @@
-package com.github.Elmicass.SFJTeam_Casotto.controller;
+package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.github.Elmicass.SFJTeam_Casotto.model.Account;
-import com.github.Elmicass.SFJTeam_Casotto.services.IAccountServices;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
+import com.github.Elmicass.SFJTeam_Casotto.repository.IUsersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AccountsManager implements IAccountManager {
+public class UserServices implements IUserServices {
 
     @Autowired
-    private IAccountServices services;
+    private IUsersRepository repository;
 
     @Override
-    public Account getInstance(String id) throws EntityNotFoundException {
+    public User getInstance(String id) throws EntityNotFoundException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -31,10 +31,9 @@ public class AccountsManager implements IAccountManager {
     }
 
     @Override
-    public boolean createNewAccount(String name, String surname, String email) {
+    public boolean createUser(String name, String surname, String email) {
         // TODO Auto-generated method stub
         return false;
     }
-    
     
 }

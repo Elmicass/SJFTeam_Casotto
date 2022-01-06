@@ -1,11 +1,37 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Product")
 public class Product {
-    private String ID;
+    
+    protected static final AtomicInteger count = new AtomicInteger(0);
+
+    @Id
+    @Column(name = "ID")
+    private final String ID;
+
+    @Column(name = "Name")
     private String name;
+
     private String description;
     private Double unitPrice;
     private Integer quantity;
+
+    public Product(String name, String description, double unitPrice, Integer quantity) {
+        this.ID = String.valueOf(count.getAndIncrement());
+        setName(name);
+        setDescription(description);
+        setUnitPrice(unitPrice);
+        setQuantity(quantity);
+    }
 
     public String getID() {
         return ID;
@@ -14,17 +40,22 @@ public class Product {
     public String getName() {
         return name;
     }
-    public void setName(String name){
-        this.name = name;
-    }
+    
+    public void setName(String name) throws IllegalArgumentException {
+		if (Objects.requireNonNull(name, "Name value is null").isBlank())
+			throw new IllegalArgumentException("The product name is empty");
+		this.name = name;
+	}
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description){
-        this.description = description;
-    }
+    public void setDescription(String description) throws IllegalArgumentException {
+		if (Objects.requireNonNull(description, "Description value is null").isBlank())
+			throw new IllegalArgumentException("The product description is empty");
+		this.description = description;
+	}
 
     public double getUnitPrice() {
         return unitPrice;
@@ -40,6 +71,31 @@ public class Product {
 
     public void setQuantity(Integer quantity){
         this.quantity = quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Product other = (Product) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 
     public String[] getProductBasicInformations(Product product) {

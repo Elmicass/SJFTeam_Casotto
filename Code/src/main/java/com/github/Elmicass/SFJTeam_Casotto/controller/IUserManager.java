@@ -1,8 +1,8 @@
 package com.github.Elmicass.SFJTeam_Casotto.controller;
 
-import com.github.Elmicass.SFJTeam_Casotto.model.Account;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 
-public interface IAccountManager extends EntityManager<Account, String> {
+public interface IUserManager extends EntityManager<User, String> {
 
     boolean createNewAccount(String name, String surname, String email);
 
