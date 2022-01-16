@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Timeslot")
@@ -21,12 +22,15 @@ public class TimeSlot implements Comparable<TimeSlot> {
 	private long ID;
 
 	// minuti massimi di tolleranza per sovrapposzione tra due timeSlot
+	@Transient
 	public static final int MINUTES_OF_TOLERANCE_FOR_OVERLAPPING = 10;
 
 	// orario di inizio di una prenotazione
+	@Column(name = "Start")
 	private LocalDateTime start;
 
 	// orario di fine di una prenotazione
+	@Column(name = "Stop")
 	private LocalDateTime stop;
 
 	public TimeSlot(LocalDateTime start, LocalDateTime stop) throws IllegalArgumentException {

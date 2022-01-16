@@ -10,8 +10,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.zxing.WriterException;
 
@@ -25,14 +27,23 @@ public class Sunshade {
         Large;
     }
 
+    @Transient
     protected static final AtomicInteger count = new AtomicInteger(0);
 
     @Id
     @Column(name = "ID")
     private final String ID;
 
+    @Column(name = "Type")
     @Enumerated(EnumType.STRING)
     private SunshadeType type;
+
+    @ManyToOne
+    @JoinColumn(name = "PriceList", referencedColumnName = "Name")
+    private PriceList priceList;
+
+    @Column(name = "HourlyPrice")
+    private double hourlyPrice;
 
     @OneToOne
     @JoinColumn(name = "BeachPlace", referencedColumnName = "ID")
@@ -42,10 +53,12 @@ public class Sunshade {
     @JoinColumn(name = "QrCode", referencedColumnName = "ID")
     private QrCode qrCode;
 
-    public Sunshade(SunshadeType type, BeachPlace beachPlace) throws WriterException, IOException {
+    public Sunshade(SunshadeType type, BeachPlace beachPlace, PriceList priceList) throws IllegalArgumentException, WriterException, IOException {
         this.ID = String.valueOf(count.getAndIncrement());
         setType(type);
         setCurrentlyUsedIn(beachPlace);
+        setPriceList(priceList);
+        setHourlyPrice(); 
         setQrCode();
     }
 
@@ -57,10 +70,30 @@ public class Sunshade {
         return type;
     }
 
-    public void setType(SunshadeType type) {
+    public void setType(SunshadeType type) throws IllegalArgumentException {
         if (Objects.requireNonNull(type, "Sunshade type value is null").toString().isBlank())
 			throw new IllegalArgumentException("The sunshade type value is empty");
 		this.type = type;
+    }
+    
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    public void setPriceList(PriceList priceList) {
+        Objects.requireNonNull(priceList,"The associated price list is null");
+        this.priceList = priceList;
+    }
+
+    public double getHourlyPrice() {
+        return hourlyPrice;
+    }
+
+    public void setHourlyPrice() throws IllegalArgumentException {
+        if (Objects.requireNonNull(type, "Sunshade type value is null").toString().isBlank())
+			throw new IllegalArgumentException("The sunshade type value is empty");
+        Objects.requireNonNull(priceList, "Price list reference is null");
+        this.hourlyPrice = this.priceList.getSunshadeHourlyPrice(type);
     }
 
     public BeachPlace getCurrentlyUsedIn() {

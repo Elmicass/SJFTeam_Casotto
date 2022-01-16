@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -12,11 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Order")
 public class Order {
 
+    @Transient
     protected static final AtomicInteger count = new AtomicInteger(0);
 
     @Id
@@ -24,20 +27,33 @@ public class Order {
     private final String ID;
 
     @ManyToOne
-    @JoinColumn(name = "User_email", referencedColumnName = "Email")
+    @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
     private User customer;
 
-    @OneToMany
-    @JoinColumn(name = "Product", referencedColumnName = "Name")
-    private List<Product> product;
+    @ManyToOne
+    @JoinColumn(name = "UserCurrentSunshade", referencedColumnName = "String")
+    private QrCode orderQrCode;
 
+    @OneToMany
+    @JoinColumn(name = "Products", referencedColumnName = "Name")
+    private List<Product> products;
+
+    @Column(name = "OrderDueAmount")
     private Double dueAmount;
+
+    @Column(name = "CreationTime")
+    private LocalDateTime creationTime;
+
+    @Column(name = "IsOpen")
+    private boolean open;
 
     public Order(User customer) {
         this.ID = String.valueOf(count.getAndIncrement());
         setCustomer(customer);
-        this.product = new LinkedList<Product>();
+        this.products = new LinkedList<Product>();
         this.dueAmount = 0.00;
+        this.creationTime = LocalDateTime.now();
+        this.open = true;
     }
 
     public String getID() {
@@ -49,11 +65,23 @@ public class Order {
     }
 
     public List<Product> getProducts() {
-        return product;
+        return products;
     }
 
     public double getDueAmount() {
         return dueAmount;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void close() {
+        this.open = false;
     }
 
     public void setCustomer(User customer) {
@@ -69,24 +97,24 @@ public class Order {
         if (product.getQuantity() < productQuantity)
             return false;
         for (int p = 0; p < productQuantity; p++) {
-            this.product.add(product);
+            this.products.add(product);
             refreshDueAmount();
         }
         return true;
     }
 
     public boolean removeProduct(Product product) throws IllegalStateException {
-        if (!(this.product.contains(Objects.requireNonNull(product, "The product has null value"))))
+        if (!(this.products.contains(Objects.requireNonNull(product, "The product has null value"))))
             throw new IllegalStateException(
                     "The product you are trying to remove from your order is already not present");
-        this.product.removeIf(prod -> Objects.equals(prod, product));
+        this.products.removeIf(prod -> Objects.equals(prod, product));
         refreshDueAmount();
         return true;
     }
 
     public void refreshDueAmount() {
         double total = 0.00;
-        for (Product product : this.product) {
+        for (Product product : this.products) {
             total = total + product.getUnitPrice();
         }
         this.dueAmount = total;

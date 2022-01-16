@@ -9,34 +9,45 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "JobOffer")
-public class JobOffer {
+public class JobOffer implements Comparable<JobOffer> {
 
+    @Transient
     protected static final AtomicInteger count = new AtomicInteger(0);
 
     @Id
     @Column(name = "ID")
     private final String ID;
 
+    @Column(name = "Name")
     private String name;
+
+    @Column(name = "Description")
     private String description;
 
-    private TimeSlot timeslot;
+    @OneToOne
+    @JoinColumn(name = "Timeslot", referencedColumnName = "Stop")
+    private TimeSlot expiration;
 
     @OneToMany(mappedBy = "entityID")
+    @Column(name = "Applications")
     private SortedSet<Reservation> applications;
 
+    @Column(name = "IsOpen")
     private boolean open;
 
     public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) {
         this.ID = String.valueOf(count.getAndIncrement());
         setName(name);
         setDescription(description);
-        setTimeSlot(start, end);
+        setExpiration(start, end);
         this.open = true;
         this.applications = new TreeSet<Reservation>();
     }
@@ -65,12 +76,12 @@ public class JobOffer {
         this.description = description;
     }
 
-    public TimeSlot getTimeslot() {
-        return timeslot;
+    public TimeSlot getExpiration() {
+        return expiration;
     }
 
-    public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
-        this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
+    public void setExpiration(LocalDateTime start, LocalDateTime end) {
+        this.expiration = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
                 Objects.requireNonNull(end, "Ending time is null")), "The created timeslot is null");
     }
 
@@ -86,6 +97,47 @@ public class JobOffer {
         this.open = open;
     }
 
+    @Override
+    public int compareTo(JobOffer jo) {
+        Objects.requireNonNull(jo,"The passed activity is null");
+        if (this.expiration.equals(jo.expiration)) {
+            return this.ID.compareTo(jo.ID);
+        } else {
+            return this.expiration.compareTo(jo.expiration);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        JobOffer other = (JobOffer) obj;
+        if (expiration == null) {
+            if (other.expiration != null)
+                return false;
+        } else if (!expiration.equals(other.expiration))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
+
     public boolean addApplication(Reservation app) {
         if (applications.contains(app))
             throw new IllegalStateException("The user has already applied to this job offer");
@@ -95,7 +147,7 @@ public class JobOffer {
     public boolean removeApplication(Reservation app) throws IllegalStateException {
         if (!(this.applications.contains(Objects.requireNonNull(app, "The application has null value"))))
             throw new IllegalStateException(
-                    "The application you are trying to cancel does not exist");
+                    "The application you are trying to cancel does not exist for this job offer");
         this.applications.removeIf(a -> Objects.equals(a, app));
         return true;
     }

@@ -2,7 +2,6 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.github.Elmicass.SFJTeam_Casotto.model.Customer;
 import com.github.Elmicass.SFJTeam_Casotto.model.Order;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IOrdersRepository;
 

@@ -1,7 +1,9 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
@@ -11,7 +13,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Reservation")
@@ -23,6 +27,7 @@ public class Reservation implements Comparable<Reservation> {
         JobOffer;
     }
 
+    @Transient
     protected static final AtomicInteger count = new AtomicInteger(0);
 
     @Id
@@ -30,25 +35,39 @@ public class Reservation implements Comparable<Reservation> {
     private final String ID;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "Type")
     private entityType type;
 
     @ManyToOne
-    @JoinColumn(name = "User_email", referencedColumnName = "Email")
+    @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
     private String userEmail;
 
     @ManyToOne
-    @JoinColumn(name = "Entity_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "EntityID", referencedColumnName = "ID")
     private String entityID;
 
+    @Column(name = "EntityObject")
+    private Optional<? extends Object> entityObject;
+
+    @OneToOne
+    @JoinColumn(name = "Timeslot", referencedColumnName = "ID")
     private TimeSlot timeslot;
 
-    public Reservation(String type, String user, String entityID, LocalDateTime start, LocalDateTime end)
+    @Column(name = "Price")
+    private Optional<Double> price;
+
+    public Reservation(String type, String user, String entityID, LocalDateTime start, LocalDateTime end, Object object)
             throws IllegalArgumentException {
         this.ID = String.valueOf(count.getAndIncrement());
-        setType(type);
-        setUserMail(user);
+        setEntityObject(object);
         setEntityID(entityID);
+        setType(type);
         setTimeSlot(start, end);
+        setUserMail(user);
+        if (this.type == entityType.BeachPlace)
+            setPrice();
+        else
+            this.price = Optional.empty();
     }
 
     public String getID() {
@@ -67,25 +86,55 @@ public class Reservation implements Comparable<Reservation> {
         return entityID;
     }
 
+    public Object getEntityObject() throws NullPointerException {
+        if (entityObject.isPresent())
+            return entityObject.get();
+        else
+            throw new NullPointerException("The reservation refers to a null object");
+    }
+
     public TimeSlot getTimeSlot() {
         return timeslot;
     }
 
+    public double getPrice() {
+        if (price.isPresent())
+            return price.get().doubleValue();
+        else
+            return 0.00;
+    }
+
+    public void setPrice() {
+        LocalDateTime from = timeslot.getStart();
+        LocalDateTime to = timeslot.getStop();
+        int hours = (int) Duration.between(from, to).toHours();
+        BeachPlace beachPlace = (BeachPlace) entityObject.get();
+        double beachPlaceHourlyPrice = beachPlace.getHourlyPrice();
+        double seaRowFixedCost = beachPlace.getSeaRowFixedPrice();
+        this.price = Optional.of((beachPlaceHourlyPrice * hours) + seaRowFixedCost);
+    }
+
     public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
         this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
-        Objects.requireNonNull(end, "Ending time is null")), "The created timeslot is null");
+                Objects.requireNonNull(end, "Ending time is null")), "The created timeslot is null");
     }
 
     public void setUserMail(String email) throws IllegalArgumentException {
         if (Objects.requireNonNull(email, "The user email value is null").isBlank())
-			throw new IllegalArgumentException("The user has no email associated");
-		this.userEmail = email;
+            throw new IllegalArgumentException("The user has no email associated");
+        this.userEmail = email;
     }
 
     public void setEntityID(String id) throws IllegalArgumentException {
         if (Objects.requireNonNull(id, "The entity id value is null").isBlank())
-			throw new IllegalArgumentException("The entity ID is empty");
-		this.entityID =  id;
+            throw new IllegalArgumentException("The entity ID is empty");
+        this.entityID = id;
+    }
+
+    public void setEntityObject(Object entityObject) {
+        Objects.requireNonNull(entityObject, "The associated object is null");
+        if (this.entityObject.isEmpty())
+            this.entityObject = Optional.of(entityObject);
     }
 
     public void setType(String typeStringName) throws IllegalArgumentException {
@@ -148,7 +197,7 @@ public class Reservation implements Comparable<Reservation> {
 
     @Override
     public int compareTo(Reservation res) {
-        Objects.requireNonNull(res,"The passed reservation is null");
+        Objects.requireNonNull(res, "The passed reservation is null");
         if (this.timeslot.equals(res.timeslot)) {
             return this.entityID.compareTo(res.entityID);
         } else {

@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.QrCodeNotFoundException;
 import com.google.zxing.BarcodeFormat;
@@ -36,26 +37,40 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 @Table(name = "QrCode")
 public class QrCode {
 
+    @Transient
     protected static final AtomicInteger count = new AtomicInteger(0);
 
     @Id
     @Column(name = "ID")
     private final String ID;
 
+    @Column(name = "File")
     private final File qrcodeFile;
 
+    @Column(name = "Path")
     private final String path;
-    private final String name;
-    private final String string;
 
+    @Column(name = "Name")
+    private final String name;
+
+    @Column(name = "String")
+    private final String string;
+    
+    @OneToOne(mappedBy = "qrCode")
+    @Column(name = "Sunshade")
+    private Sunshade sunshade;
+    
+    @Transient
     private final String charset = "UTF-8";
+
+    @Transient
     private final int qrCodeheight = 250;
+
+    @Transient
     private final int qrCodewidth = 250;
 
+    @Transient
     private final Map hintMap;
-
-    @OneToOne(mappedBy = "qrCode")
-    private Sunshade sunshade;
 
     public QrCode(Sunshade sunshade) throws WriterException, IOException {
         this.ID = String.valueOf(count.getAndIncrement());
@@ -73,7 +88,8 @@ public class QrCode {
     }
 
     public void setSunshade(Sunshade sunshade) {
-        this.sunshade = Objects.requireNonNull(sunshade, "Sunshade is null");
+        Objects.requireNonNull(sunshade, "Sunshade is null");
+        this.sunshade = sunshade;
     }
 
     @Override

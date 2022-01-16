@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
@@ -23,23 +23,29 @@ public class User {
 	@Column(name = "ID")
 	private final String ID;
 	
+	@Column(name = "Name")
 	private String name;
+
+	@Column(name = "Surname")
 	private String surname;	
 	
-	@OneToMany(mappedBy = "userEmail")
 	@Column(name = "Email")
 	private String email;
 	
+	@Column(name = "Password")
 	private String password;
 
+	@Column(name = "Enabled")
 	private boolean enabled;
+
+	@Column(name = "IsTokenExpired")
 	private boolean tokenExpired;
 
 	@ManyToMany
 	@JoinTable ( 
-        name = "Users_roles", 
-        joinColumns = @JoinColumn(name = "User_id", referencedColumnName = "ID"), 
-        inverseJoinColumns = @JoinColumn(name = "Role_id", referencedColumnName = "ID")) 
+        name = "UsersRoles", 
+        joinColumns = @JoinColumn(name = "UserID", referencedColumnName = "ID"), 
+        inverseJoinColumns = @JoinColumn(name = "RoleID", referencedColumnName = "ID")) 
 	private Set<Role> roles;
 
 	public User(String name, String surname, String email) {
@@ -58,7 +64,9 @@ public class User {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(String name) throws IllegalArgumentException {
+		if (Objects.requireNonNull(name, "The user name is null").isBlank())
+			throw new  IllegalArgumentException("The user name is empty");
 		this.name = name;
 	}
 
@@ -67,6 +75,8 @@ public class User {
 	}
 
 	public void setSurname(String surname) {
+		if (Objects.requireNonNull(surname, "The user surname is null").isBlank())
+			throw new  IllegalArgumentException("The user surname is empty");
 		this.surname = surname;
 	}
 
@@ -75,6 +85,8 @@ public class User {
 	}
 
 	public void setEmail(String email) {
+		if (Objects.requireNonNull(email, "The user email is null").isBlank())
+			throw new  IllegalArgumentException("The user email is empty");
 		this.email = email;
 	}
 
@@ -83,6 +95,7 @@ public class User {
 	}
 
 	public void setRoles(Set<Role> roles) {
+		Objects.requireNonNull(roles, "The user roles set is null");
 		this.roles = roles;
 	}
 
@@ -111,6 +124,18 @@ public class User {
 		return true;
 	}
 
+	public boolean addRole(Role role) {
+        if (roles.contains(role))
+            throw new IllegalStateException("This user is already associated to the given role");
+        return roles.add(Objects.requireNonNull(role, "The passed role is null"));
+    }
+
+	public boolean removeRole(Role role) {
+        if (!(this.roles.contains(Objects.requireNonNull(role, "The given role is null"))))
+            throw new IllegalStateException("This user is already not associated to the given role");
+        this.roles.removeIf(r -> Objects.equals(r, role));
+        return true;
+    }
 	
 
 
