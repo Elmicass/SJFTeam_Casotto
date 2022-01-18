@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,6 +40,8 @@ public class Role {
     public Role(String name) {
         this.ID = String.valueOf(count.getAndIncrement());
         this.name = name;
+        this.users = new HashSet<>();
+        this.privileges = new HashSet<>();
     }
 
     public String getName() {

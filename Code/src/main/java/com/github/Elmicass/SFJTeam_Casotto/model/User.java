@@ -49,7 +49,7 @@ public class User {
 	private Set<Role> roles;
 
 	public User(String name, String surname, String email) {
-		this.ID = String.valueOf(count.getAndIncrement());
+		this.ID = String.valueOf(count.incrementAndGet());
 		this.name = name;
 		this.surname = surname;
 		this.email = email;

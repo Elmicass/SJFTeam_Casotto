@@ -1,12 +1,11 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 public class ActivityTest {
     @Test
+	void contextLoads() {
+	}
 
 	/*public void shouldGetID(){
 		Equipment equipment = new Equipment("Test Name","Test Desc","Test Type");
