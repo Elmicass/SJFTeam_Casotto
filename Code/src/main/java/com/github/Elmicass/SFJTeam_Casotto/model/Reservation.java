@@ -59,6 +59,7 @@ public class Reservation implements Comparable<Reservation> {
     public Reservation(EntityType type, String user, String entityID, LocalDateTime start, LocalDateTime end, Object object)
             throws IllegalArgumentException {
         this.ID = String.valueOf(count.incrementAndGet());
+        this.entityObject = Optional.empty();
         setEntityObject(object);
         setEntityID(entityID);
         setType(type);
@@ -174,6 +175,11 @@ public class Reservation implements Comparable<Reservation> {
         if (getClass() != obj.getClass())
             return false;
         Reservation other = (Reservation) obj;
+        if (userEmail == null) {
+            if (other.userEmail != null)
+                return false;
+        } else if (!userEmail.equals(other.userEmail))
+            return false;
         if (entityID == null) {
             if (other.entityID != null)
                 return false;
@@ -185,11 +191,6 @@ public class Reservation implements Comparable<Reservation> {
         } else if (!timeslot.equals(other.timeslot))
             return false;
         if (type != other.type)
-            return false;
-        if (userEmail == null) {
-            if (other.userEmail != null)
-                return false;
-        } else if (!userEmail.equals(other.userEmail))
             return false;
         return true;
     }

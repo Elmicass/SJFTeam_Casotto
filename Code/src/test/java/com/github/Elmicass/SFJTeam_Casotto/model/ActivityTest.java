@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation.EntityType;
+
 import org.junit.jupiter.api.Test;
 
 public class ActivityTest {
@@ -350,8 +353,8 @@ public class ActivityTest {
 		assertThrows(NullPointerException.class, () -> activity.removeEquipment(null));
 	}
 	//tests of addReservation method
-	/*@Test
-	void shouldAddReservation(){
+	@Test
+	void shouldAddReservation() throws IllegalStateException, AlreadyExistingException{
 		LocalDateTime ldtStart = LocalDateTime.now();
 		LocalDateTime ldtEnd = ldtStart.plusHours(3);
 
@@ -359,7 +362,112 @@ public class ActivityTest {
 		Set<Equipment> equipments = new HashSet<Equipment>();
 		equipments.add(equipment1);
 		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
-		activity.getReservations()
-	}*/
+		assertEquals(0,activity.getReservations().size());
+		
+		User user = new User("test name","test surname","test email");
+
+		Reservation reservation = new Reservation(EntityType.Activity,"test email",activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		activity.addReservation(reservation);
+		assertEquals(1,activity.getReservations().size());
+	}
+	@Test
+	void shouldThrowAEExceptionWhenAddExistingUserReservation() throws IllegalStateException, AlreadyExistingException{
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
+		assertEquals(0,activity.getReservations().size());
+
+		Reservation reservation = new Reservation(EntityType.Activity,"test email",activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		activity.addReservation(reservation);
+		
+		assertThrows(AlreadyExistingException.class, () -> activity.addReservation(reservation));
+	}
+	@Test
+	//Test fallito, per il sistema le reservation sono uguali "DA RISOLVERE"
+	void shouldThrowISExceptionWhenMaxinumBookingNumberIsReachedInAddReservation() throws IllegalStateException, AlreadyExistingException{
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",1,ldtStart,ldtEnd,equipments);
+		
+		String email1 = "ejioqwjeioqw";
+		String email2 = "wejirdfjweio";
+
+		Reservation reservation1 = new Reservation(EntityType.Activity,email1,activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		Reservation reservation2 = new Reservation(EntityType.Activity,email2,activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		
+		activity.addReservation(reservation1);
+		assertThrows(IllegalStateException.class, () -> activity.addReservation(reservation2));
+
+	}
+	@Test
+	void shouldThrowNPExceptionWhenAddNullReservation(){
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",1,ldtStart,ldtEnd,equipments);
+		
+		assertThrows(NullPointerException.class, () -> activity.addReservation(null));
+	}
+
 	//tests of removeReservation method
+	@Test
+	void shouldRemoveReservation() throws IllegalStateException, AlreadyExistingException{
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
+
+		Reservation reservation = new Reservation(EntityType.Activity,"user email",activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+
+		activity.addReservation(reservation);
+		assertFalse(activity.getReservations().isEmpty());
+		activity.removeReservation(reservation);
+		assertTrue(activity.getReservations().isEmpty());
+
+		
+	}
+	@Test
+	//Test fallito, per il sistema le reservation sono uguali "DA RISOLVERE"
+	void shouldThrowISExceptionWhenRemoveDifferentReservation() throws IllegalStateException, AlreadyExistingException{
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
+
+		Reservation reservation1 = new Reservation(EntityType.Activity,"eqwmeijkoq",activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		Reservation reservation2 = new Reservation(EntityType.Activity,"hweujrhioweu",activity.getID(),activity.getTimeSlot().getStart(),activity.getTimeSlot().getStop(),activity);
+		
+		activity.addReservation(reservation1);
+		assertThrows(IllegalStateException.class, () -> activity.removeReservation(reservation2));
+		
+	}
+	@Test
+	void shouldThrowNPExceptionWhenRemoveNullReservation(){
+		LocalDateTime ldtStart = LocalDateTime.now();
+		LocalDateTime ldtEnd = ldtStart.plusHours(3);
+
+		Equipment equipment1 = new Equipment("test name1","test description1","Indoor");
+		Set<Equipment> equipments = new HashSet<Equipment>();
+		equipments.add(equipment1);
+		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
+		
+		assertThrows(NullPointerException.class, () -> activity.removeReservation(null));
+	}
 }
