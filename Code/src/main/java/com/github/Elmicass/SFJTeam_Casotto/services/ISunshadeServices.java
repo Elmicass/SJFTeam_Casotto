@@ -1,7 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade;
-import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 
 /**
  * Questa interfaccia è responsabile della gestione di tutti gli ombrelloni nel sistema.
@@ -11,10 +10,10 @@ public interface ISunshadeServices extends EntityServices<Sunshade, String> {
 
     /**
      * 
-     * @param type
+     * @param sunshade
      * @return
      */
-    boolean createSunshade(/* QrCode : qrcode ,*/ SunshadeType type);
+    boolean saveSunshade(Sunshade sunshade);
 
 
 

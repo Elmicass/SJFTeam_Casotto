@@ -64,8 +64,9 @@ public class PriceList {
         return SingleSunbedHourlyPrice;
     }
 
-    public void setSingleSunbedHourlyPrice(Double singleSunbedHourlyPrice) {
-        Objects.requireNonNull(singleSunbedHourlyPrice, "The price number value is null");
+    public void setSingleSunbedHourlyPrice(Double singleSunbedHourlyPrice) throws IllegalArgumentException {
+        if  (Objects.requireNonNull(singleSunbedHourlyPrice, "The price number value is null").doubleValue() < 0.00)
+            throw new IllegalArgumentException("The sunbed hourly price value is less than zero");
         this.SingleSunbedHourlyPrice = singleSunbedHourlyPrice;
     }
 
@@ -87,8 +88,9 @@ public class PriceList {
         return SmallSunshadeHourlyPrice;
     }
 
-    public void setSmallSunshadeHourlyPrice(Double smallSunshadeHourlyPrice) {
-        Objects.requireNonNull(smallSunshadeHourlyPrice, "The price number value is null");
+    public void setSmallSunshadeHourlyPrice(Double smallSunshadeHourlyPrice) throws IllegalArgumentException {
+        if  (Objects.requireNonNull(smallSunshadeHourlyPrice, "The price number value is null").doubleValue() < 0.00)
+            throw new IllegalArgumentException("The sunshade (type Small) hourly price value is less than zero");
         this.SmallSunshadeHourlyPrice = smallSunshadeHourlyPrice;
     }
 
@@ -96,8 +98,9 @@ public class PriceList {
         return MediumSunshadeHourlyPrice;
     }
 
-    public void setMediumSunshadeHourlyPrice(double mediumSunshadeHourlyPrice) {
-        Objects.requireNonNull(mediumSunshadeHourlyPrice, "The price number value is null");
+    public void setMediumSunshadeHourlyPrice(double mediumSunshadeHourlyPrice) throws IllegalArgumentException {
+        if  (Objects.requireNonNull(mediumSunshadeHourlyPrice, "The price number value is null").doubleValue() < 0.00)
+            throw new IllegalArgumentException("The sunshade (type Medium) hourly price value is less than zero");
         this.MediumSunshadeHourlyPrice = mediumSunshadeHourlyPrice;
     }
 
@@ -105,8 +108,9 @@ public class PriceList {
         return LargeSunshadeHourlyPrice;
     }
 
-    public void setLargeSunshadeHourlyPrice(double largeSunshadeHourlyPrice) {
-        Objects.requireNonNull(largeSunshadeHourlyPrice, "The price number value is null");
+    public void setLargeSunshadeHourlyPrice(double largeSunshadeHourlyPrice) throws IllegalArgumentException {
+        if  (Objects.requireNonNull(largeSunshadeHourlyPrice, "The price number value is null").doubleValue() < 0.00)
+            throw new IllegalArgumentException("The sunshade (type Large) hourly price value is less than zero");
         this.LargeSunshadeHourlyPrice = largeSunshadeHourlyPrice;
     }
 

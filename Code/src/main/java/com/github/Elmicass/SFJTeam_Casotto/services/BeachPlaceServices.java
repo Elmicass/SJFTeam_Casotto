@@ -8,6 +8,8 @@ import javax.persistence.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
 import com.github.Elmicass.SFJTeam_Casotto.model.PriceList;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
+import com.github.Elmicass.SFJTeam_Casotto.model.Sunbed;
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IBeachPlacesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IPriceListRepository;
@@ -43,6 +45,12 @@ public class BeachPlaceServices implements IBeachPlaceServices {
                 sunbedsNumber);
         BeachPlace beachPlace = new BeachPlace(srRepository.findBySeaRowNumber(seaRowNumber), position, priceList,
                 sunshadeType, sunbedsNumber);
+        SunshadeServices sunshadeServices = new SunshadeServices();
+        sunshadeServices.saveSunshade(beachPlace.getSunshade());
+        SunbedServices sunbedServices = new SunbedServices();
+        for (Sunbed sunbed : beachPlace.getSunbeds()) {
+            sunbedServices.saveSunbed(sunbed);
+        }
         bpRepository.save(beachPlace);
         return true;
     }
@@ -77,5 +85,22 @@ public class BeachPlaceServices implements IBeachPlaceServices {
         else
             return plRepository.findByName(priceListName);
     }
+
+    public boolean booking(String beachPlaceID, Reservation reservation) {
+        BeachPlace bp = getInstance(beachPlaceID);
+        if (bp.addReservation(reservation)) {
+            return !bpRepository.save(bp).getReservations().contains(reservation);
+        } else return false;
+    }
+
+    public boolean cancelBooking(Reservation toCancel, String beachPlaceID) {
+        BeachPlace bp = getInstance(beachPlaceID);
+        if (bp.removeReservation(toCancel)) {
+            return !bpRepository.save(bp).getReservations().contains(toCancel);
+        } else return false;
+    }
+
+
+    
 
 }

@@ -6,6 +6,7 @@ import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 
@@ -59,6 +60,18 @@ public class JobOfferServices implements IJobOfferServices {
             throw new IllegalArgumentException(
                     "You are trying to create a job offer with starting or ending time before than the current time");
         return true;
+    }
+
+    public boolean application(String jobOfferID, Reservation reservation) {
+        JobOffer jo = getInstance(jobOfferID);
+        if (jo.addApplication(reservation)) {
+            joRepository.save(jo);
+            return true;
+        } else return false;
+    }
+
+    public boolean cancelBooking(Reservation toCancel, String entityID) {
+        return false;
     }
 
 

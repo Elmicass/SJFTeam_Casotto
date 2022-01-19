@@ -37,6 +37,13 @@ public interface IReservationServices extends EntityServices<Reservation, String
      */
     boolean booking(String type, String user, String entityID, LocalDateTime start, LocalDateTime end) throws AlreadyExistingException;
 
+    /**
+     * 
+     * @param reservationID
+     * @return
+     */
+    boolean cancelBooking(String reservationID);
+
 
 
 }

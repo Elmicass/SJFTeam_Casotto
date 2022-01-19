@@ -10,9 +10,10 @@ public interface ISunbedServices extends EntityServices<Sunbed, String> {
 
     /**
      * 
+     * @param sunbed
      * @return
      */
-    boolean createSunbed();
+    boolean saveSunbed (Sunbed sunbed);
     
     
 }

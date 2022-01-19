@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
 import com.github.Elmicass.SFJTeam_Casotto.model.Equipment;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IActivitiesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
@@ -62,15 +63,20 @@ public class ActivityServices implements IActivityServices {
     }
 
     @Override
-    public boolean booking(String activityID, String email) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean booking(String activityID, Reservation reservation) throws IllegalStateException, AlreadyExistingException {
+        Activity activity = getInstance(activityID);
+        if (activity.addReservation(reservation)) {
+            actRepository.save(activity);
+            return true;
+        } else return false;
     }
 
     @Override
-    public boolean cancelBooking(String activityID, String email) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean cancelBooking(Reservation toCancel, String activityID) {
+        Activity act = getInstance(activityID);
+        if (act.removeReservation(toCancel)) {
+            return !actRepository.save(act).getReservations().contains(toCancel);
+        } else return false;
     }
 
     public Set<Equipment> activityCreationErrorsChecking(LocalDateTime start, LocalDateTime stop,

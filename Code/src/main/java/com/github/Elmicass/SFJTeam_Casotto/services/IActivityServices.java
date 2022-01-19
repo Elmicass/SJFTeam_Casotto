@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 
 /**
  * Questa interfaccia è responsabile della gestione di tutte le attività nel sistema.
@@ -30,8 +31,10 @@ public interface IActivityServices extends EntityServices<Activity, String>{
      * @param activityID - l'ID dell'attività selezionata
      * @param email - email dell'utente che intende prenotarsi
      * @return - true se l'utente si è prenotato con successo, false altrimenti
+     * @throws AlreadyExistingException
+     * @throws IllegalStateException
      */
-    boolean booking(String activityID, String email);
+    boolean booking(String activityID, Reservation reservation) throws IllegalStateException, AlreadyExistingException;
 
     /**
      * Rimuove la prenotazione di un utente da una determinata attività.
@@ -39,6 +42,6 @@ public interface IActivityServices extends EntityServices<Activity, String>{
      * @param email - email dell'utente che intende cancellare la sua prenotazione
      * @return - true se la prenotazione è stata cancellata con successo, false altrimenti
      */
-    boolean cancelBooking(String activityID, String email);
+    boolean cancelBooking(Reservation reservation, String activityID);
 
 }

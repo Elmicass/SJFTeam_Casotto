@@ -26,13 +26,13 @@ public class SeaRow {
     private final String ID;
 
     @Column(name = "SeaRowNumber")
-    private int seaRowNumber;
+    private Integer seaRowNumber;
 
     @Column(name = "MaxBPsInThisRow")
-    private int maxBeachPlacesInThisRow;
+    private Integer maxBeachPlacesInThisRow;
 
     @Column(name = "AvailableBPsPositions") 
-    private int availableBeachPlacesPositions;
+    private Integer availableBeachPlacesPositions;
 
     @Column(name = "SeaRowMap")
     private boolean[] seaRowMap;
@@ -44,7 +44,7 @@ public class SeaRow {
     @Column(name = "BeachPlaces")
     private Set<BeachPlace> BeachPlaces;
 
-    public SeaRow(int seaRowNumber, int maxBPs, int price) throws IllegalArgumentException, NumberFormatException {
+    public SeaRow(Integer seaRowNumber, Integer maxBPs, Double price) throws IllegalArgumentException, NumberFormatException {
         this.ID = String.valueOf(count.incrementAndGet());
         setSeaRowNumber(seaRowNumber);
         setMaxBeachPlacesInThisRow(maxBPs);
@@ -61,7 +61,7 @@ public class SeaRow {
         return seaRowNumber;
     }
 
-    public void setSeaRowNumber(int seaRowNumber) throws IllegalArgumentException {
+    public void setSeaRowNumber(Integer seaRowNumber) throws IllegalArgumentException {
         if (Objects.requireNonNull(seaRowNumber, "The sea row number value is null").intValue() == 0)
             throw new IllegalArgumentException("The sea row number value is zero");
         this.seaRowNumber = seaRowNumber;
@@ -71,7 +71,7 @@ public class SeaRow {
         return maxBeachPlacesInThisRow;
     }
 
-    public void setMaxBeachPlacesInThisRow(int maxBeachPlacesInThisRow) throws IllegalArgumentException {
+    public void setMaxBeachPlacesInThisRow(Integer maxBeachPlacesInThisRow) throws IllegalArgumentException {
         if (Objects.requireNonNull(maxBeachPlacesInThisRow, "The number value is null").intValue() == 0)
             throw new IllegalArgumentException("The number value is zero");
         this.maxBeachPlacesInThisRow = maxBeachPlacesInThisRow;
@@ -81,7 +81,7 @@ public class SeaRow {
         return availableBeachPlacesPositions;
     }
 
-    public void setAvailableBeachPlacesPositions(int availableBeachPlacesPositions) {
+    public void setAvailableBeachPlacesPositions(Integer availableBeachPlacesPositions) {
         Objects.requireNonNull(availableBeachPlacesPositions, "The number value is null");
         this.availableBeachPlacesPositions = availableBeachPlacesPositions;
     }
@@ -93,8 +93,8 @@ public class SeaRow {
             return 0.00;
     }
 
-    public void setFixedPrice(double fixedPrice) throws NumberFormatException {
-        if (Objects.requireNonNull(fixedPrice, "The price value is null").doubleValue() == 0.00)
+    public void setFixedPrice(Double fixedPrice) throws NumberFormatException {
+        if (Objects.requireNonNull(fixedPrice, "The price value is null").doubleValue() <= 0.00)
             this.fixedPrice = Optional.empty();
         this.fixedPrice = Optional.of(fixedPrice);
     }

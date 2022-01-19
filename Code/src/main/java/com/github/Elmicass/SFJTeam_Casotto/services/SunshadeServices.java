@@ -3,37 +3,40 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade;
-import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 import com.github.Elmicass.SFJTeam_Casotto.repository.ISunshadesRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.NonNull;
+
 public class SunshadeServices implements ISunshadeServices {
 
     @Autowired
-    private ISunshadesRepository repository;
+    private ISunshadesRepository sunshadeRepository;
 
     @Override
     public Sunshade getInstance(String id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunshades found with the given id: " + id));
+        return sunshadeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunshades found with the given id: " + id));
+    }
+
+    @Override
+    public boolean saveSunshade(@NonNull Sunshade sunshade) {
+        sunshadeRepository.save(sunshade);
+        return true;
     }
 
     @Override
     public boolean delete(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        if (id.isBlank()) throw new IllegalArgumentException("The sunshade ID is empty");
+        if (!(exists(id))) throw new EntityNotFoundException("The sunshade with ID: " + id + " does not exist");
+        sunshadeRepository.deleteById(id);
+        return !exists(id);
     }
 
     @Override
     public boolean exists(String id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean createSunshade(SunshadeType type) {
-        // TODO Auto-generated method stub
-        return false;
+        if (id.isBlank()) throw new IllegalArgumentException("The sunshade ID value is empty");
+        return sunshadeRepository.existsById(id);
     }
     
     

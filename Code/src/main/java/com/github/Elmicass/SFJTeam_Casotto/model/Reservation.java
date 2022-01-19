@@ -155,6 +155,8 @@ public class Reservation implements Comparable<Reservation> {
         }
     }
 
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -175,10 +177,21 @@ public class Reservation implements Comparable<Reservation> {
         if (getClass() != obj.getClass())
             return false;
         Reservation other = (Reservation) obj;
+<<<<<<< Updated upstream
         if (userEmail == null) {
             if (other.userEmail != null)
                 return false;
         } else if (!userEmail.equals(other.userEmail))
+=======
+        if (userEmail.equals(other.userEmail) && entityID.equals(other.entityID) && timeslot.equals(other.timeslot) && type.equals(other.type))
+            return true;
+        else return false;
+        
+        /** if (userEmail == null) {
+            if (other.userEmail != null)
+                return false;
+        } else if (userEmail != other.userEmail)
+>>>>>>> Stashed changes
             return false;
         if (entityID == null) {
             if (other.entityID != null)
@@ -192,7 +205,11 @@ public class Reservation implements Comparable<Reservation> {
             return false;
         if (type != other.type)
             return false;
+<<<<<<< Updated upstream
         return true;
+=======
+        return true; */
+>>>>>>> Stashed changes
     }
 
     @Override

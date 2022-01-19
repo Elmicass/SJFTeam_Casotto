@@ -7,34 +7,37 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.ISunbedsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.NonNull;
+
 public class SunbedServices implements ISunbedServices {
 
     @Autowired
-    private ISunbedsRepository repository;
+    private ISunbedsRepository sunbedsRepository;
 
     @Override
     public Sunbed getInstance(String id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunbeds found with the given id: " + id));
+        return sunbedsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunbeds found with the given id: " + id));
+    }
+
+    @Override
+    public boolean saveSunbed(@NonNull Sunbed sunbed) {
+        sunbedsRepository.save(sunbed);
+        return true;
     }
 
     @Override
     public boolean delete(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        if (id.isBlank()) throw new IllegalArgumentException("The sunbed ID is empty");
+        if (!(exists(id))) throw new EntityNotFoundException("The sunbed with ID: " + id + " does not exist");
+        sunbedsRepository.deleteById(id);
+        return !exists(id);
     }
 
     @Override
     public boolean exists(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        if (id.isBlank()) throw new IllegalArgumentException("The sunbed ID value is empty");
+        return sunbedsRepository.existsById(id);
     }
-
-    @Override
-    public boolean createSunbed() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     
     
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
+import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import com.google.zxing.WriterException;
 
 
@@ -27,4 +28,21 @@ public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> 
      */
     boolean createBeachPlace(int seaRowNumber, int position, String priceListName, String sunshadeType, int sunbedsNumber) throws IllegalArgumentException, IllegalStateException, WriterException, IOException, ReachedLimitOfObjects;
   
+    /**
+     * 
+     * @param beachPlaceID
+     * @param reservation
+     * @return
+     */
+    boolean booking(String beachPlaceID, Reservation reservation);
+
+    /**
+     * 
+     * @param toCancel
+     * @param beachPlaceID
+     * @return
+     */
+    boolean cancelBooking(Reservation toCancel, String beachPlaceID);
+
+
 }

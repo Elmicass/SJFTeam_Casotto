@@ -5,15 +5,10 @@ import java.time.LocalDateTime;
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
-import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
-import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
-import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
+
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation.EntityType;
-import com.github.Elmicass.SFJTeam_Casotto.repository.IActivitiesRepository;
-import com.github.Elmicass.SFJTeam_Casotto.repository.IBeachPlacesRepository;
-import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IReservationsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +19,6 @@ public class ReservationServices implements IReservationServices {
 
     @Autowired
     private IReservationsRepository resRepository;
-
-    @Autowired
-    private IBeachPlacesRepository bpRepository;
-
-    @Autowired
-    private IActivitiesRepository actRepository;
-
-    @Autowired
-    private IJobOffersRepository joRepository;
 
     @Override
     public Reservation getInstance(@NonNull String id) throws EntityNotFoundException {
@@ -77,37 +63,63 @@ public class ReservationServices implements IReservationServices {
     }
 
     public boolean booking(@NonNull String entityType, @NonNull String user, @NonNull String entityID,
-            @NonNull LocalDateTime start, @NonNull LocalDateTime end) throws AlreadyExistingException {
+            @NonNull LocalDateTime start, @NonNull LocalDateTime end) throws EntityNotFoundException, AlreadyExistingException {
         EntityType type = EntityType.valueOf(entityType);
         switch (type) {
             case BeachPlace:
-                EntityServices<BeachPlace, String> bpServices = new BeachPlaceServices();
-                BeachPlace bp = bpServices.getInstance(entityID);
-                Reservation bpRes = createReservation(type, user, entityID, start, end, bp);
-                if (bp.addReservation(bpRes)) {
+                BeachPlaceServices bpServices = new BeachPlaceServices();
+                Reservation bpRes = createReservation(type, user, entityID, start, end, bpServices.getInstance(entityID));
+                if (bpServices.booking(entityID, bpRes)) {
                     resRepository.save(bpRes);
-                    bpRepository.save(bp);
                     return true;
                 }
                 break;
             case Activity:
-                EntityServices<Activity, String> actServices = new ActivityServices();
-                Activity act = actServices.getInstance(entityID);
-                Reservation actRes = createReservation(type, user, entityID, start, end, act);
-                if (act.addReservation(actRes)) {
+                ActivityServices actServices = new ActivityServices();
+                Reservation actRes = createReservation(type, user, entityID, start, end, actServices.getInstance(entityID));
+                if (actServices.booking(entityID, actRes)) {
                     resRepository.save(actRes);
-                    actRepository.save(act);
                     return true;
                 }
                 break;
             case JobOffer:
-                EntityServices<JobOffer, String> joServices = new JobOfferServices();
-                JobOffer jo = joServices.getInstance(entityID);
-                Reservation joRes = createReservation(type, user, entityID, start, end, jo);
-                if (jo.addApplication(joRes)) {
+                JobOfferServices joServices = new JobOfferServices();
+                Reservation joRes = createReservation(type, user, entityID, start, end, joServices.getInstance(entityID));
+                if (joServices.application(entityID, joRes)) {
                     resRepository.save(joRes);
-                    joRepository.save(jo);
                     return true;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "The entity type you are trying to book for is not one of: " + EntityType.values() + ".");
+        }
+        return false;
+    }
+
+    public boolean cancelBooking(@NonNull String reservationID) {
+        Reservation toCancel = getInstance(reservationID);
+        EntityType type = toCancel.getType();
+        switch (type) {
+            case BeachPlace:
+                BeachPlaceServices bpServices = new BeachPlaceServices();
+                if (bpServices.cancelBooking(toCancel, toCancel.getEntityID())) {
+                    resRepository.deleteById(reservationID);
+                    return !exists(reservationID);
+                }
+                break;
+            case Activity:
+                ActivityServices actServices = new ActivityServices();
+                if (actServices.cancelBooking(toCancel, toCancel.getEntityID())) {
+                    resRepository.deleteById(reservationID);
+                    return !exists(reservationID);
+                }
+                break;
+            case JobOffer:
+                JobOfferServices joServices = new JobOfferServices();
+                if (joServices.cancelBooking(toCancel, toCancel.getEntityID())) {
+                    resRepository.deleteById(reservationID);
+                    return !exists(reservationID);
                 }
                 break;
             default:
