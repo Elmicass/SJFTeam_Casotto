@@ -44,7 +44,7 @@ public class JobOffer implements Comparable<JobOffer> {
     private boolean open;
 
     public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setName(name);
         setDescription(description);
         setExpiration(start, end);

@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Product;
 
 /**
@@ -15,8 +16,9 @@ public interface IProductServices extends EntityServices<Product, String>{
      * @param unitPrice
      * @param quantity
      * @return
+     * @throws AlreadyExistingException
      */
-    boolean createProduct(String name, String description, double unitPrice, int quantity);
+    boolean createProduct(String name, String description, double unitPrice, int quantity) throws AlreadyExistingException;
 
     /**
      * 

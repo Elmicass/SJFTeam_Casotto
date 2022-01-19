@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IProductsRepository extends JpaRepository<Product, String> {
 
-    // TODO
+    Product findByName(String name);
     
 }

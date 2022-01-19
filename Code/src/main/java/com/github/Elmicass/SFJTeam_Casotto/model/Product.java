@@ -33,7 +33,7 @@ public class Product {
     private Integer quantity;
 
     public Product(String name, String description, double unitPrice, int quantity) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setName(name);
         setDescription(description);
         setUnitPrice(unitPrice);
@@ -70,7 +70,7 @@ public class Product {
 
     public void setUnitPrice(Double unitPrice) throws IllegalArgumentException {
         if (Objects.requireNonNull(unitPrice, "The product unit price value is null").doubleValue() < 0.00)
-            throw new IllegalArgumentException("The product unit price value is negative");
+            throw new IllegalArgumentException("The product unit price value is less than zero");
         this.unitPrice = unitPrice;
     }
 
@@ -79,7 +79,8 @@ public class Product {
     }
 
     public void setQuantity(Integer quantity) {
-        Objects.requireNonNull(quantity, "The product quantity value is null");
+        if(Objects.requireNonNull(quantity, "The product quantity value is null").intValue() < 0)
+            throw new IllegalArgumentException("The product quantity value is less than zero");
         this.quantity = quantity;
     }
 

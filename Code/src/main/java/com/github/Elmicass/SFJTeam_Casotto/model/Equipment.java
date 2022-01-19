@@ -46,7 +46,7 @@ public class Equipment {
     private SortedSet<Activity> scheduledActivities;
 
     public Equipment(String name, String description, String type) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         this.scheduledActivities = new TreeSet<Activity>();
         setName(name);
         setDescription(description);
@@ -62,7 +62,7 @@ public class Equipment {
     }
 
     public void setName(String name) throws IllegalArgumentException {
-        if (Objects.requireNonNull(description, "Name value is null").isBlank())
+        if (Objects.requireNonNull(name, "Name value is null").isBlank())
             throw new IllegalArgumentException("The equipment name is empty");
         this.name = name;
     }
@@ -124,7 +124,7 @@ public class Equipment {
     public boolean isFree(TimeSlot timeSlot) {
         Iterator<Activity> free = scheduledActivities.iterator();
         while (free.hasNext()) {
-            if (free.next().getEquipments().contains(this) && free.next().getTimeSlot().overlapsWith(timeSlot))
+            if (free.next().getEquipments().contains(this) && free.next().getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null")))
                 return false;
         }
         return true;

@@ -1,7 +1,8 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
 
 /**
@@ -14,9 +15,11 @@ public interface IJobOfferServices extends EntityServices<JobOffer, String>{
      * 
      * @param name
      * @param description
+     * @param start
      * @param expiration
      * @return
+     * @throws AlreadyExistingException
      */
-    boolean createJobOffer(String name, String description, Date expiration);
+    boolean createJobOffer(String name, String description, LocalDateTime start, LocalDateTime expiration) throws AlreadyExistingException;
         
 }

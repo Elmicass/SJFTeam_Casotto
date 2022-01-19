@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -19,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 import com.google.zxing.WriterException;
 
@@ -66,8 +68,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
     private SortedSet<Reservation> reservations;
 
     public BeachPlace(SeaRow seaRow, int position, PriceList priceList, String sunshadeType, int sunbedsNumber)
-            throws IllegalArgumentException, WriterException, IOException {
-        this.ID = String.valueOf(count.getAndIncrement());
+            throws IllegalArgumentException, WriterException, IOException, IllegalStateException, ReachedLimitOfObjects {
+        this.ID = String.valueOf(count.incrementAndGet());
         this.reservations = new TreeSet<Reservation>();
         setSeaRow(seaRow);
         setPosition(position);
@@ -76,6 +78,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
         setSunshade(this.type, priceList);
         setSunbedsNumber(sunbedsNumber);
         setSunbeds(this.sunbedsNumber, priceList);
+        this.seaRow.addBeachPlace(this);
     }
 
     public String getID() {
@@ -87,8 +90,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
     }
 
     public void setSeaRow(SeaRow seaRow) throws IllegalArgumentException {
-        if (Objects.requireNonNull(seaRow, "Sea row value is null").getSeaRowNumber() == 0)
-            throw new IllegalArgumentException("The sea row number value is 0");
+        if (Objects.requireNonNull(seaRow, "Sea row value is null.").getSeaRowNumber() == 0)
+            throw new IllegalArgumentException("The sea row number value is 0.");
         this.seaRow = seaRow;
     }
 
@@ -97,8 +100,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
     }
 
     public void setPosition(int position) {
-        if (Objects.requireNonNull(position, "Position value is null").intValue() > seaRow.getMaxBeachPlacesInThisRow()-1)
-            throw new IllegalArgumentException("The given position value is not valid. Valid values go from 0 to " + (seaRow.getMaxBeachPlacesInThisRow()-1));
+        if (Objects.requireNonNull(position, "Position value is null.").intValue() > seaRow.getMaxBeachPlacesInThisRow()-1)
+            throw new IllegalArgumentException("The given position value is not valid. Valid values go from 0 to " + (seaRow.getMaxBeachPlacesInThisRow()-1) + ".");
         this.seaRowPosition = position;
     
     }
@@ -108,7 +111,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
     }
 
     public void setSeaRowFixedPrice() {
-        Objects.requireNonNull(getSeaRow().getFixedPrice(), "The sea row fixed price is null");
+        Objects.requireNonNull(getSeaRow().getFixedPrice(), "The sea row fixed price is null.");
         this.seaRowFixedPrice = getSeaRow().getFixedPrice();
     }
 
@@ -118,8 +121,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
 
     public void setSunshade(SunshadeType type, PriceList priceList)
             throws IllegalArgumentException, WriterException, IOException {
-        if (Objects.requireNonNull(type, "Sunshade type value is null").toString().isBlank())
-            throw new IllegalArgumentException("The sunshade type value is empty");
+        if (Objects.requireNonNull(type, "Sunshade type value is null.").toString().isBlank())
+            throw new IllegalArgumentException("The sunshade type value is empty.");
         Sunshade sunshade = new Sunshade(type, this, priceList);
         this.sunshade = sunshade;
     }
@@ -152,7 +155,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
 
     public void setSunbeds(int sunbedsNumber, PriceList priceList) {
         for (int s = 0; s < sunbedsNumber; s++) {
-            Sunbed bed = Objects.requireNonNull(new Sunbed(this, priceList), "The created sunbed is null");
+            Sunbed bed = Objects.requireNonNull(new Sunbed(this, priceList), "The created sunbed is null.");
             this.sunbeds.add(bed);
         }
     }
@@ -162,8 +165,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
     }
 
     public void setSunbedsNumber(int sunbedsNumber) {
-        if (Objects.requireNonNull(sunbedsNumber, "Sunbeds number value is null").intValue() == 0)
-            throw new IllegalArgumentException("The sunbeds number value is 0");
+        if (Objects.requireNonNull(sunbedsNumber, "Sunbeds number value is null.").intValue() == 0)
+            throw new IllegalArgumentException("The sunbeds number value is 0.");
         this.sunbedsNumber = sunbedsNumber;
     }
 
@@ -173,10 +176,10 @@ public class BeachPlace implements Comparable<BeachPlace> {
 
     public void setHourlyPrice(PriceList priceList) {
         double sunshadeHourlyPrice = sunshade.getHourlyPrice();
-        Sunbed sunbed = Objects.requireNonNull(new Sunbed(this, priceList), "The created sunbed is null");
+        Sunbed sunbed = Objects.requireNonNull(new Sunbed(this, priceList), "The created sunbed is null.");
         double sunbedHourlyPrice = sunbed.getHourlyPrice();
-        Objects.requireNonNull(sunshadeHourlyPrice, "The associated sunshade's hourly price is null");
-        Objects.requireNonNull(sunbedHourlyPrice, "The associated sunbeds's hourly price is null");
+        Objects.requireNonNull(sunshadeHourlyPrice, "The associated sunshade's hourly price is null.");
+        Objects.requireNonNull(sunbedHourlyPrice, "The associated sunbeds's hourly price is null.");
         this.hourlyPrice = sunshadeHourlyPrice + sunbedHourlyPrice;
     }
 
@@ -184,30 +187,43 @@ public class BeachPlace implements Comparable<BeachPlace> {
         return reservations;
     }
 
+    public boolean isFree(TimeSlot timeSlot) {
+        Iterator<Reservation> free = reservations.iterator();
+        while (free.hasNext()) {
+            if (free.next().getEntityObject().equals(this) && free.next().getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null.")))
+                return false;
+        }
+        return true;
+    }
+
     public boolean addReservation(Reservation res) throws IllegalStateException {
         if (reservations.contains(res))
-            throw new IllegalStateException("The user is already booked for this beach place");
-        return reservations.add(Objects.requireNonNull(res, "The reservation is null"));
+            throw new IllegalStateException("The user is already booked for this beach place.");
+        if (isFree(res.getTimeSlot()))
+            return reservations.add(Objects.requireNonNull(res, "The reservation is null."));
+        else
+            throw new IllegalStateException(
+                    "This beach place is already booked for the time slot provided.");   
     }
 
     public boolean removeReservation(Reservation res) throws IllegalStateException {
-        if (!(this.reservations.contains(Objects.requireNonNull(res, "The booking has null value"))))
+        if (!(this.reservations.contains(Objects.requireNonNull(res, "The booking has null value."))))
             throw new IllegalStateException(
-                    "The booking you are trying to cancel does not exist for this beach place");
+                    "The booking you are trying to cancel does not exist for this beach place.");
         this.reservations.removeIf(r -> Objects.equals(r, res));
         return true;
     }
 
     public boolean addSunbed(PriceList priceList) {
-        Objects.requireNonNull(priceList, "Beach place's associated price list is null");
+        Objects.requireNonNull(priceList, "Beach place's associated price list is null.");
         Sunbed bed = new Sunbed(this, priceList);
         return sunbeds.add(bed);
     }
 
     public boolean removeSunbed(Sunbed sunbed) throws IllegalArgumentException {
-        if (!(this.sunbeds.contains(Objects.requireNonNull(sunbed, "The sunbed is null"))))
+        if (!(this.sunbeds.contains(Objects.requireNonNull(sunbed, "The sunbed is null."))))
             throw new IllegalArgumentException(
-                    "The sunbed you are trying to remove does not exist in this beach place");
+                    "The sunbed you are trying to remove does not exist in this beach place.");
         this.sunbeds.removeIf(s -> Objects.equals(s, sunbed));
         return true;
     }
@@ -242,7 +258,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
 
     @Override
     public int compareTo(BeachPlace bp) {
-        Objects.requireNonNull(bp, "The passed beach place is null");
+        Objects.requireNonNull(bp, "The passed beach place is null.");
 		if (this.seaRow.equals(bp.seaRow)) {
 			return ((Integer)this.seaRowPosition).compareTo(bp.seaRowPosition);
 		} else {

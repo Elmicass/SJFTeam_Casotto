@@ -73,7 +73,7 @@ public class QrCode {
     private final Map hintMap;
 
     public QrCode(Sunshade sunshade) throws WriterException, IOException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setSunshade(sunshade);
         this.hintMap = new HashMap<>();
         this.name = "Sunshade_n" + sunshade.getID() + ".png";

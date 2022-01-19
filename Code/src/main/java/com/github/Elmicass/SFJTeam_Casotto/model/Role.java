@@ -38,7 +38,7 @@ public class Role {
     private Set<Privilege> privileges;
 
     public Role(String name) {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         this.name = name;
         this.users = new HashSet<>();
         this.privileges = new HashSet<>();

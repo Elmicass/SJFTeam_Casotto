@@ -34,7 +34,7 @@ public class Sunbed {
     private BeachPlace currentlyUsedIn;
 
     public Sunbed(BeachPlace beachPlace, PriceList priceList) {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);
         setHourlyPrice();

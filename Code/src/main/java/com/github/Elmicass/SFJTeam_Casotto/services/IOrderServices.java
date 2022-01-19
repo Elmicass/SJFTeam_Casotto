@@ -1,7 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
-import com.github.Elmicass.SFJTeam_Casotto.model.Customer;
 import com.github.Elmicass.SFJTeam_Casotto.model.Order;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 
 /**
  * Questa interfaccia è responsabile della gestione di tutte le ordinazioni da parte dei clienti nel servizio bar dell'applicazione.
@@ -14,7 +14,7 @@ public interface IOrderServices extends EntityServices<Order, String> {
      * @param customer - oggetto di tipo cliente
      * @return - true se l'ordinazione viene creata con successo, false altrimenti
      */
-    boolean createOrder(Customer customer);
+    boolean createOrder(User customer);
 
     /**
      * Aggiunge un prodotto ad una determinata ordinazione.

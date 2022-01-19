@@ -38,7 +38,7 @@ public class PriceList {
     private double LargeSunshadeHourlyPrice;
 
     public PriceList(String name, double sunbedHourly, double smallSunSHourly, double medSunSHourly, double largeSunSHourly) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setName(name);
         setSingleSunbedHourlyPrice(sunbedHourly);
         setSmallSunshadeHourlyPrice(smallSunSHourly);

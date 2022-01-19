@@ -31,7 +31,7 @@ public class Privilege {
     private Set<Role> roles;
 
     public Privilege(String name) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setName(name);
         this.roles = new HashSet<>();
     }

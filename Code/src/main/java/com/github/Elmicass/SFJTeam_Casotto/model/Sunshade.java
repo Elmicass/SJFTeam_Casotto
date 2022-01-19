@@ -54,7 +54,7 @@ public class Sunshade {
     private QrCode qrCode;
 
     public Sunshade(SunshadeType type, BeachPlace beachPlace, PriceList priceList) throws IllegalArgumentException, WriterException, IOException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setType(type);
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);

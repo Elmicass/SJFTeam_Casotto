@@ -1,8 +1,11 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.io.IOException;
+
+import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
-import com.github.Elmicass.SFJTeam_Casotto.model.Sunbed;
-import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade;
+import com.google.zxing.WriterException;
+
 
 /**
  * Questa interfaccia è responsabile della gestione di tutti i posti spiaggia nel sistema.
@@ -16,7 +19,12 @@ public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> 
      * @param sunshade
      * @param sunbeds
      * @return
+     * @throws ReachedLimitOfObjects
+     * @throws IOException
+     * @throws WriterException
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
      */
-    boolean createBeachPlace(int seaRowNumber, Sunshade sunshade, Sunbed[] sunbeds);
+    boolean createBeachPlace(int seaRowNumber, int position, String priceListName, String sunshadeType, int sunbedsNumber) throws IllegalArgumentException, IllegalStateException, WriterException, IOException, ReachedLimitOfObjects;
   
 }

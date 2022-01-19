@@ -14,8 +14,7 @@ public class UserServices implements IUserServices {
 
     @Override
     public User getInstance(String id) throws EntityNotFoundException {
-        // TODO Auto-generated method stub
-        return null;
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("No users found with the given id: " + id));
     }
 
     @Override

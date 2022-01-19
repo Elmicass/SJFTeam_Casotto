@@ -21,7 +21,7 @@ import javax.persistence.Transient;
 @Table(name = "Reservation")
 public class Reservation implements Comparable<Reservation> {
 
-    public enum entityType {
+    public enum EntityType {
         BeachPlace,
         Activity,
         JobOffer;
@@ -36,7 +36,7 @@ public class Reservation implements Comparable<Reservation> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Type")
-    private entityType type;
+    private EntityType type;
 
     @ManyToOne
     @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
@@ -56,15 +56,15 @@ public class Reservation implements Comparable<Reservation> {
     @Column(name = "Price")
     private Optional<Double> price;
 
-    public Reservation(String type, String user, String entityID, LocalDateTime start, LocalDateTime end, Object object)
+    public Reservation(EntityType type, String user, String entityID, LocalDateTime start, LocalDateTime end, Object object)
             throws IllegalArgumentException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setEntityObject(object);
         setEntityID(entityID);
         setType(type);
         setTimeSlot(start, end);
         setUserMail(user);
-        if (this.type == entityType.BeachPlace)
+        if (this.type == EntityType.BeachPlace)
             setPrice();
         else
             this.price = Optional.empty();
@@ -74,7 +74,7 @@ public class Reservation implements Comparable<Reservation> {
         return ID;
     }
 
-    public entityType getType() {
+    public EntityType getType() {
         return type;
     }
 
@@ -137,21 +137,20 @@ public class Reservation implements Comparable<Reservation> {
             this.entityObject = Optional.of(entityObject);
     }
 
-    public void setType(String typeStringName) throws IllegalArgumentException {
-        entityType type = entityType.valueOf(typeStringName);
+    public void setType(EntityType type) throws IllegalArgumentException {
         switch (type) {
             case BeachPlace:
-                this.type = entityType.BeachPlace;
+                this.type = EntityType.BeachPlace;
                 break;
             case Activity:
-                this.type = entityType.Activity;
+                this.type = EntityType.Activity;
                 break;
             case JobOffer:
-                this.type = entityType.JobOffer;
+                this.type = EntityType.JobOffer;
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "The entity type you are trying to book for is not one of: " + entityType.values() + ".");
+                        "The entity type you are trying to book for is not one of: " + EntityType.values() + ".");
         }
     }
 

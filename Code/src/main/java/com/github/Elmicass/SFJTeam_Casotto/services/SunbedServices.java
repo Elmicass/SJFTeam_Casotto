@@ -14,8 +14,7 @@ public class SunbedServices implements ISunbedServices {
 
     @Override
     public Sunbed getInstance(String id) throws EntityNotFoundException {
-        // TODO Auto-generated method stub
-        return null;
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunbeds found with the given id: " + id));
     }
 
     @Override

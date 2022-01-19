@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IEquipmentsRepository extends JpaRepository<Equipment, String> {
 
-    // TODO
+    Equipment findByName(String name);
     
 }

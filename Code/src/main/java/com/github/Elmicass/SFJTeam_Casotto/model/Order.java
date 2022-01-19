@@ -48,7 +48,7 @@ public class Order {
     private boolean open;
 
     public Order(User customer) {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setCustomer(customer);
         this.products = new LinkedList<Product>();
         this.dueAmount = 0.00;

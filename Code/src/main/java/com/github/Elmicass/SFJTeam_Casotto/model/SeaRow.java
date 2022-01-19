@@ -45,7 +45,7 @@ public class SeaRow {
     private Set<BeachPlace> BeachPlaces;
 
     public SeaRow(int seaRowNumber, int maxBPs, int price) throws IllegalArgumentException, NumberFormatException {
-        this.ID = String.valueOf(count.getAndIncrement());
+        this.ID = String.valueOf(count.incrementAndGet());
         setSeaRowNumber(seaRowNumber);
         setMaxBeachPlacesInThisRow(maxBPs);
         setAvailableBeachPlacesPositions(maxBeachPlacesInThisRow);

@@ -8,7 +8,13 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Equipment;
  */
 public interface IEquipmentServices extends EntityServices<Equipment, String> {
 
+    /**
+     * 
+     * @param name
+     * @param description
+     * @param type
+     * @return
+     */
+    boolean createEquipment(String name, String description, String type);
 
-
-    
 }
