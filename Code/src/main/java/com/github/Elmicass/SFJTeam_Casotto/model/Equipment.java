@@ -130,6 +130,16 @@ public class Equipment {
         return true;
     }
 
+
+    public SortedSet<Activity> getActivity() {
+        return this.scheduledActivities;
+    }
+
+    public void setActivity(SortedSet<Activity> act) {
+        Objects.requireNonNull(act, "The role privileges set is null");
+        this.scheduledActivities = act;
+    }
+
     public boolean addActivity(Activity act) {
         if (scheduledActivities.contains(act))
             throw new IllegalStateException("This equipment is already scheduled to be used by the given activity");

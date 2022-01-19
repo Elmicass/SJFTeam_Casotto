@@ -73,36 +73,43 @@ public class Activity implements Comparable<Activity> {
 		return name;
 	}
 
-	public TimeSlot getTimeSlot() {
-		return timeslot;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Integer getMaxEntries() {
-		return maxEntries;
-	}
-
-	public Set<Equipment> getEquipments() {
-		return equipments;
-	}
-
-	public SortedSet<Reservation> getReservations() {
-		return reservations;
-	}
-
 	public void setName(String name) throws IllegalArgumentException {
 		if (Objects.requireNonNull(name, "Name value is null.").isBlank())
 			throw new IllegalArgumentException("The activity name is empty.");
 		this.name = name;
 	}
 
+	public TimeSlot getTimeSlot() {
+		return timeslot;
+	}
+
+	public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
+		this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null."),
+				Objects.requireNonNull(end, "Ending time is null.")), "The created timeslot is null.");
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
 	public void setDescription(String description) throws IllegalArgumentException {
 		if (Objects.requireNonNull(description, "Description value is null.").isBlank())
 			throw new IllegalArgumentException("The activity description is empty.");
 		this.description = description;
+	}
+
+	public Integer getMaxEntries() {
+		return maxEntries;
+	}
+
+	public void setMaxEntries(Integer maxEntries) {
+		if (Objects.requireNonNull(maxEntries, "Max entries value is null.").intValue() == 0)
+			this.maxEntries = Integer.MAX_VALUE;
+		this.maxEntries = maxEntries;
+	}
+
+	public Set<Equipment> getEquipments() {
+		return equipments;
 	}
 
 	public void setEquipments(Set<Equipment> equipments) {
@@ -113,15 +120,8 @@ public class Activity implements Comparable<Activity> {
 		this.equipments = equipments;
 	}
 
-	public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
-		this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null."),
-				Objects.requireNonNull(end, "Ending time is null.")), "The created timeslot is null.");
-	}
-
-	public void setMaxEntries(int maxEntries) {
-		if (Objects.requireNonNull(maxEntries, "Max entries value is null.").intValue() == 0)
-			this.maxEntries = Integer.MAX_VALUE;
-		this.maxEntries = Objects.requireNonNull(maxEntries, "Max entries value is null.");
+	public SortedSet<Reservation> getReservations() {
+		return reservations;
 	}
 
 	@Override
