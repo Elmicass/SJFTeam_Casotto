@@ -17,9 +17,11 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.ISeaRowRepository;
 import com.google.zxing.WriterException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class BeachPlaceServices implements IBeachPlaceServices {
 
     @Autowired

@@ -15,8 +15,11 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IActivitiesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import lombok.NonNull;
 
+@Service
 public class ActivityServices implements IActivityServices {
 
     @Autowired

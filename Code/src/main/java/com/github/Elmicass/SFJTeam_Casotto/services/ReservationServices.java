@@ -12,9 +12,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Reservation.EntityType;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IReservationsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class ReservationServices implements IReservationServices {
 
     @Autowired

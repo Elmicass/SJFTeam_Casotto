@@ -7,9 +7,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.SeaRow;
 import com.github.Elmicass.SFJTeam_Casotto.repository.ISeaRowRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class SeaRowServices implements ISeaRowServices {
 
     @Autowired

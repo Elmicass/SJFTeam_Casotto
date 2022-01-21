@@ -7,7 +7,9 @@ import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IOrdersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OrderServices implements IOrderServices {
 
     @Autowired

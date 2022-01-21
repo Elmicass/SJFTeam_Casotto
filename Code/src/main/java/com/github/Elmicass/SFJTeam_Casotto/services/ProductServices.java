@@ -7,9 +7,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Product;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IProductsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class ProductServices implements IProductServices {
 
     @Autowired

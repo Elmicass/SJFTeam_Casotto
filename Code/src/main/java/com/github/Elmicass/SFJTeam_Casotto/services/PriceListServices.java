@@ -7,9 +7,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.PriceList;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IPriceListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class PriceListServices implements IPriceListServices {
 
     @Autowired

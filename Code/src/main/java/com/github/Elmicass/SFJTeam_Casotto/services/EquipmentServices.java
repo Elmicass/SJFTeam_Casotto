@@ -9,9 +9,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Equipment.EquipmentType;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class EquipmentServices implements IEquipmentServices {
 
     @Autowired

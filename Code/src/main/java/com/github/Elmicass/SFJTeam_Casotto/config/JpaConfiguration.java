@@ -57,10 +57,10 @@ public class JpaConfiguration {
     }
 
     Properties additionalProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL55Dialect");
-        return properties;
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL55Dialect");
+        return jpaProperties;
     }
     
 }

@@ -6,9 +6,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade;
 import com.github.Elmicass.SFJTeam_Casotto.repository.ISunshadesRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class SunshadeServices implements ISunshadeServices {
 
     @Autowired

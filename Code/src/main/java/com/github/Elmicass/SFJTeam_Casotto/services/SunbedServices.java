@@ -6,9 +6,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Sunbed;
 import com.github.Elmicass.SFJTeam_Casotto.repository.ISunbedsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class SunbedServices implements ISunbedServices {
 
     @Autowired

@@ -11,9 +11,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
 
+@Service
 public class JobOfferServices implements IJobOfferServices {
 
     @Autowired
