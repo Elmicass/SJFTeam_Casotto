@@ -153,6 +153,10 @@ public class QrCode {
         }
     }
 
+    public static boolean delete(QrCode qrCode) {
+        return qrCode.qrcodeFile.delete();
+    }
+
 
 
 }

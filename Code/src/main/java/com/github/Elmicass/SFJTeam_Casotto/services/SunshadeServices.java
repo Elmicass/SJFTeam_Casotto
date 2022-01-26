@@ -2,6 +2,7 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import javax.persistence.EntityNotFoundException;
 
+import com.github.Elmicass.SFJTeam_Casotto.model.QrCode;
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade;
 import com.github.Elmicass.SFJTeam_Casotto.repository.ISunshadesRepository;
 
@@ -31,6 +32,7 @@ public class SunshadeServices implements ISunshadeServices {
     public boolean delete(String id) {
         if (id.isBlank()) throw new IllegalArgumentException("The sunshade ID is empty");
         if (!(exists(id))) throw new EntityNotFoundException("The sunshade with ID: " + id + " does not exist");
+        QrCode.delete(getInstance(id).getQrCode());
         sunshadeRepository.deleteById(id);
         return !exists(id);
     }

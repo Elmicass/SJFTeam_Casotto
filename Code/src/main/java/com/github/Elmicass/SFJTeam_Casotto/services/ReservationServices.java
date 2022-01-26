@@ -22,6 +22,15 @@ public class ReservationServices implements IReservationServices {
     @Autowired
     private IReservationsRepository resRepository;
 
+    @Autowired
+    private BeachPlaceServices bpServices;
+
+    @Autowired
+    private ActivityServices actServices;
+
+    @Autowired
+    private JobOfferServices joServices;
+
     @Override
     public Reservation getInstance(@NonNull String id) throws EntityNotFoundException {
         return resRepository.findById(id)
@@ -69,7 +78,6 @@ public class ReservationServices implements IReservationServices {
         EntityType type = EntityType.valueOf(entityType);
         switch (type) {
             case BeachPlace:
-                BeachPlaceServices bpServices = new BeachPlaceServices();
                 Reservation bpRes = createReservation(type, user, entityID, start, end, bpServices.getInstance(entityID));
                 if (bpServices.booking(entityID, bpRes)) {
                     resRepository.save(bpRes);
@@ -77,7 +85,6 @@ public class ReservationServices implements IReservationServices {
                 }
                 break;
             case Activity:
-                ActivityServices actServices = new ActivityServices();
                 Reservation actRes = createReservation(type, user, entityID, start, end, actServices.getInstance(entityID));
                 if (actServices.booking(entityID, actRes)) {
                     resRepository.save(actRes);
@@ -85,7 +92,6 @@ public class ReservationServices implements IReservationServices {
                 }
                 break;
             case JobOffer:
-                JobOfferServices joServices = new JobOfferServices();
                 Reservation joRes = createReservation(type, user, entityID, start, end, joServices.getInstance(entityID));
                 if (joServices.application(entityID, joRes)) {
                     resRepository.save(joRes);
@@ -104,21 +110,18 @@ public class ReservationServices implements IReservationServices {
         EntityType type = toCancel.getType();
         switch (type) {
             case BeachPlace:
-                BeachPlaceServices bpServices = new BeachPlaceServices();
                 if (bpServices.cancelBooking(toCancel, toCancel.getEntityID())) {
                     resRepository.deleteById(reservationID);
                     return !exists(reservationID);
                 }
                 break;
             case Activity:
-                ActivityServices actServices = new ActivityServices();
                 if (actServices.cancelBooking(toCancel, toCancel.getEntityID())) {
                     resRepository.deleteById(reservationID);
                     return !exists(reservationID);
                 }
                 break;
             case JobOffer:
-                JobOfferServices joServices = new JobOfferServices();
                 if (joServices.cancelBooking(toCancel, toCancel.getEntityID())) {
                     resRepository.deleteById(reservationID);
                     return !exists(reservationID);

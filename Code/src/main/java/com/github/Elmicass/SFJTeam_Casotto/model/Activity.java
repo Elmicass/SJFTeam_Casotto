@@ -180,8 +180,8 @@ public class Activity implements Comparable<Activity> {
 	}
 
 	public boolean addReservation(Reservation res) throws AlreadyExistingException, IllegalStateException {
-		if (reservations.contains(res))
-			throw new AlreadyExistingException("The user is already booked to this activity.");
+		if (reservations.contains(res)) {
+			throw new AlreadyExistingException("The user is already booked to this activity.");	}
 		if (reservations.size() >= maxEntries)
 			throw new IllegalStateException("The maximum number of bookings for this activity has been reached.");
 		return reservations.add(Objects.requireNonNull(res, "The reservation is null."));

@@ -33,6 +33,15 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     @Autowired
     private IPriceListRepository plRepository;
 
+    @Autowired
+    private SunshadeServices sunshadeServices;
+
+    @Autowired
+    private SunbedServices sunbedServices;
+
+    @Autowired
+    private ReservationServices reservationServices;
+
     @Override
     public BeachPlace getInstance(String id) throws EntityNotFoundException {
         return bpRepository.findById(id)
@@ -47,9 +56,7 @@ public class BeachPlaceServices implements IBeachPlaceServices {
                 sunbedsNumber);
         BeachPlace beachPlace = new BeachPlace(srRepository.findBySeaRowNumber(seaRowNumber), position, priceList,
                 sunshadeType, sunbedsNumber);
-        SunshadeServices sunshadeServices = new SunshadeServices();
         sunshadeServices.saveSunshade(beachPlace.getSunshade());
-        SunbedServices sunbedServices = new SunbedServices();
         for (Sunbed sunbed : beachPlace.getSunbeds()) {
             sunbedServices.saveSunbed(sunbed);
         }
@@ -61,6 +68,13 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     public boolean delete(String id) {
         if (id.isBlank()) throw new IllegalArgumentException("The beach place ID is empty");
         if (!(exists(id))) throw new EntityNotFoundException("The beach place with ID: " + id + " does not exist");
+        for (Reservation res : getInstance(id).getReservations()) {
+            reservationServices.cancelBooking(res.getID());
+        }
+        sunshadeServices.delete(getInstance(id).getSunshade().getID());
+        for (Sunbed sunbed : getInstance(id).getSunbeds()) {
+            sunbedServices.delete(sunbed.getID());
+        }
         bpRepository.deleteById(id);
         return !exists(id);
     }

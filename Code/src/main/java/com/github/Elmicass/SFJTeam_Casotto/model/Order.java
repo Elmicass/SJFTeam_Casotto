@@ -28,7 +28,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
-    private User customer;
+    private String customer;
 
     @ManyToOne
     @JoinColumn(name = "UserCurrentSunshade", referencedColumnName = "String")
@@ -47,7 +47,7 @@ public class Order {
     @Column(name = "IsOpen")
     private boolean open;
 
-    public Order(User customer) {
+    public Order(String customer) {
         this.ID = String.valueOf(count.incrementAndGet());
         setCustomer(customer);
         this.products = new LinkedList<Product>();
@@ -60,7 +60,7 @@ public class Order {
         return ID;
     }
 
-    public User getCustomer() {
+    public String getCustomer() {
         return customer;
     }
 
@@ -84,18 +84,17 @@ public class Order {
         this.open = false;
     }
 
-    public void setCustomer(User customer) {
-        if (!(Objects.requireNonNull(customer, "The customer reference is null").getRole()
-                .contains(new Role("Customer"))))
-            throw new IllegalArgumentException("The passed user doesn't have a Customer role in the system");
+    public void setCustomer(String customer) {
+        if (Objects.requireNonNull(customer, "The referenced customer email is null.").isBlank())
+            throw new IllegalArgumentException("The referenced customer's email is empty.");
         this.customer = customer;
     }
 
     public boolean addProduct(Product product, Integer productQuantity) throws IllegalStateException {
-        if (Objects.requireNonNull(product, "The product has null value").getQuantity() == 0)
-            throw new IllegalStateException("The product you are trying to add at the order is no longer available");
+        if (Objects.requireNonNull(product, "The product has null value.").getQuantity() == 0)
+            throw new IllegalStateException("The product you are trying to add at the order is no longer available.");
         if (product.getQuantity() < productQuantity)
-            return false;
+            throw new IllegalStateException("There is not enough product availability to satisfy your demand. Maximum product availability: " + product.getQuantity());
         for (int p = 0; p < productQuantity; p++) {
             this.products.add(product);
             refreshDueAmount();
@@ -104,9 +103,9 @@ public class Order {
     }
 
     public boolean removeProduct(Product product) throws IllegalStateException {
-        if (!(this.products.contains(Objects.requireNonNull(product, "The product has null value"))))
+        if (!(this.products.contains(Objects.requireNonNull(product, "The product has null value."))))
             throw new IllegalStateException(
-                    "The product you are trying to remove from your order is already not present");
+                    "The product you are trying to remove from your order is already not present.");
         this.products.removeIf(prod -> Objects.equals(prod, product));
         refreshDueAmount();
         return true;

@@ -1,6 +1,5 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -62,8 +61,8 @@ public class Equipment {
     }
 
     public void setName(String name) throws IllegalArgumentException {
-        if (Objects.requireNonNull(name, "Name value is null").isBlank())
-            throw new IllegalArgumentException("The equipment name is empty");
+        if (Objects.requireNonNull(name, "Name value is null.").isBlank())
+            throw new IllegalArgumentException("The equipment name is empty.");
         this.name = name;
     }
 
@@ -72,8 +71,8 @@ public class Equipment {
     }
 
     public void setDescription(String description) throws IllegalArgumentException {
-        if (Objects.requireNonNull(description, "Description value is null").isBlank())
-            throw new IllegalArgumentException("The equipment description is empty");
+        if (Objects.requireNonNull(description, "Description value is null.").isBlank())
+            throw new IllegalArgumentException("The equipment description is empty.");
         this.description = description;
     }
 
@@ -122,9 +121,8 @@ public class Equipment {
     }
 
     public boolean isFree(TimeSlot timeSlot) {
-        Iterator<Activity> free = scheduledActivities.iterator();
-        while (free.hasNext()) {
-            if (free.next().getEquipments().contains(this) && free.next().getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null")))
+        for (Activity activity : scheduledActivities) {
+            if (activity.getEquipments().contains(this) && activity.getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null.")))
                 return false;
         }
         return true;
@@ -136,24 +134,24 @@ public class Equipment {
     }
 
     public void setActivity(SortedSet<Activity> act) {
-        Objects.requireNonNull(act, "The role privileges set is null");
+        Objects.requireNonNull(act, "The role privileges set is null.");
         this.scheduledActivities = act;
     }
 
     public boolean addActivity(Activity act) {
         if (scheduledActivities.contains(act))
-            throw new IllegalStateException("This equipment is already scheduled to be used by the given activity");
+            throw new IllegalStateException("This equipment is already scheduled to be used by the given activity.");
         if (isFree(act.getTimeSlot()))
             return scheduledActivities.add(act);
         else
             throw new IllegalStateException(
-                    "This equipment is already scheduled to be used by an activity in the same time slot of the given activity");
+                    "This equipment is already scheduled to be used by an activity in the same time slot of the given activity.");
     }
 
     public boolean removeActivity(Activity act) {
-        if (!(scheduledActivities.contains(Objects.requireNonNull(act, "The given activity is null"))))
+        if (!(scheduledActivities.contains(Objects.requireNonNull(act, "The given activity is null."))))
             throw new IllegalArgumentException(
-                    "The activity you are trying to remove is not scheduled for this equipment");
+                    "The activity you are trying to remove is not scheduled for this equipment.");
         this.scheduledActivities.removeIf(a -> Objects.equals(a, act));
         return true;
     }

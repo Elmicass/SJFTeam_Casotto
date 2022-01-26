@@ -121,8 +121,8 @@ public class Reservation implements Comparable<Reservation> {
     }
 
     public void setUserMail(String email) throws IllegalArgumentException {
-        if (Objects.requireNonNull(email, "The user email value is null").isBlank())
-            throw new IllegalArgumentException("The user has no email associated");
+        if (Objects.requireNonNull(email, "The referenced user email is null.").isBlank())
+            throw new IllegalArgumentException("The user has no email associated.");
         this.userEmail = email;
     }
 
@@ -155,15 +155,12 @@ public class Reservation implements Comparable<Reservation> {
         }
     }
 
-    
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((entityID == null) ? 0 : entityID.hashCode());
+        result = prime * result + ((entityObject == null) ? 0 : entityObject.hashCode());
         result = prime * result + ((timeslot == null) ? 0 : timeslot.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((userEmail == null) ? 0 : userEmail.hashCode());
         return result;
     }
@@ -177,46 +174,29 @@ public class Reservation implements Comparable<Reservation> {
         if (getClass() != obj.getClass())
             return false;
         Reservation other = (Reservation) obj;
-<<<<<<< Updated upstream
-        if (userEmail == null) {
-            if (other.userEmail != null)
+        if (entityObject == null) {
+            if (other.entityObject != null)
                 return false;
-        } else if (!userEmail.equals(other.userEmail))
-=======
-        if (userEmail.equals(other.userEmail) && entityID.equals(other.entityID) && timeslot.equals(other.timeslot) && type.equals(other.type))
-            return true;
-        else return false;
-        
-        /** if (userEmail == null) {
-            if (other.userEmail != null)
-                return false;
-        } else if (userEmail != other.userEmail)
->>>>>>> Stashed changes
-            return false;
-        if (entityID == null) {
-            if (other.entityID != null)
-                return false;
-        } else if (!entityID.equals(other.entityID))
+        } else if (!entityObject.equals(other.entityObject))
             return false;
         if (timeslot == null) {
             if (other.timeslot != null)
                 return false;
         } else if (!timeslot.equals(other.timeslot))
             return false;
-        if (type != other.type)
+        if (userEmail == null) {
+            if (other.userEmail != null)
+                return false;
+        } else if (!userEmail.equals(other.userEmail))
             return false;
-<<<<<<< Updated upstream
         return true;
-=======
-        return true; */
->>>>>>> Stashed changes
     }
 
     @Override
     public int compareTo(Reservation res) {
         Objects.requireNonNull(res, "The passed reservation is null");
         if (this.timeslot.equals(res.timeslot)) {
-            return this.entityID.compareTo(res.entityID);
+            return this.userEmail.compareTo(res.userEmail);
         } else {
             return this.timeslot.compareTo(res.timeslot);
         }

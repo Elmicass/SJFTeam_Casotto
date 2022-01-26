@@ -104,13 +104,17 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	public Set<Role> getRole() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
 	public void setRoles(Set<Role> roles) {
 		Objects.requireNonNull(roles, "The user roles set is null");
 		this.roles = roles;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	@Override
@@ -153,7 +157,7 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return getGrantedAuthorities(getPrivileges(roles));
+		return getGrantedAuthorities(getPrivileges(this.getRoles()));
 	}
 
 	@Override

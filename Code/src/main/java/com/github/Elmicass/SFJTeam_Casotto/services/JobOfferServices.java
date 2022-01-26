@@ -21,6 +21,9 @@ public class JobOfferServices implements IJobOfferServices {
     @Autowired
     private IJobOffersRepository joRepository;
 
+    @Autowired
+    private ReservationServices reservationServices;
+
     @Override
     public JobOffer getInstance(String id) throws EntityNotFoundException {
         return joRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No job offer found with the given id: " + id));
@@ -45,6 +48,9 @@ public class JobOfferServices implements IJobOfferServices {
             throw new IllegalArgumentException("The job offer ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The job offer with ID: " + id + " does not exist");
+        for (Reservation res : getInstance(id).getApplications()) {
+            reservationServices.cancelBooking(res.getID());
+        }
         joRepository.deleteById(id);
         return !exists(id);
     }

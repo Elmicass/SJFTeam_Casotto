@@ -28,6 +28,9 @@ public class ActivityServices implements IActivityServices {
     @Autowired
     private IEquipmentsRepository eqRepository;
 
+    @Autowired
+    private ReservationServices reservationServices;
+
     @Override
     public Activity getInstance(@NonNull String id) throws EntityNotFoundException {
         return actRepository.findById(id)
@@ -54,6 +57,9 @@ public class ActivityServices implements IActivityServices {
             throw new IllegalArgumentException("The activity ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The activity with ID: " + id + " does not exist");
+        for (Reservation res : getInstance(id).getReservations()) {
+            reservationServices.cancelBooking(res.getID());
+        }
         actRepository.deleteById(id);
         return !exists(id);
     }
