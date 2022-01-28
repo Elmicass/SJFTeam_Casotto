@@ -11,12 +11,12 @@ import com.github.Elmicass.SFJTeam_Casotto.model.ConfirmationToken;
 import com.github.Elmicass.SFJTeam_Casotto.model.Role;
 import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.registration.RegistrationRequest;
+import com.github.Elmicass.SFJTeam_Casotto.repository.IConfirmationTokenRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IRolesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IUsersRepository;
 import com.github.Elmicass.SFJTeam_Casotto.security.PasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,15 +33,15 @@ public class UserServices implements IUserServices, UserDetailsService {
     private IRolesRepository rolesRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private IConfirmationTokenRepository tokensRepository;
 
     @Autowired
-    private ConfirmationTokenServices confirmationTokenService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EmailSender emailSender;
 
-    private final static String USER_NOT_FOUND_MSG = "User with email %s not found.";
+    public final static String USER_NOT_FOUND_MSG = "User with email %s not found.";
 
     @Override
     public User getInstance(String id) throws EntityNotFoundException {
@@ -50,11 +50,11 @@ public class UserServices implements IUserServices, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format(USER_NOT_FOUND_MSG, email)));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, user.getAuthorities());
+        return user;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class UserServices implements IUserServices, UserDetailsService {
                         emailSender.send(user.getEmail(), emailSender.getEmailBody(user.getName(), link));
                     }
             throw new AlreadyExistingException(
-                    "There is already an account with that email adress: " + user.getEmail());
+                    "There is already an account with that email address: " + user.getEmail());
         }
         String encodedPassword = passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -107,12 +107,13 @@ public class UserServices implements IUserServices, UserDetailsService {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(20),
                 user);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        tokensRepository.save(confirmationToken);
         return token;
     }
 
     public int enableAppUser(String email) {
         return usersRepository.enableUser(email);
     }
+
 
 }

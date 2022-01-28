@@ -22,4 +22,21 @@ public class RegistrationRequest {
     public String getPassword() {
         return password;
     }
+
+    public void setName(String name) {
+        this.firstName = name;
+    }
+
+    public void setSurname(String surname) {
+        this.lastName = surname;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
 }
