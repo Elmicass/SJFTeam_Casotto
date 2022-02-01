@@ -4,7 +4,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import com.github.Elmicass.SFJTeam_Casotto.view.login.ConsoleCallbackHandler;
+import com.github.Elmicass.SFJTeam_Casotto.view.authentication.login.ConsoleCallbackHandler;
 
 public class LoginService {
 
@@ -39,7 +39,7 @@ public class LoginService {
         }
         // did they fail three times?
         if (i == 3) {
-            System.out.println("Sorry");
+            System.out.println("Sorry, you have finished the available login attempts. If you want to try again, please restart the application.");
             System.exit(-1);
         }
 

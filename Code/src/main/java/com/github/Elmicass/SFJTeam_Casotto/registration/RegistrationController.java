@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.registration;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,4 +19,11 @@ public class RegistrationController {
     public String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);
     }
+
+    public boolean register(RegistrationRequest userData) throws AlreadyExistingException {
+        if (registrationService.register(userData) != null)
+            return true;
+        else return false;
+    }
+
 }

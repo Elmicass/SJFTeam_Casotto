@@ -1,8 +1,5 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.email.EmailSender;
@@ -11,7 +8,6 @@ import com.github.Elmicass.SFJTeam_Casotto.model.ConfirmationToken;
 import com.github.Elmicass.SFJTeam_Casotto.model.Role;
 import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.registration.RegistrationRequest;
-import com.github.Elmicass.SFJTeam_Casotto.repository.IConfirmationTokenRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IRolesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IUsersRepository;
 import com.github.Elmicass.SFJTeam_Casotto.security.PasswordEncoder;
@@ -33,7 +29,7 @@ public class UserServices implements IUserServices, UserDetailsService {
     private IRolesRepository rolesRepository;
 
     @Autowired
-    private IConfirmationTokenRepository tokensRepository;
+    private ConfirmationTokenServices tokensServices;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -91,8 +87,7 @@ public class UserServices implements IUserServices, UserDetailsService {
             if (usersRepository.findByEmail(user.getEmail()).get().getName().equals(user.getName()))
                 if (usersRepository.findByEmail(user.getEmail()).get().getSurname().equals(user.getSurname()))
                     if (!(usersRepository.findByEmail(user.getEmail()).get().isEnabled())) {
-                        String token = UUID.randomUUID().toString();
-                        String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
+                        String link = tokensServices.generateFullTokenLink();
                         emailSender.send(user.getEmail(), emailSender.getEmailBody(user.getName(), link));
                     }
             throw new AlreadyExistingException(
@@ -101,14 +96,9 @@ public class UserServices implements IUserServices, UserDetailsService {
         String encodedPassword = passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
         usersRepository.save(user);
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(20),
-                user);
-        tokensRepository.save(confirmationToken);
-        return token;
+        ConfirmationToken confirmationToken = tokensServices.createConfirmationToken(user);
+        tokensServices.saveConfirmationToken(confirmationToken);
+        return confirmationToken.getToken();
     }
 
     public int enableAppUser(String email) {

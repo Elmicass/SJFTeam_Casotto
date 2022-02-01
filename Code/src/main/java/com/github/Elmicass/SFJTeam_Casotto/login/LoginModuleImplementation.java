@@ -15,7 +15,9 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import com.github.Elmicass.SFJTeam_Casotto.email.EmailSender;
 import com.github.Elmicass.SFJTeam_Casotto.security.PasswordEncoder;
+import com.github.Elmicass.SFJTeam_Casotto.services.ConfirmationTokenServices;
 import com.github.Elmicass.SFJTeam_Casotto.services.UserServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,14 @@ public class LoginModuleImplementation implements LoginModule {
     @Autowired
     private UserServices usersServices;
 
+    @Autowired
+    private ConfirmationTokenServices tokensServices;
+
     @Autowired 
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailSender emailSender;
 
     // initial state
     private Subject subject;
@@ -81,10 +89,23 @@ public class LoginModuleImplementation implements LoginModule {
             if (usernameCorrect && (passwordEncoder.bCryptPasswordEncoder().matches(password,
                     usersServices.loadUserByUsername(username).getPassword()))) {
                 passwordCorrect = true;
-                if (debug)
-                    System.out.println("\t\t[LoginModule] " + "authentication succeeded");
-                succeeded = true;
-                return true;
+                if (!(usersServices.loadUserByUsername(username).isEnabled())) {
+                    if (debug)
+                        System.out.println("\t\t[LoginModule] " + "authentication failed.");
+                    emailSender.send(username,
+                            emailSender.getEmailBody(usersServices.loadUserByUsername(username).getName(),
+                                    tokensServices.generateFullTokenLink()));
+                    succeeded = false;
+                    username = null;
+                    password = null;
+                    throw new FailedLoginException(
+                            "The email has not yet been verified. A new verification link has been sent to the corresponding email. Make sure to confirm your email within 20 mins or the link will expire.");
+                } else {
+                    if (debug)
+                        System.out.println("\t\t[LoginModule] " + "authentication succeeded");
+                    succeeded = true;
+                    return true;
+                }
             } else {
                 if (debug)
                     System.out.println("\t\t[LoginModule] " + "authentication failed.");

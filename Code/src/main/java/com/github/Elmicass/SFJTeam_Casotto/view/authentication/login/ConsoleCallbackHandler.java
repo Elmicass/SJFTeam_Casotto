@@ -1,4 +1,4 @@
-package com.github.Elmicass.SFJTeam_Casotto.view.login;
+package com.github.Elmicass.SFJTeam_Casotto.view.authentication.login;
 
 import java.io.Console;
 import java.io.IOException;

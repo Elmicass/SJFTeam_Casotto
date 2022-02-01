@@ -80,7 +80,7 @@ public class User implements UserDetails {
 
 	public void setName(String name) throws IllegalArgumentException {
 		if (Objects.requireNonNull(name, "The user name is null").isBlank())
-			throw new  IllegalArgumentException("The user name is empty");
+			throw new IllegalArgumentException("The user name is empty");
 		this.name = name;
 	}
 
@@ -90,7 +90,7 @@ public class User implements UserDetails {
 
 	public void setSurname(String surname) {
 		if (Objects.requireNonNull(surname, "The user surname is null").isBlank())
-			throw new  IllegalArgumentException("The user surname is empty");
+			throw new IllegalArgumentException("The user surname is empty");
 		this.surname = surname;
 	}
 
@@ -100,7 +100,7 @@ public class User implements UserDetails {
 
 	public void setEmail(String email) {
 		if (Objects.requireNonNull(email, "The user email is null").isBlank())
-			throw new  IllegalArgumentException("The user email is empty");
+			throw new IllegalArgumentException("The user email is empty");
 		this.email = email;
 	}
 
@@ -166,6 +166,8 @@ public class User implements UserDetails {
 	}
 
 	public void setPassword(String encodedPassword) {
+		if (Objects.requireNonNull(encodedPassword, "The user password is null").isBlank())
+			throw new IllegalArgumentException("The password is empty");
 		this.password = encodedPassword;
 	}
 

@@ -2,10 +2,12 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.ConfirmationToken;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IConfirmationTokenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,28 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
 
     @Autowired
     private IConfirmationTokenRepository ctRepository;
+
+    private final static String tokensLink = "http://localhost:8080/api/v1/registration/confirm?token="; 
+
+    public String getTokensLink() {
+        return tokensLink;    
+    }
+
+    public String generateFullTokenLink() {
+        String token = UUID.randomUUID().toString();
+        String link = tokensLink + token;
+        return link;
+    }
+
+    public ConfirmationToken createConfirmationToken(User user) {
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(20),
+                user);
+        return confirmationToken;
+    }
 
     public void saveConfirmationToken(ConfirmationToken token) {
         ctRepository.save(token);

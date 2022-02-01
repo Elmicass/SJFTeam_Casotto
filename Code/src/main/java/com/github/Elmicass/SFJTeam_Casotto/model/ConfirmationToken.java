@@ -43,16 +43,20 @@ public class ConfirmationToken {
         this.user = user;
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public Object getConfirmedAt() {
-        return null;
+        return confirmedAt;
     }
 
     public LocalDateTime getExpiresAt() {
-        return null;
+        return expiresAt;
     }
 
     public User getUser() {
-        return null;
+        return user;
     }
 
 }
