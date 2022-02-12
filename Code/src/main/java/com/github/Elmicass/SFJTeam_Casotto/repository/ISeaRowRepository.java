@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ISeaRowRepository extends JpaRepository<SeaRow, String> {
 
-    boolean existBySeaRowNumber(int seaRowNumber);
+    boolean existsBySeaRowNumber(int seaRowNumber);
 
     SeaRow findBySeaRowNumber(int seaRowNumber);
 

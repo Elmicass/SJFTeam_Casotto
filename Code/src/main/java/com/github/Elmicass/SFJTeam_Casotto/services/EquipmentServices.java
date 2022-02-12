@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -22,6 +23,11 @@ public class EquipmentServices implements IEquipmentServices {
     @Override
     public Equipment getInstance(String id) throws EntityNotFoundException {
         return eqRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No equipment found with the given id: " + id));
+    }
+
+    @Override
+    public List<Equipment> getAll() {
+        return eqRepository.findAll();
     }
 
     @Override

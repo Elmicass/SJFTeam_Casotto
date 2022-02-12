@@ -1,14 +1,22 @@
 package com.github.Elmicass.SFJTeam_Casotto.login;
 
-import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
+import com.github.Elmicass.SFJTeam_Casotto.services.UserServices;
 import com.github.Elmicass.SFJTeam_Casotto.view.authentication.login.ConsoleCallbackHandler;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class LoginService {
 
-    public Subject login() throws LoginException {
+    @Autowired
+    private UserServices userServices;
+
+    public User login() throws LoginException {
         LoginContext loginContext = null;
         try {
             loginContext = new LoginContext("jaasApplication", new ConsoleCallbackHandler());
@@ -24,14 +32,14 @@ public class LoginService {
             try {
                 // attempt authentication
                 loginContext.login();
-
+                LoginContextHolder.setCurrentLoginContext(loginContext);
                 // if we return with no exception, authentication succeeded
                 break;
             } catch (LoginException le) {
                   System.err.println("Authentication failed:");
                   System.err.println("  " + le.getMessage());
                   try {
-                    Thread.currentThread().sleep(3000);
+                    Thread.sleep(3000);
                   } catch (Exception e) {
                       // ignore
                   }
@@ -42,8 +50,33 @@ public class LoginService {
             System.out.println("Sorry, you have finished the available login attempts. If you want to try again, please restart the application.");
             System.exit(-1);
         }
-
-        return loginContext.getSubject();
+        if (LoginContextHolder.isUserLogged() == false) {
+            LoginContextHolder.setUserLogged(true);
+            LoginContextHolder.setCurrentAppUser(userServices.loadUserByUsername(loginContext.getSubject().getPrincipals().stream().findFirst().get().getName()));
+        }
+        return LoginContextHolder.getCurrentAppUser();
     }
-    
+
+    public void logout() {
+        try {
+            if (LoginContextHolder.isUserLogged()) {
+                LoginContextHolder.getCurrentLoginContext().logout();
+                LoginContextHolder.clear();
+                LoginContextHolder.setUserLogged(false);
+            }
+        } catch (LoginException le) {
+            System.err.println("Logout failed:");
+            System.err.println("  " + le.getMessage());
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
 }
+
+
+    
+

@@ -1,10 +1,15 @@
 package com.github.Elmicass.SFJTeam_Casotto.controller;
 
+import java.util.List;
+
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Product;
 import com.github.Elmicass.SFJTeam_Casotto.services.IProductServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class ProductsManager implements IProductManager {
 
     @Autowired
@@ -12,56 +17,42 @@ public class ProductsManager implements IProductManager {
 
     @Override
     public Product getInstance(String productID) {
-        // TODO Auto-generated method stub
-        return null;
+        return services.getInstance(productID);
     }
 
     @Override
-    public boolean createNewProduct(String name, String description, double unitPrice, int quantity) {
-        // TODO
-        return false;
+    public List<Product> getAll() {
+        return services.getAll();
     }
 
     @Override
-    public String[] getProductsInformations() {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public String[] getProductInformations(String productID) {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean createNewProduct(String name, String description, double unitPrice, int quantity) throws AlreadyExistingException {
+        return services.createProduct(name, description, unitPrice, quantity);
     }
 
     @Override
     public boolean addProduct(String productID, int quantity) {
-        // TODO
-        return false;
+        return services.addProduct(productID, quantity);
     }
 
     @Override
     public boolean subtractProduct(String productID, int quantity) {
-        // TODO
-        return false;
+        return services.subtractProduct(productID, quantity);
     }
 
     @Override
     public int getProductQuantity(String productID) {
-        // TODO
-        return 0;
+        return services.getProductQuantity(productID);
     }
 
     @Override
     public boolean delete(String productID) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.delete(productID);
     }
 
     @Override
     public boolean exists(String productID) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.exists(productID);
     }
 
     

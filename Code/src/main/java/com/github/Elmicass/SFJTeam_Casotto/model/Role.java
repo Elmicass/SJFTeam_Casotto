@@ -3,27 +3,32 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
+
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name = "Roles")
+@NoArgsConstructor
 public class Role {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Name")
     private String name;
@@ -38,7 +43,7 @@ public class Role {
     private Set<Privilege> privileges;
 
     public Role(String name) {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         this.name = name;
         this.users = new HashSet<>();
         this.privileges = new HashSet<>();

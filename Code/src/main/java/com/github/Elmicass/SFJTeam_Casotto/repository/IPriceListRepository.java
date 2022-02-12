@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IPriceListRepository extends JpaRepository<PriceList, String> {
 
-    boolean existByName(String priceListName);
+    boolean existsByName(String name);
 
-    PriceList findByName(String string);
+    PriceList findByName(String name);
     
 
 }

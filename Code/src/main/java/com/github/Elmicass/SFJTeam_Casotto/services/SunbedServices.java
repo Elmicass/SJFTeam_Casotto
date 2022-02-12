@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunbed;
@@ -19,6 +21,11 @@ public class SunbedServices implements ISunbedServices {
     @Override
     public Sunbed getInstance(String id) throws EntityNotFoundException {
         return sunbedsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunbeds found with the given id: " + id));
+    }
+
+    @Override
+    public List<Sunbed> getAll() {
+        return sunbedsRepository.findAll();
     }
 
     @Override

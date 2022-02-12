@@ -8,12 +8,14 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -37,12 +39,13 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 @Table(name = "QrCode")
 public class QrCode {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "File")
     private final File qrcodeFile;
@@ -57,7 +60,7 @@ public class QrCode {
     private final String string;
     
     @OneToOne(mappedBy = "qrCode")
-    @Column(name = "Sunshade")
+    @JoinColumn(name = "Sunshade")
     private Sunshade sunshade;
     
     @Transient
@@ -73,7 +76,7 @@ public class QrCode {
     private final Map hintMap;
 
     public QrCode(Sunshade sunshade) throws WriterException, IOException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setSunshade(sunshade);
         this.hintMap = new HashMap<>();
         this.name = "Sunshade_n" + sunshade.getID() + ".png";

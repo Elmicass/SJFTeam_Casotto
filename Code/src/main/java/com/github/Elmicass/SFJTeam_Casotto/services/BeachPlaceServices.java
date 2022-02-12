@@ -2,6 +2,7 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -17,6 +18,7 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.ISeaRowRepository;
 import com.google.zxing.WriterException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
@@ -40,12 +42,18 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     private SunbedServices sunbedServices;
 
     @Autowired
+    @Lazy
     private ReservationServices reservationServices;
 
     @Override
     public BeachPlace getInstance(String id) throws EntityNotFoundException {
         return bpRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No beach places found with the given id: " + id));
+    }
+
+    @Override
+    public List<BeachPlace> getAll() {
+        return bpRepository.findAll();
     }
 
     @Override
@@ -86,8 +94,8 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     }
 
     public PriceList beachPlaceCreationErrorsChecking(int seaRowNumber, String priceListName, String sunshadeType,
-            int sunbedsNumber) {
-        if (!(srRepository.existBySeaRowNumber(seaRowNumber)))
+            int sunbedsNumber) throws IllegalArgumentException {
+        if (!(srRepository.existsBySeaRowNumber(seaRowNumber)))
             throw new IllegalArgumentException(
                     "The sea row number you entered does not correspond to any existing sea row.");
         if (!(EnumSet.allOf(SunshadeType.class).contains(SunshadeType.valueOf(sunshadeType))))
@@ -96,13 +104,13 @@ public class BeachPlaceServices implements IBeachPlaceServices {
         if (!(sunbedsNumber > 0))
             throw new IllegalArgumentException(
                     "You are trying to create a beach place with 0 sunbeds. Insert a value greater than zero.");
-        if (!(plRepository.existByName(priceListName)))
+        if (!(plRepository.existsByName(priceListName)))
             return plRepository.findByName("DEFAULT");
         else
             return plRepository.findByName(priceListName);
     }
 
-    public boolean booking(String beachPlaceID, Reservation reservation) {
+    public boolean booking(String beachPlaceID, Reservation reservation) throws IllegalStateException {
         BeachPlace bp = getInstance(beachPlaceID);
         if (bp.addReservation(reservation)) {
             return !bpRepository.save(bp).getReservations().contains(reservation);

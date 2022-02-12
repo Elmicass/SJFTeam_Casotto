@@ -4,27 +4,32 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "JobOffer")
-public class JobOffer implements Comparable<JobOffer> {
+@NoArgsConstructor
+public class JobOffer implements Comparable<JobOffer>, IEntity {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Name")
     private String name;
@@ -36,15 +41,16 @@ public class JobOffer implements Comparable<JobOffer> {
     @JoinColumn(name = "Timeslot", referencedColumnName = "Stop")
     private TimeSlot expiration;
 
-    @OneToMany(mappedBy = "entityID")
+    @OneToMany(mappedBy = "joReference")
     @Column(name = "Applications")
+    @OrderBy("Timeslot ASC, UserEmail ASC")
     private SortedSet<Reservation> applications;
 
     @Column(name = "IsOpen")
     private boolean open;
 
     public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setName(name);
         setDescription(description);
         setExpiration(start, end);
@@ -138,13 +144,15 @@ public class JobOffer implements Comparable<JobOffer> {
         return true;
     }
 
-    public boolean addApplication(Reservation app) {
+    @Override
+    public boolean addReservation(Reservation app) {
         if (applications.contains(app))
             throw new IllegalStateException("The user has already applied to this job offer");
         return applications.add(Objects.requireNonNull(app, "The application is null"));
     }
 
-    public boolean removeApplication(Reservation app) throws IllegalStateException {
+    @Override
+    public boolean removeReservation(Reservation app) throws IllegalStateException {
         if (!(this.applications.contains(Objects.requireNonNull(app, "The application has null value"))))
             throw new IllegalStateException(
                     "The application you are trying to cancel does not exist for this job offer");

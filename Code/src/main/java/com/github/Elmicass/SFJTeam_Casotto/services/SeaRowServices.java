@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
@@ -21,6 +23,11 @@ public class SeaRowServices implements ISeaRowServices {
     public SeaRow getInstance(String id) throws EntityNotFoundException {
         return seaRowRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No sea row found with the given id: " + id));
+    }
+
+    @Override
+    public List<SeaRow> getAll() {
+        return seaRowRepository.findAll();
     }
 
     @Override

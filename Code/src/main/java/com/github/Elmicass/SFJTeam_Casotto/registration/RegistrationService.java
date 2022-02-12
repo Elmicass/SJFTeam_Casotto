@@ -2,7 +2,7 @@ package com.github.Elmicass.SFJTeam_Casotto.registration;
 
 import java.time.LocalDateTime;
 
-import com.github.Elmicass.SFJTeam_Casotto.email.EmailSender;
+import com.github.Elmicass.SFJTeam_Casotto.email.EmailService;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.ConfirmationToken;
 import com.github.Elmicass.SFJTeam_Casotto.services.ConfirmationTokenServices;
@@ -25,7 +25,7 @@ public class RegistrationService {
     private ConfirmationTokenServices confirmationTokenServices;
     
     @Autowired
-    private EmailSender emailSender;
+    private EmailService emailSender;
 
     public String register(RegistrationRequest request) throws AlreadyExistingException {
         boolean isValidEmail = emailValidator.test(request.getEmail());

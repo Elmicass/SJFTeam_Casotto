@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +58,11 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
     @Override
     public ConfirmationToken getInstance(String token) throws EntityNotFoundException {
         return ctRepository.findByToken(token).get();
+    }
+
+    @Override
+    public List<ConfirmationToken> getAll() {
+        return ctRepository.findAll();
     }
 
     @Override

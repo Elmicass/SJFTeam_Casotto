@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -11,6 +12,7 @@ import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
@@ -22,11 +24,17 @@ public class JobOfferServices implements IJobOfferServices {
     private IJobOffersRepository joRepository;
 
     @Autowired
+    @Lazy
     private ReservationServices reservationServices;
 
     @Override
     public JobOffer getInstance(String id) throws EntityNotFoundException {
         return joRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No job offer found with the given id: " + id));
+    }
+
+    @Override
+    public List<JobOffer> getAll() {
+        return joRepository.findAll();
     }
 
     @Override
@@ -72,14 +80,18 @@ public class JobOfferServices implements IJobOfferServices {
 
     public boolean application(String jobOfferID, Reservation reservation) {
         JobOffer jo = getInstance(jobOfferID);
-        if (jo.addApplication(reservation)) {
+        if (jo.addReservation(reservation)) {
             joRepository.save(jo);
             return true;
         } else return false;
     }
 
-    public boolean cancelBooking(Reservation toCancel, String entityID) {
-        return false;
+    public boolean cancelBooking(Reservation toCancel, String jobOfferID) {
+        JobOffer jo = getInstance(jobOfferID);
+        if (jo.removeReservation(toCancel)) {
+            joRepository.save(jo);
+            return true;
+        } else return false;
     }
 
 

@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.QrCode;
@@ -20,6 +22,11 @@ public class SunshadeServices implements ISunshadeServices {
     @Override
     public Sunshade getInstance(String id) throws EntityNotFoundException {
         return sunshadeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No sunshades found with the given id: " + id));
+    }
+
+    @Override
+    public List<Sunshade> getAll() {
+        return sunshadeRepository.findAll();
     }
 
     @Override

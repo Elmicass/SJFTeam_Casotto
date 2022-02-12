@@ -1,28 +1,32 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "PriceList")
+@NoArgsConstructor
 public class PriceList {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
 	@Id
-    @Column(name = "ID")
-	private final String ID;
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false)
     private String name;
 
     @Column(name = "SingleSunbedHourlyPrice")
@@ -38,7 +42,7 @@ public class PriceList {
     private double LargeSunshadeHourlyPrice;
 
     public PriceList(String name, double sunbedHourly, double smallSunSHourly, double medSunSHourly, double largeSunSHourly) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setName(name);
         setSingleSunbedHourlyPrice(sunbedHourly);
         setSmallSunshadeHourlyPrice(smallSunSHourly);

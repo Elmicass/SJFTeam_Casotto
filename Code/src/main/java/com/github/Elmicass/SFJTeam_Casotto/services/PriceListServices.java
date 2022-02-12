@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
@@ -21,6 +23,11 @@ public class PriceListServices implements IPriceListServices {
     public PriceList getInstance(String id) throws EntityNotFoundException {
         return priceListRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No price list found with the given id: " + id));
+    }
+
+    @Override
+    public List<PriceList> getAll() {
+        return priceListRepository.findAll();
     }
 
     @Override

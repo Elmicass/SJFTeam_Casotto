@@ -3,8 +3,11 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 import java.time.LocalDateTime;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
+import com.github.Elmicass.SFJTeam_Casotto.model.IEntity.BookableEntityType;
+import com.github.Elmicass.SFJTeam_Casotto.model.IEntity;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
-import com.github.Elmicass.SFJTeam_Casotto.model.Reservation.EntityType;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 
 /**
  * 
@@ -23,7 +26,7 @@ public interface IReservationServices extends EntityServices<Reservation, String
      * @return
      * @throws AlreadyExistingException
      */
-    Reservation createReservation(EntityType type, String user, String entityID, LocalDateTime start, LocalDateTime end, Object object) throws AlreadyExistingException;
+    Reservation createReservation(BookableEntityType type, User user, LocalDateTime start, LocalDateTime end, IEntity object) throws AlreadyExistingException;
     
     /**
      * 
@@ -35,7 +38,7 @@ public interface IReservationServices extends EntityServices<Reservation, String
      * @return
      * @throws AlreadyExistingException
      */
-    boolean booking(String type, String user, String entityID, LocalDateTime start, LocalDateTime end) throws AlreadyExistingException;
+    boolean booking(String type, User user, LocalDateTime start, LocalDateTime end, String entityID) throws AlreadyExistingException, IllegalStateException, EntityNotFoundException;
 
     /**
      * 

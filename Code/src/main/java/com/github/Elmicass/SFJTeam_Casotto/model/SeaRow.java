@@ -1,29 +1,35 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "SeaRow")
-public class SeaRow {
+@NoArgsConstructor
+public class SeaRow implements Comparable<SeaRow> {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "SeaRowNumber")
     private Integer seaRowNumber;
@@ -35,21 +41,22 @@ public class SeaRow {
     private Integer availableBeachPlacesPositions;
 
     @Column(name = "SeaRowMap")
-    private boolean[] seaRowMap;
+    @ElementCollection
+    private Map<Integer, BeachPlace> seaRowMap;
 
     @Column(name = "SeaRowFixedPrice")
-    private Optional<Double> fixedPrice;
+    private Double fixedPrice;
 
     @OneToMany(mappedBy = "seaRow")
     @Column(name = "BeachPlaces")
     private Set<BeachPlace> BeachPlaces;
 
     public SeaRow(Integer seaRowNumber, Integer maxBPs, Double price) throws IllegalArgumentException, NumberFormatException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setSeaRowNumber(seaRowNumber);
         setMaxBeachPlacesInThisRow(maxBPs);
         setAvailableBeachPlacesPositions(maxBeachPlacesInThisRow);
-        this.seaRowMap = new boolean[maxBeachPlacesInThisRow];
+        this.seaRowMap = new HashMap<>();
         setFixedPrice(price);
     }
 
@@ -87,16 +94,21 @@ public class SeaRow {
     }
 
     public double getFixedPrice() {
-        if (fixedPrice.isPresent())
-            return fixedPrice.get().doubleValue();
-        else
-            return 0.00;
+        return fixedPrice;
     }
 
     public void setFixedPrice(Double fixedPrice) throws NumberFormatException {
         if (Objects.requireNonNull(fixedPrice, "The price value is null").doubleValue() <= 0.00)
-            this.fixedPrice = Optional.empty();
-        this.fixedPrice = Optional.of(fixedPrice);
+            this.fixedPrice = 0.00;
+        this.fixedPrice = fixedPrice;
+    }
+
+    public Map<Integer, BeachPlace> getSeaRowMap() {
+        return seaRowMap;
+    }
+
+    public void setSeaRowMap(Map<Integer, BeachPlace> map) {
+        this.seaRowMap = map;
     }
 
     public Set<BeachPlace> getBeachPlaces() {
@@ -124,14 +136,20 @@ public class SeaRow {
             return false;
         return true;
     }
-
+    
+    @Override
+    public int compareTo(SeaRow sr) {
+        Objects.requireNonNull(sr, "The passed sea row is null.");
+		return this.seaRowNumber.compareTo(sr.seaRowNumber);
+    }
+    
     public boolean addBeachPlace(BeachPlace beachPlace) throws IllegalStateException, ReachedLimitOfObjects {
         if (BeachPlaces.contains(beachPlace))
             throw new IllegalStateException("This sea row already contains the given beach place");
         if (availableBeachPlacesPositions > 0) {
-            if (this.seaRowMap[beachPlace.getPosition()] == false) {
+            if (!seaRowMap.containsKey(beachPlace.getPosition())) {
                 if (BeachPlaces.add(Objects.requireNonNull(beachPlace, "The beach place is null"))) {
-                    this.seaRowMap[beachPlace.getPosition()] = true;
+                    this.seaRowMap.put(beachPlace.getPosition(), beachPlace);
                     this.availableBeachPlacesPositions = availableBeachPlacesPositions - 1;
                     return true;
                 } else return false;
@@ -144,7 +162,10 @@ public class SeaRow {
             throw new IllegalStateException(
                     "The beach place you are trying to remove does not exist");
         this.BeachPlaces.removeIf(b -> Objects.equals(b, beachPlace));
+        this.seaRowMap.remove(beachPlace.getPosition(), beachPlace);
         return true;
     }
+
+    
 
 }

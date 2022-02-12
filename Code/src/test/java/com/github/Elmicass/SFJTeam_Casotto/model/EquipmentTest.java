@@ -17,7 +17,8 @@ public class EquipmentTest {
 	void ShouldSetID(){
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		
-		assertEquals(Equipment.count.toString(), equipment.getID());
+		String count = "1";
+		assertEquals(count, equipment.getID());
 	}
 
 	//tests of name attribute

@@ -2,6 +2,7 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
@@ -15,6 +16,7 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IActivitiesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
@@ -29,12 +31,18 @@ public class ActivityServices implements IActivityServices {
     private IEquipmentsRepository eqRepository;
 
     @Autowired
+    @Lazy
     private ReservationServices reservationServices;
 
     @Override
     public Activity getInstance(@NonNull String id) throws EntityNotFoundException {
         return actRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No activity found with the given id: " + id));
+    }
+
+    @Override
+    public List<Activity> getAll() {
+        return actRepository.findAll();
     }
 
     @Override

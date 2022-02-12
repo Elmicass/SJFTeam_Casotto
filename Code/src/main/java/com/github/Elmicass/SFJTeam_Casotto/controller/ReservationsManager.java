@@ -1,12 +1,18 @@
 package com.github.Elmicass.SFJTeam_Casotto.controller;
 
-import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.List;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.services.IReservationServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class ReservationsManager implements IReservationManager {
 
     @Autowired
@@ -14,20 +20,33 @@ public class ReservationsManager implements IReservationManager {
 
     @Override
     public Reservation getInstance(String id) throws EntityNotFoundException {
-        // TODO Auto-generated method stub
-        return null;
+        return services.getInstance(id);
+    }
+
+    @Override
+    public List<Reservation> getAll() {
+        return services.getAll();
+    }
+
+    @Override
+    public boolean booking(String entityType, User user, String entityID,
+            LocalDateTime start, LocalDateTime end) throws EntityNotFoundException, AlreadyExistingException, IllegalStateException {
+        return services.booking(entityType, user, start, end, entityID);
+    }
+
+    @Override
+    public boolean cancelBooking(String reservationID) {
+        return services.cancelBooking(reservationID);
     }
 
     @Override
     public boolean delete(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.delete(id);
     }
 
     @Override
     public boolean exists(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.exists(id);
     }
 
     

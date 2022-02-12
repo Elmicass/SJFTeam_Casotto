@@ -3,25 +3,29 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Privileges")
+@NoArgsConstructor
 public class Privilege {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Name")
     private String name;
@@ -31,7 +35,7 @@ public class Privilege {
     private Set<Role> roles;
 
     public Privilege(String name) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setName(name);
         this.roles = new HashSet<>();
     }

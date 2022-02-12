@@ -1,26 +1,30 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Sunbed")
+@NoArgsConstructor
 public class Sunbed {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @ManyToOne
     @JoinColumn(name = "PriceList", referencedColumnName = "Name")
@@ -34,7 +38,7 @@ public class Sunbed {
     private BeachPlace currentlyUsedIn;
 
     public Sunbed(BeachPlace beachPlace, PriceList priceList) {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);
         setHourlyPrice();

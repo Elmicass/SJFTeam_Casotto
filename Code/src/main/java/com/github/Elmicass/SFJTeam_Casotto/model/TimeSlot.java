@@ -12,14 +12,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "Timeslot")
+@NoArgsConstructor
 public class TimeSlot implements Comparable<TimeSlot> {
 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ID")
-	private long ID;
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
 	// minuti massimi di tolleranza per sovrapposzione tra due timeSlot
 	@Transient
@@ -34,7 +40,12 @@ public class TimeSlot implements Comparable<TimeSlot> {
 	private LocalDateTime stop;
 
 	public TimeSlot(LocalDateTime start, LocalDateTime stop) throws IllegalArgumentException {
+		this.ID = String.valueOf(count);
 		setStartStop(start, stop);
+	}
+
+	public String getID() {
+		return ID;
 	}
 
 	public LocalDateTime getStart() {
@@ -51,7 +62,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
 				(Objects.requireNonNull(start, "Starting time is null")
 						.isEqual(Objects.requireNonNull(stop, "Ending time is null"))))
 			throw new IllegalArgumentException(
-					"Attempt to create a timeslot with starting time equal to, or after ending time");
+					"Attempt to create a timeslot with starting time equal to, or after ending time");	
 		this.start = start;
 		this.stop = stop;
 	}

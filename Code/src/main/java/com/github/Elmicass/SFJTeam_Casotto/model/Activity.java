@@ -6,31 +6,36 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "Activity")
-public class Activity implements Comparable<Activity> {
+@NoArgsConstructor
+public class Activity implements Comparable<Activity>, IEntity {
 
-	@Transient
-	protected static final AtomicInteger count = new AtomicInteger(0);
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
 	@Id
-	@Column(name = "ID")
-	private final String ID;
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
 	@Column(name = "Name")
 	private String name;
@@ -49,14 +54,15 @@ public class Activity implements Comparable<Activity> {
 	@Column(name = "MaxEntries")
 	private Integer maxEntries;
 
-	@OneToMany(mappedBy = "entityID")
+	@OneToMany(mappedBy = "actReference")
 	@Column(name = "Reservations")
+	@OrderBy("Timeslot ASC, UserEmail ASC")
 	private SortedSet<Reservation> reservations;
 
 	public Activity(String name, String description, Integer maxEntries, LocalDateTime start, LocalDateTime end,
 			Set<Equipment> equipments)
 			throws IllegalArgumentException, NullPointerException, IllegalStateException {
-		this.ID = String.valueOf(count.incrementAndGet());
+		this.ID = String.valueOf(count);
 		setName(name);
 		setDescription(description);
 		setMaxEntries(maxEntries);

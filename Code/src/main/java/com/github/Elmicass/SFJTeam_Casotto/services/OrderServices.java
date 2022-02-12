@@ -1,8 +1,11 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.model.Order;
+import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IOrdersRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IProductsRepository;
 
@@ -26,7 +29,12 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public Order createOrder(@NonNull String customer) {
+    public List<Order> getAll() {
+        return ordersRepository.findAll();
+    }
+
+    @Override
+    public Order createOrder(@NonNull User customer) {
         Order order = new Order(customer);
         return order;
     }

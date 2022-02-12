@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
@@ -20,6 +22,11 @@ public class ProductServices implements IProductServices {
     @Override
     public Product getInstance(String id) throws EntityNotFoundException {
         return productsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No products found with the given id: " + id));
+    }
+
+    @Override
+    public List<Product> getAll() {
+        return productsRepository.findAll();
     }
 
     @Override
@@ -57,18 +64,6 @@ public class ProductServices implements IProductServices {
     public int getProductsNumber() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public String[] getProductInformations(String productID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String[] getProductsInformation() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

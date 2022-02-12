@@ -2,23 +2,26 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.google.zxing.WriterException;
 
+import lombok.NoArgsConstructor;
+
 @Entity
-@Table(name = "Sunshad")
+@Table(name = "Sunshade")
+@NoArgsConstructor
 public class Sunshade {
 
     public enum SunshadeType {
@@ -27,12 +30,13 @@ public class Sunshade {
         Large;
     }
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Type")
     @Enumerated(EnumType.STRING)
@@ -54,7 +58,7 @@ public class Sunshade {
     private QrCode qrCode;
 
     public Sunshade(SunshadeType type, BeachPlace beachPlace, PriceList priceList) throws IllegalArgumentException, WriterException, IOException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setType(type);
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);

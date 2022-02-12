@@ -1,24 +1,28 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Product")
+@NoArgsConstructor
 public class Product {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Name")
     private String name;
@@ -33,7 +37,7 @@ public class Product {
     private Integer quantity;
 
     public Product(String name, String description, double unitPrice, int quantity) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         setName(name);
         setDescription(description);
         setUnitPrice(unitPrice);
@@ -109,14 +113,5 @@ public class Product {
         return true;
     }
 
-    public String getProductBasicInformations() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getProductFullInformation() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+   
 }

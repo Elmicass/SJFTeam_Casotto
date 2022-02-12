@@ -36,19 +36,6 @@ public interface IProductServices extends EntityServices<Product, String>{
     /**
      * 
      * @param productID
-     * @return
-     */
-    String[] getProductInformations(String productID);
-    
-    /**
-     * 
-     * @return
-     */
-    String[] getProductsInformation();
-    
-    /**
-     * 
-     * @param productID
      * @param quantity
      * @return
      */

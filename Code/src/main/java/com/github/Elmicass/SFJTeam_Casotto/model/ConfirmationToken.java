@@ -9,17 +9,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ConfirmationToken")
+@NoArgsConstructor
 public class ConfirmationToken {
 
-    @SequenceGenerator(name = "confirmation_token_sequence", sequenceName = "confirmation_token_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Count")
+    private Integer count;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "confirmation_token_sequence")
-    private String id;
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(nullable = false)
     private String token;
@@ -37,6 +42,7 @@ public class ConfirmationToken {
     private User user;
 
     public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
+        this.ID = String.valueOf(count);
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;

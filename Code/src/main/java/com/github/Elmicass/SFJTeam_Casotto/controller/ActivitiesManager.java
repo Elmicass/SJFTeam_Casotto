@@ -1,56 +1,48 @@
 package com.github.Elmicass.SFJTeam_Casotto.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.EntityNotFoundException;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
 import com.github.Elmicass.SFJTeam_Casotto.services.IActivityServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class ActivitiesManager implements IActivityManager {
 
     @Autowired
     private IActivityServices services;
-    
-    @Override
-    public boolean newBooking(String activityID, String email) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean cancelBooking(String activityID, String email) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override
     public Activity getInstance(String id) throws EntityNotFoundException {
-        // TODO Auto-generated method stub
-        return null;
+        return services.getInstance(id);
+    }
+
+    @Override
+    public List<Activity> getAll() {
+        return services.getAll();
+    }
+    
+    @Override
+    public boolean createNewActivity(String name, String description, int maxEntries, LocalDateTime startTime,
+            LocalDateTime endTime, Set<String> equipments) throws AlreadyExistingException {
+        return services.createActivity(name, description, maxEntries, startTime, endTime, equipments);
     }
 
     @Override
     public boolean delete(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.delete(id);
     }
 
     @Override
     public boolean exists(String id) {
-        // TODO Auto-generated method stub
-        return false;
+        return services.exists(id);
     }
-
-    @Override
-    public boolean createNewActivity(String name, String description, int maxEntries) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-   
-
-
-
     
 }

@@ -6,10 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -18,18 +19,23 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name = "Users")
+@NoArgsConstructor
 public class User implements UserDetails {
 
-	protected static final AtomicInteger count = new AtomicInteger(0);
-	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
+
 	@Id
-	@Column(name = "ID")
-	private final String ID;
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 	
 	@Column(name = "Name")
 	private String name;
@@ -60,7 +66,7 @@ public class User implements UserDetails {
 	private Set<Role> roles;
 
 	public User(String name, String surname, String email, String password) {
-		this.ID = String.valueOf(count.incrementAndGet());
+		this.ID = String.valueOf(count);
 		this.name = name;
 		this.surname = surname;
 		this.email = email;

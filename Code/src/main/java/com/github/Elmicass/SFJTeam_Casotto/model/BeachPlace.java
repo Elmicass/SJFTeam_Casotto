@@ -6,34 +6,39 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 import com.google.zxing.WriterException;
 
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "BeachPlace")
-public class BeachPlace implements Comparable<BeachPlace> {
+@NoArgsConstructor
+public class BeachPlace implements Comparable<BeachPlace>, IEntity {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @ManyToOne
     @JoinColumn(name = "SeaRow", referencedColumnName = "SeaRowNumber")
@@ -46,7 +51,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
     private double seaRowFixedPrice;
 
     @OneToOne(mappedBy = "currentlyUsedIn")
-    @Column(name = "Sunshade")
+    @JoinColumn(name = "Sunshade")
     private Sunshade sunshade;
 
     @Enumerated(EnumType.STRING)
@@ -63,13 +68,14 @@ public class BeachPlace implements Comparable<BeachPlace> {
     @Column(name = "HourlyPrice")
     private double hourlyPrice;
 
-    @OneToMany(mappedBy = "entityID")
+    @OneToMany(mappedBy = "bpReference")
     @Column(name = "Reservations")
+    @OrderBy("Timeslot ASC, UserEmail ASC")
     private SortedSet<Reservation> reservations;
 
     public BeachPlace(SeaRow seaRow, int position, PriceList priceList, String sunshadeType, int sunbedsNumber)
             throws IllegalArgumentException, WriterException, IOException, IllegalStateException, ReachedLimitOfObjects {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         this.reservations = new TreeSet<Reservation>();
         setSeaRow(seaRow);
         setPosition(position);
@@ -186,7 +192,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
     public SortedSet<Reservation> getReservations() {
         return reservations;
     }
-
+    
     public boolean isFree(TimeSlot timeSlot) {
         Iterator<Reservation> free = reservations.iterator();
         while (free.hasNext()) {
@@ -196,9 +202,8 @@ public class BeachPlace implements Comparable<BeachPlace> {
         return true;
     }
 
+    @Override
     public boolean addReservation(Reservation res) throws IllegalStateException {
-        if (reservations.contains(res))
-            throw new IllegalStateException("The user is already booked for this beach place.");
         if (isFree(res.getTimeSlot()))
             return reservations.add(Objects.requireNonNull(res, "The reservation is null."));
         else
@@ -206,6 +211,7 @@ public class BeachPlace implements Comparable<BeachPlace> {
                     "This beach place is already booked for the time slot provided.");   
     }
 
+    @Override
     public boolean removeReservation(Reservation res) throws IllegalStateException {
         if (!(this.reservations.contains(Objects.requireNonNull(res, "The booking has null value."))))
             throw new IllegalStateException(

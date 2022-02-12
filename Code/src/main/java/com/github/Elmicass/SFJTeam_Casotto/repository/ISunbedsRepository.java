@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ISunbedsRepository extends JpaRepository<Sunbed, String> {
     
-    // TODO
 
 }

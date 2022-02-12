@@ -1,5 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.github.Elmicass.SFJTeam_Casotto.email.EmailSender;
@@ -43,6 +45,11 @@ public class UserServices implements IUserServices, UserDetailsService {
     public User getInstance(String id) throws EntityNotFoundException {
         return usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No users found with the given id: " + id));
+    }
+
+    @Override
+    public List<User> getAll() {
+        return usersRepository.findAll();
     }
 
     @Override

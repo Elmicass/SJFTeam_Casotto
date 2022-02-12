@@ -4,38 +4,42 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Order")
+@NoArgsConstructor
 public class Order {
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @ManyToOne
     @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
-    private String customer;
+    private User customer;
 
     @ManyToOne
     @JoinColumn(name = "UserCurrentSunshade", referencedColumnName = "String")
     private QrCode orderQrCode;
 
     @OneToMany
-    @JoinColumn(name = "Products", referencedColumnName = "Name")
+    @JoinColumn(name = "Products")
     private List<Product> products;
 
     @Column(name = "OrderDueAmount")
@@ -47,8 +51,8 @@ public class Order {
     @Column(name = "IsOpen")
     private boolean open;
 
-    public Order(String customer) {
-        this.ID = String.valueOf(count.incrementAndGet());
+    public Order(User customer) {
+        this.ID = String.valueOf(count);
         setCustomer(customer);
         this.products = new LinkedList<Product>();
         this.dueAmount = 0.00;
@@ -60,7 +64,7 @@ public class Order {
         return ID;
     }
 
-    public String getCustomer() {
+    public User getCustomer() {
         return customer;
     }
 
@@ -84,8 +88,8 @@ public class Order {
         this.open = false;
     }
 
-    public void setCustomer(String customer) {
-        if (Objects.requireNonNull(customer, "The referenced customer email is null.").isBlank())
+    public void setCustomer(User customer) {
+        if (Objects.requireNonNull(customer.getEmail(), "The referenced customer email is null.").isBlank())
             throw new IllegalArgumentException("The referenced customer's email is empty.");
         this.customer = customer;
     }

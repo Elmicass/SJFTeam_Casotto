@@ -3,19 +3,23 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Equipment")
+@NoArgsConstructor
 public class Equipment {
 
     public enum EquipmentType {
@@ -23,12 +27,13 @@ public class Equipment {
         Outdoor;
     }
 
-    @Transient
-    protected static final AtomicInteger count = new AtomicInteger(0);
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "Count")
+	private Integer count;
 
-    @Id
-    @Column(name = "ID")
-    private final String ID;
+	@Id
+	@Column(name = "ID", nullable = false, unique = true)
+	private String ID;
 
     @Column(name = "Name")
     private String name;
@@ -42,10 +47,11 @@ public class Equipment {
 
     @ManyToMany(mappedBy = "equipments")
     @Column(name = "Activities")
+    @OrderBy("Timeslot ASC, ID ASC")
     private SortedSet<Activity> scheduledActivities;
 
     public Equipment(String name, String description, String type) throws IllegalArgumentException {
-        this.ID = String.valueOf(count.incrementAndGet());
+        this.ID = String.valueOf(count);
         this.scheduledActivities = new TreeSet<Activity>();
         setName(name);
         setDescription(description);
