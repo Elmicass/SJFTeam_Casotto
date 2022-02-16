@@ -18,7 +18,7 @@ public class EquipmentTest {
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		
 		String count = "1";
-		assertEquals(count, equipment.getID());
+		assertNotNull(count, equipment.getID());
 	}
 
 	//tests of name attribute
