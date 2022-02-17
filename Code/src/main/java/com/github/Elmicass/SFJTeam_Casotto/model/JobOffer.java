@@ -1,10 +1,12 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,15 +23,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "JobOffer")
 @NoArgsConstructor
-public class JobOffer implements Comparable<JobOffer>, IEntity {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Name")
     private String name;
@@ -37,20 +36,19 @@ public class JobOffer implements Comparable<JobOffer>, IEntity {
     @Column(name = "Description")
     private String description;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Timeslot", referencedColumnName = "Stop")
     private TimeSlot expiration;
 
     @OneToMany(mappedBy = "joReference")
     @Column(name = "Applications")
-    @OrderBy("Timeslot ASC, UserEmail ASC")
+    @OrderBy("Timeslot ASC, User_Email ASC")
     private SortedSet<Reservation> applications;
 
     @Column(name = "IsOpen")
     private boolean open;
 
-    public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) {
-        this.ID = String.valueOf(count);
+    public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) throws IllegalArgumentException {
         setName(name);
         setDescription(description);
         setExpiration(start, end);
@@ -58,8 +56,8 @@ public class JobOffer implements Comparable<JobOffer>, IEntity {
         this.applications = new TreeSet<Reservation>();
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public String getName() {
@@ -107,7 +105,7 @@ public class JobOffer implements Comparable<JobOffer>, IEntity {
     public int compareTo(JobOffer jo) {
         Objects.requireNonNull(jo,"The passed activity is null");
         if (this.expiration.equals(jo.expiration)) {
-            return this.ID.compareTo(jo.ID);
+            return this.id.compareTo(jo.id);
         } else {
             return this.expiration.compareTo(jo.expiration);
         }

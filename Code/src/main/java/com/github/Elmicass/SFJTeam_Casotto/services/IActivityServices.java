@@ -1,7 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
@@ -11,7 +10,7 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
  * Questa interfaccia è responsabile della gestione di tutte le attività nel sistema.
  * Sa restituire un'istanza di qualsiasi attività mediante il suo ID, può crearne di nuove o eliminarne di esistenti.
  */
-public interface IActivityServices extends EntityServices<Activity, String>{
+public interface IActivityServices extends EntityServices<Activity>{
 
     /**
      * 
@@ -24,7 +23,7 @@ public interface IActivityServices extends EntityServices<Activity, String>{
      * @return
      * @throws AlreadyExistingException
      */
-    boolean createActivity(String name, String description, int maxEntries, LocalDateTime startTime, LocalDateTime endTime, Set<String> equipments) throws AlreadyExistingException;
+    boolean createActivity(String name, String description, Integer maxEntries, LocalDateTime startTime, LocalDateTime endTime, String[] equipments) throws AlreadyExistingException;
 
     /**
      * Aggiunge la prenotazione di un utente ad una determinata attività.
@@ -34,7 +33,7 @@ public interface IActivityServices extends EntityServices<Activity, String>{
      * @throws AlreadyExistingException
      * @throws IllegalStateException
      */
-    boolean booking(String activityID, Reservation reservation) throws IllegalStateException, AlreadyExistingException;
+    boolean booking(Integer activityID, Reservation reservation) throws IllegalStateException, AlreadyExistingException;
 
     /**
      * Rimuove la prenotazione di un utente da una determinata attività.
@@ -42,6 +41,6 @@ public interface IActivityServices extends EntityServices<Activity, String>{
      * @param email - email dell'utente che intende cancellare la sua prenotazione
      * @return - true se la prenotazione è stata cancellata con successo, false altrimenti
      */
-    boolean cancelBooking(Reservation reservation, String activityID);
+    boolean cancelBooking(Reservation reservation, Integer activityID);
 
 }

@@ -9,9 +9,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.SeaRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Component
+@Transactional
 public class SeaRowsPrinter implements Printer<SeaRow> {
 
     @Autowired
@@ -20,9 +22,9 @@ public class SeaRowsPrinter implements Printer<SeaRow> {
     @Override
     public String shortToStringVersion(SeaRow seaRow) {
         String returnValue;
-        returnValue = "◉ - [ID: " + seaRow.getID() + " | Row number: " + seaRow.getSeaRowNumber() + " | "
+        returnValue = "- [ID: " + seaRow.getID() + " | Row number: " + seaRow.getSeaRowNumber() + " | "
                 + seaRow.getBeachPlaces().size() + "/" + seaRow.getMaxBeachPlacesInThisRow()
-                + " | " + seaRow.getFixedPrice() + "€ ]";
+                + " | " + seaRow.getFixedPrice() + "EUR ]";
         return returnValue;
     }
 
@@ -38,8 +40,9 @@ public class SeaRowsPrinter implements Printer<SeaRow> {
                 System.out.println(shortToStringVersion(seaRow));
                 System.out.flush();
             }
-        } else
+        } else {
             System.out.println("[No sea rows exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -55,14 +58,21 @@ public class SeaRowsPrinter implements Printer<SeaRow> {
         System.out.flush();
     }
 
-    public void beachStructure() {
-        if (!(manager.getAll().isEmpty())) {
-            for (SeaRow row : manager.getAll()) {
+    @Override
+    public void clearConsoleScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    public void beachStructure(List<SeaRow> list) {
+        if (!(list.isEmpty())) {
+            for (SeaRow row : list) {
                 System.out.println("[" + row.getSeaRowNumber() + "]" + " - " + "[" + rowMapToString(row) + " ]");
                 System.out.flush();            
             }
-        } else 
+        } else {
             System.out.println("[No sea row exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -86,11 +96,11 @@ public class SeaRowsPrinter implements Printer<SeaRow> {
             String beachPlace;
             if (row.getSeaRowMap().get(i) != null)
                 if (row.getSeaRowMap().get(i).getPosition() == beachPlacePos)
-                    beachPlace = "◉";
+                    beachPlace = ">O<";
                 else
-                    beachPlace = "◯";
+                    beachPlace = "O";
             else
-                beachPlace = "⊗";
+                beachPlace = "x";
             returnValue = returnValue + " (" + beachPlace + ")";            
         }
         return returnValue;
@@ -103,7 +113,7 @@ public class SeaRowsPrinter implements Printer<SeaRow> {
         if (!(seaRows.isEmpty())) {
             Collections.sort(seaRows); 
             for (SeaRow row : seaRows) {
-                returnValue = returnValue + String.format("%-271s", init + "[" + row.getSeaRowNumber() + "]" + " - " + "[" + graphicRepSeaRow(row, beachPlacePos) + "]") + "|\n";            
+                returnValue = returnValue + String.format("%-215s", init + "[" + row.getSeaRowNumber() + "]" + " - " + "[" + graphicRepSeaRow(row, beachPlacePos) + "]") + "|\n";            
             }
         } else
             returnValue = String.format("%-271s", "[Error in printing the beach structure!]");

@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,15 +18,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Privileges")
 @NoArgsConstructor
-public class Privilege {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Privilege implements Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Name")
     private String name;
@@ -35,7 +33,6 @@ public class Privilege {
     private Set<Role> roles;
 
     public Privilege(String name) throws IllegalArgumentException {
-        this.ID = String.valueOf(count);
         setName(name);
         this.roles = new HashSet<>();
     }

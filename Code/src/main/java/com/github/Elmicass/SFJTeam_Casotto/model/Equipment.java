@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -20,20 +21,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Equipment")
 @NoArgsConstructor
-public class Equipment {
+public class Equipment implements Serializable {
 
     public enum EquipmentType {
         Indoor,
         Outdoor;
     }
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
-
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Name")
     private String name;
@@ -51,15 +49,14 @@ public class Equipment {
     private SortedSet<Activity> scheduledActivities;
 
     public Equipment(String name, String description, String type) throws IllegalArgumentException {
-        this.ID = String.valueOf(count);
         this.scheduledActivities = new TreeSet<Activity>();
         setName(name);
         setDescription(description);
         setType(type);
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public String getName() {

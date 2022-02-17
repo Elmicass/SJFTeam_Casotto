@@ -30,7 +30,7 @@ public class RegistrationService {
     public String register(RegistrationRequest request) throws AlreadyExistingException {
         boolean isValidEmail = emailValidator.test(request.getEmail());
         if (!isValidEmail)
-            throw new IllegalArgumentException("The email is not valid.");
+            throw new IllegalArgumentException("The email entered is not valid.");
         String token = userServices.signUpUser(userServices.createUser(request));
         String link = confirmationTokenServices.getTokensLink() + token;
         emailSender.send(

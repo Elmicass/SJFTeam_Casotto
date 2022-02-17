@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
 import com.github.Elmicass.SFJTeam_Casotto.model.PriceList;
@@ -20,10 +21,12 @@ import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class BeachPlaceServices implements IBeachPlaceServices {
 
     @Autowired
@@ -36,17 +39,17 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     private IPriceListRepository plRepository;
 
     @Autowired
-    private SunshadeServices sunshadeServices;
+    private ISunshadeServices sunshadeServices;
 
     @Autowired
-    private SunbedServices sunbedServices;
+    private ISunbedServices sunbedServices;
 
     @Autowired
     @Lazy
-    private ReservationServices reservationServices;
+    private IReservationServices reservationServices;
 
     @Override
-    public BeachPlace getInstance(String id) throws EntityNotFoundException {
+    public BeachPlace getInstance(Integer id) throws EntityNotFoundException {
         return bpRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No beach places found with the given id: " + id));
     }
@@ -57,14 +60,14 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     }
 
     @Override
-    public boolean createBeachPlace(@NonNull int seaRowNumber, @NonNull int position, @NonNull String priceListName,
-            @NonNull String sunshadeType, @NonNull int sunbedsNumber) throws IllegalArgumentException,
-            IllegalStateException, WriterException, IOException, ReachedLimitOfObjects {
+    public boolean createBeachPlace(@NonNull Integer seaRowNumber, @NonNull Integer position, @NonNull String priceListName,
+            @NonNull String sunshadeType, @NonNull Integer sunbedsNumber) throws IllegalArgumentException,
+            IllegalStateException, WriterException, IOException, ReachedLimitOfObjects, AlreadyExistingException {
         PriceList priceList = beachPlaceCreationErrorsChecking(seaRowNumber, priceListName, sunshadeType,
                 sunbedsNumber);
-        BeachPlace beachPlace = new BeachPlace(srRepository.findBySeaRowNumber(seaRowNumber), position, priceList,
+        BeachPlace beachPlace = new BeachPlace(srRepository.findBySeaRowNumber(seaRowNumber).get(), position, priceList,
                 sunshadeType, sunbedsNumber);
-        sunshadeServices.saveSunshade(beachPlace.getSunshade());
+        bpRepository.save(beachPlace).setSunshade(sunshadeServices.saveSunshade(sunshadeServices.createSunshade(SunshadeType.valueOf(sunshadeType), beachPlace, priceList)));
         for (Sunbed sunbed : beachPlace.getSunbeds()) {
             sunbedServices.saveSunbed(sunbed);
         }
@@ -73,8 +76,8 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     }
 
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank()) throw new IllegalArgumentException("The beach place ID is empty");
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank()) throw new IllegalArgumentException("The beach place ID is empty");
         if (!(exists(id))) throw new EntityNotFoundException("The beach place with ID: " + id + " does not exist");
         for (Reservation res : getInstance(id).getReservations()) {
             reservationServices.cancelBooking(res.getID());
@@ -83,13 +86,14 @@ public class BeachPlaceServices implements IBeachPlaceServices {
         for (Sunbed sunbed : getInstance(id).getSunbeds()) {
             sunbedServices.delete(sunbed.getID());
         }
+        getInstance(id).getSeaRow().removeBeachPlace(getInstance(id));
         bpRepository.deleteById(id);
         return !exists(id);
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank()) throw new IllegalArgumentException("The beach place ID value is empty");
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank()) throw new IllegalArgumentException("The beach place ID value is empty");
         return bpRepository.existsById(id);
     }
 
@@ -105,19 +109,19 @@ public class BeachPlaceServices implements IBeachPlaceServices {
             throw new IllegalArgumentException(
                     "You are trying to create a beach place with 0 sunbeds. Insert a value greater than zero.");
         if (!(plRepository.existsByName(priceListName)))
-            return plRepository.findByName("DEFAULT");
+            return plRepository.findByName("DEFAULT").get();
         else
-            return plRepository.findByName(priceListName);
+            return plRepository.findByName(priceListName).get();
     }
 
-    public boolean booking(String beachPlaceID, Reservation reservation) throws IllegalStateException {
+    public boolean booking(Integer beachPlaceID, Reservation reservation) throws IllegalStateException {
         BeachPlace bp = getInstance(beachPlaceID);
         if (bp.addReservation(reservation)) {
             return !bpRepository.save(bp).getReservations().contains(reservation);
         } else return false;
     }
 
-    public boolean cancelBooking(Reservation toCancel, String beachPlaceID) {
+    public boolean cancelBooking(Reservation toCancel, Integer beachPlaceID) {
         BeachPlace bp = getInstance(beachPlaceID);
         if (bp.removeReservation(toCancel)) {
             return !bpRepository.save(bp).getReservations().contains(toCancel);

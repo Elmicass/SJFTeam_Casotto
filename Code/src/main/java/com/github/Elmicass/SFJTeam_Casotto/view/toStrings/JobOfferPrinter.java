@@ -8,9 +8,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Component
+@Transactional
 public class JobOfferPrinter implements Printer<JobOffer> {
 
     @Autowired
@@ -27,7 +29,7 @@ public class JobOfferPrinter implements Printer<JobOffer> {
             open = "Open";
         else
             open = "Closed";
-        returnValue = "◉ - [ID: " + offer.getID() + " | Name: " + offer.getName()
+        returnValue = "- [ID: " + offer.getID() + " | Name: " + offer.getName()
                 + " | Expiration: " + timePrinter.localDateTimeToString(offer.getExpiration().getStop()) + " | "
                 + open + " ]";
         return returnValue;
@@ -41,16 +43,12 @@ public class JobOfferPrinter implements Printer<JobOffer> {
             open = "Open";
         else
             open = "Closed";
-        String firstLine = String.format("%-271s", new String("┌")) + "┐";
-        String secondLine = String.format("%-271s",
-                new String(
-                        "| [ID: " + offer.getID() + " - Name: " + offer.getName()
+        String firstLine = String.format("%-215s", new String("+")) + "+";
+        String secondLine = String.format("%-215s", new String("| [ID: " + offer.getID() + " - Name: " + offer.getName()
                                 + " - Expiration: " + timePrinter.localDateTimeToString(offer.getExpiration().getStop())
-                                + " - "
-                                + open + " ]"))
-                + "|";
-        String thirdLine = String.format("%-271s", new String("| Description: " + offer.getDescription())) + "|";
-        String fourthLine = String.format("%-271s", new String("└")) + "┘";
+                                + " - " + open + " ]")) + "|";
+        String thirdLine = String.format("%-215s", new String("| Description: " + offer.getDescription())) + "|";
+        String fourthLine = String.format("%-215s", new String("+")) + "+";
         returnValue = firstLine + "\n" + secondLine + "\n" + thirdLine + "\n" + fourthLine;
         return returnValue;
     }
@@ -62,8 +60,9 @@ public class JobOfferPrinter implements Printer<JobOffer> {
                 System.out.println(shortToStringVersion(jobOffer));
                 System.out.flush();
             }
-        } else
+        } else {
             System.out.println("[No job offers exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -76,6 +75,12 @@ public class JobOfferPrinter implements Printer<JobOffer> {
     @Override
     public void printFullVersion(JobOffer jo) {
         System.out.println(fullToStringVersion(jo));
+        System.out.flush();
+    }
+
+    @Override
+    public void clearConsoleScreen() {
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 

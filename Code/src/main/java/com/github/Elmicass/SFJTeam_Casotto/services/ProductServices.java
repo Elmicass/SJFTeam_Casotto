@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -10,17 +11,19 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IProductsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class ProductServices implements IProductServices {
 
     @Autowired
     private IProductsRepository productsRepository;
 
     @Override
-    public Product getInstance(String id) throws EntityNotFoundException {
+    public Product getInstance(Integer id) throws EntityNotFoundException {
         return productsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No products found with the given id: " + id));
     }
 
@@ -30,17 +33,27 @@ public class ProductServices implements IProductServices {
     }
 
     @Override
-    public boolean createProduct(@NonNull String name, @NonNull String description, @NonNull double unitPrice, @NonNull int quantity) throws AlreadyExistingException {
+    public List<Product> getAvailableProducts() {
+        List<Product> products = new LinkedList<>();
+        for (Product pr : getAll()) {
+            if (pr.getQuantity() > 0)
+                products.add(pr);
+        }
+        return products;
+    }
+
+    @Override
+    public boolean createProduct(@NonNull String name, @NonNull String description, @NonNull Double unitPrice, @NonNull Integer quantity) throws AlreadyExistingException {
         Product product = new Product(name, description, unitPrice, quantity);
-        if (productsRepository.findByName(name).equals(product))
+        if (productsRepository.findByName(name).isPresent())
             throw new AlreadyExistingException("The product you are trying to create already exists, with the same name: " + name);
         productsRepository.save(product);
         return true;
     }
 
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank())
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The product ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The product with ID: " + id + " does not exist");
@@ -49,14 +62,14 @@ public class ProductServices implements IProductServices {
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank())
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The product ID value is empty");
         return productsRepository.existsById(id);
     }
 
     @Override
-    public int getProductQuantity(String productID) {
+    public int getProductQuantity(Integer productID) {
         return getInstance(productID).getQuantity();
     }
 
@@ -67,13 +80,13 @@ public class ProductServices implements IProductServices {
     }
 
     @Override
-    public boolean addProduct(String productID, int quantity) {
+    public boolean addProduct(Integer productID, Integer quantity) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean subtractProduct(String productID, int quantity) {
+    public boolean subtractProduct(Integer productID, Integer quantity) {
         // TODO Auto-generated method stub
         return false;
     }

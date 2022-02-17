@@ -19,7 +19,7 @@ public class JobOffersManager implements IJobOfferManager {
     private IJobOfferServices services;
 
     @Override
-    public JobOffer getInstance(String id) throws EntityNotFoundException {
+    public JobOffer getInstance(Integer id) throws EntityNotFoundException {
         return services.getInstance(id);
     }
 
@@ -35,12 +35,12 @@ public class JobOffersManager implements IJobOfferManager {
     }
     
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
 

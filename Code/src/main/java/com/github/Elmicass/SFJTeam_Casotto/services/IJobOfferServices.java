@@ -10,7 +10,7 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
  * Questa interfaccia è responsabile della gestione di tutte le offerte di lavoro nel sistema.
  * Sa restituire un'istanza di qualsiasi offerta mediante il suo ID, può crearne di nuove o eliminarne di esistenti.
  */
-public interface IJobOfferServices extends EntityServices<JobOffer, String>{
+public interface IJobOfferServices extends EntityServices<JobOffer>{
 
     /**
      * 
@@ -29,6 +29,14 @@ public interface IJobOfferServices extends EntityServices<JobOffer, String>{
      * @param reservation
      * @return
      */
-    boolean application(String jobOfferID, Reservation reservation);
+    boolean application(Integer jobOfferID, Reservation reservation);
+
+    /**
+     * 
+     * @param reservation
+     * @param jobOfferID
+     * @return
+     */
+    boolean cancelApplication(Reservation reservation, Integer jobOfferID);
 
 }

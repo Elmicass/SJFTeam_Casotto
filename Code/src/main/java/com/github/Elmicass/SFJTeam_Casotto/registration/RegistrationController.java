@@ -20,7 +20,7 @@ public class RegistrationController {
         return registrationService.confirmToken(token);
     }
 
-    public boolean register(RegistrationRequest userData) throws AlreadyExistingException {
+    public boolean register(RegistrationRequest userData) throws AlreadyExistingException, IllegalArgumentException {
         if (registrationService.register(userData) != null)
             return true;
         else return false;

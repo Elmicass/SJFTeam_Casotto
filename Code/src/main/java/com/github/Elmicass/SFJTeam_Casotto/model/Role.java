@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,15 +21,12 @@ import javax.persistence.JoinColumn;
 @Entity
 @Table(name = "Roles")
 @NoArgsConstructor
-public class Role {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Role implements Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Name")
     private String name;
@@ -43,7 +41,6 @@ public class Role {
     private Set<Privilege> privileges;
 
     public Role(String name) {
-        this.ID = String.valueOf(count);
         this.name = name;
         this.users = new HashSet<>();
         this.privileges = new HashSet<>();

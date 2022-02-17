@@ -7,7 +7,7 @@ import com.github.Elmicass.SFJTeam_Casotto.model.User;
  * Questa interfaccia è responsabile della gestione di tutte le ordinazioni da parte dei clienti nel servizio bar dell'applicazione.
  * Sa restituire un'istanza di qualsiasi ordine mediante il suo ID, può crearne di nuove o eliminare ordinazioni esistenti.
  */
-public interface IOrderServices extends EntityServices<Order, String> {
+public interface IOrderServices extends EntityServices<Order> {
 
       /**
      * Crea una nuova ordinazione vuota. L'ordinazione è associata al cliente corrispondente all'email passata.
@@ -23,7 +23,7 @@ public interface IOrderServices extends EntityServices<Order, String> {
      * @param quantity - quantità del prodotto da aggiungere all'ordine
      * @return - true se il prodotto è stato aggiunto correttamente all'ordinazione, false altrimenti
      */
-    boolean addProduct(String orderID, String productID, int quantity);
+    boolean addProduct(Integer orderID, Integer productID, int quantity);
 
     /**
      * Rimuove un prodotto da una determinata ordinazione.
@@ -31,7 +31,7 @@ public interface IOrderServices extends EntityServices<Order, String> {
      * @param productID - ID del prodotto selezionato da aggiungere all'ordine
      * @return - true se il prodotto è stato rimosso correttamente dall'ordinazione, false altrimenti
      */
-    boolean removeProduct(String orderID, String productID);
+    boolean removeProduct(Integer orderID, Integer productID);
 
     /**
      * 

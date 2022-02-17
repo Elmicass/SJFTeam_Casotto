@@ -2,17 +2,12 @@ package com.github.Elmicass.SFJTeam_Casotto.view.authentication;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.function.Consumer;
 
-import javax.security.auth.login.LoginException;
-
-import com.github.Elmicass.SFJTeam_Casotto.login.LoginService;
 import com.github.Elmicass.SFJTeam_Casotto.view.IConsoleView;
+import com.github.Elmicass.SFJTeam_Casotto.view.authentication.login.ConsoleLoginRequest;
 import com.github.Elmicass.SFJTeam_Casotto.view.authentication.registration.ConsoleRegistrationRequest;
-import com.github.Elmicass.SFJTeam_Casotto.view.events.GlobalKeyListener;
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,33 +19,37 @@ public class AuthenticationConsole implements IConsoleView {
     private ConsoleRegistrationRequest registrationConsole;
 
     @Autowired
-    private LoginService loginService;
+    private ConsoleLoginRequest loginConsole;
 
-    private boolean open = true;
+    private boolean open;
 
     private final Map<String, Consumer<? super IConsoleView>> commands;
 
+    private Scanner authIn;
+
     public AuthenticationConsole() {
         this.commands = new HashMap<>();
+        this.open = true;
+        this.authIn = new Scanner(System.in);
     }
 
     public void menu() {
         clearConsoleScreen();
-        System.out.println("╔══════════════════════════════════════════════════════════════════════╗");
-        System.out.println("║ Casotto Smart Chalet                                                 ║");
-        System.out.println("╠══════════════════════════════════════════════════════════════════════╣");
-        System.out.println("║                          Sign in or login                            ║");
-        System.out.println("╚══════════════════════════════════════════════════════════════════════╝");
-        System.out.println("┌                                                                      ┐");
-        System.out.println("| Press [?] for:                                                       |");
+        System.out.println("+----------------------------------------------------------------------+");
+        System.out.println("| Casotto Smart Chalet                                                 |");
+        System.out.println("+----------------------------------------------------------------------+");
+        System.out.println("|                          Sign in or login                            |");
+        System.out.println("+----------------------------------------------------------------------+");
+        System.out.println("|                                                                      |");
+        System.out.println("| Type [?] for:                                                        |");
         System.out.println("| [R] - Sign in                                                        |");
         System.out.println("| [L] - Login                                                          |");
         System.out.println("|                                                                      |");
         System.out.println("|                                                                      |");
         System.out.println("|                                                                      |");
-        System.out.println("| [BACKSPACE] - Go back                                                |");
-        System.out.println("| [ESC] - Quit application                                             |");
-        System.out.println("└                                                                      ┘");
+        System.out.println("| [BACK] - Go back                                                     |");
+        System.out.println("| [0] - Quit application                                               |");
+        System.out.println("+----------------------------------------------------------------------+");
         System.out.flush();
     }
 
@@ -62,36 +61,30 @@ public class AuthenticationConsole implements IConsoleView {
 
     @Override
     public void open() {
+        commands.clear();
         this.open = true;
-        addCommand(NativeKeyEvent.getKeyText(NativeKeyEvent.VC_R), c -> registrationConsole.registrationRequest());
-        addCommand(NativeKeyEvent.getKeyText(NativeKeyEvent.VC_L), c -> {
-            try {
-                loginService.login();
-            } catch (LoginException le) {
-                le.printStackTrace();
-            }
-        });
-        addCommand(NativeKeyEvent.getKeyText(NativeKeyEvent.VC_BACKSPACE), c -> close());
-        menu();
-        try {
-            GlobalScreen.registerNativeHook();
-            GlobalScreen.addNativeKeyListener(new GlobalKeyListener(commands, this));
-            while(open) {
-                System.out.print(" > ");
-                System.out.flush();
-            }
-        } catch (NativeHookException nhe) {
-            nhe.printStackTrace();
+        while(open) {
+            addCommand("R", c -> registrationConsole.registrationRequest());
+            addCommand("L", c -> { if (loginConsole.loginRequest()) close(); });
+            addCommand("BACK", c -> close());
+            addCommand("0", c -> System.exit(0));
+            clearConsoleScreen();
+            menu();
+            System.out.print(" > ");
+            System.out.flush();
+            String command = authIn.nextLine();
+            processCommand(command);
         }
     }
 
     @Override
     public void close() {
         this.open = false;
+        commands.clear();       
     }
 
     public void logoutController() {
-        loginService.logout();
+        loginConsole.logoutRequest();
     }
 
     @Override

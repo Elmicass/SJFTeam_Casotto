@@ -8,9 +8,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Equipment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Component
+@Transactional
 public class EquipmentPrinter implements Printer<Equipment> {
 
     @Autowired
@@ -19,18 +21,18 @@ public class EquipmentPrinter implements Printer<Equipment> {
     @Override
     public String shortToStringVersion(Equipment eq) {
         String returnValue;
-        returnValue = "◉ - [ID: " + eq.getID() + " | Name: " + eq.getName() + " | Type: " + eq.getType().name() + " ]";
+        returnValue = "- [ID: " + eq.getID() + " | Name: " + eq.getName() + " | Type: " + eq.getType().name() + " ]";
         return returnValue;
     }
 
     @Override
     public String fullToStringVersion(Equipment eq) {
         String returnValue;
-        String firstLine = String.format("%-271s", new String("┌")) + "┐";
-        String secondLine = String.format("%-271s", new String("| [ID: " + eq.getID() + " - Equipment name: "
+        String firstLine = String.format("%-215s", new String("+")) + "+";
+        String secondLine = String.format("%-215s", new String("| [ID: " + eq.getID() + " - Equipment name: "
                 + eq.getName() + " - Type: " + eq.getType().name() + " ]")) + "|";
-        String thirdLine = String.format("%-271s", new String("| Description: " + eq.getDescription())) + "|";
-        String fourthLine = String.format("%-271s", new String("└")) + "┘";
+        String thirdLine = String.format("%-215s", new String("| Description: " + eq.getDescription())) + "|";
+        String fourthLine = String.format("%-215s", new String("+")) + "+";
         returnValue = firstLine + "\n" + secondLine + "\n" + thirdLine + "\n" + fourthLine;
         return returnValue;
     }
@@ -42,8 +44,9 @@ public class EquipmentPrinter implements Printer<Equipment> {
                 System.out.println(shortToStringVersion(equipment));
                 System.out.flush();
             }
-        } else
+        } else {
             System.out.println("[No equipments exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -56,6 +59,12 @@ public class EquipmentPrinter implements Printer<Equipment> {
     @Override
     public void printFullVersion(Equipment eq) {
         System.out.println(fullToStringVersion(eq));
+        System.out.flush();
+    }
+
+    @Override
+    public void clearConsoleScreen() {
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 

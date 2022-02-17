@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -16,15 +17,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "ConfirmationToken")
 @NoArgsConstructor
-public class ConfirmationToken {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Count")
-    private Integer count;
+public class ConfirmationToken implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(nullable = false)
     private String token;
@@ -42,7 +40,6 @@ public class ConfirmationToken {
     private User user;
 
     public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
-        this.ID = String.valueOf(count);
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;

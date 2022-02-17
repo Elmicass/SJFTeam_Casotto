@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Objects;
@@ -17,15 +18,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Timeslot")
 @NoArgsConstructor
-public class TimeSlot implements Comparable<TimeSlot> {
-
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
 	// minuti massimi di tolleranza per sovrapposzione tra due timeSlot
 	@Transient
@@ -40,12 +38,11 @@ public class TimeSlot implements Comparable<TimeSlot> {
 	private LocalDateTime stop;
 
 	public TimeSlot(LocalDateTime start, LocalDateTime stop) throws IllegalArgumentException {
-		this.ID = String.valueOf(count);
 		setStartStop(start, stop);
 	}
 
-	public String getID() {
-		return ID;
+	public Integer getID() {
+		return id;
 	}
 
 	public LocalDateTime getStart() {

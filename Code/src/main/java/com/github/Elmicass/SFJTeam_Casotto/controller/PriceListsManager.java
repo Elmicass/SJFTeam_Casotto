@@ -8,14 +8,16 @@ import com.github.Elmicass.SFJTeam_Casotto.model.PriceList;
 import com.github.Elmicass.SFJTeam_Casotto.services.PriceListServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class PriceListsManager implements IPriceListManager {
 
     @Autowired
     private PriceListServices services;
 
     @Override
-    public PriceList getInstance(String id) throws EntityNotFoundException {
+    public PriceList getInstance(Integer id) throws EntityNotFoundException {
         return services.getInstance(id);
     }
 
@@ -31,12 +33,12 @@ public class PriceListsManager implements IPriceListManager {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
 

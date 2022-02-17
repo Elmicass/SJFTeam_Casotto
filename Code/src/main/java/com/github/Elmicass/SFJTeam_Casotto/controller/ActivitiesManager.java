@@ -2,7 +2,6 @@ package com.github.Elmicass.SFJTeam_Casotto.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -20,7 +19,7 @@ public class ActivitiesManager implements IActivityManager {
     private IActivityServices services;
 
     @Override
-    public Activity getInstance(String id) throws EntityNotFoundException {
+    public Activity getInstance(Integer id) throws EntityNotFoundException {
         return services.getInstance(id);
     }
 
@@ -31,17 +30,17 @@ public class ActivitiesManager implements IActivityManager {
     
     @Override
     public boolean createNewActivity(String name, String description, int maxEntries, LocalDateTime startTime,
-            LocalDateTime endTime, Set<String> equipments) throws AlreadyExistingException {
+            LocalDateTime endTime, String[] equipments) throws AlreadyExistingException {
         return services.createActivity(name, description, maxEntries, startTime, endTime, equipments);
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) throws EntityNotFoundException, IllegalArgumentException {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
     

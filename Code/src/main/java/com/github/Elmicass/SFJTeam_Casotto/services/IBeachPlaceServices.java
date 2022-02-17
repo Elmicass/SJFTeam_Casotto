@@ -2,6 +2,7 @@ package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.io.IOException;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
@@ -12,7 +13,7 @@ import com.google.zxing.WriterException;
  * Questa interfaccia è responsabile della gestione di tutti i posti spiaggia nel sistema.
  * Sa restituire un'istanza di qualsiasi posto spiaggia mediante il suo ID, può crearne di nuovi o eliminarne di esistenti.
  */
-public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> {
+public interface IBeachPlaceServices extends EntityServices<BeachPlace> {
 
     /**
      * 
@@ -25,8 +26,9 @@ public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> 
      * @throws WriterException
      * @throws IllegalStateException
      * @throws IllegalArgumentException
+     * @throws AlreadyExistingException
      */
-    boolean createBeachPlace(int seaRowNumber, int position, String priceListName, String sunshadeType, int sunbedsNumber) throws IllegalArgumentException, IllegalStateException, WriterException, IOException, ReachedLimitOfObjects;
+    boolean createBeachPlace(Integer seaRowNumber, Integer position, String priceListName, String sunshadeType, Integer sunbedsNumber) throws IllegalArgumentException, IllegalStateException, WriterException, IOException, ReachedLimitOfObjects, AlreadyExistingException;
   
     /**
      * 
@@ -34,7 +36,7 @@ public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> 
      * @param reservation
      * @return
      */
-    boolean booking(String beachPlaceID, Reservation reservation);
+    boolean booking(Integer beachPlaceID, Reservation reservation);
 
     /**
      * 
@@ -42,7 +44,7 @@ public interface IBeachPlaceServices extends EntityServices<BeachPlace, String> 
      * @param beachPlaceID
      * @return
      */
-    boolean cancelBooking(Reservation toCancel, String beachPlaceID);
+    boolean cancelBooking(Reservation toCancel, Integer beachPlaceID);
 
 
 }

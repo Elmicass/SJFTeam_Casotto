@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional(readOnly = true)
-public interface IUsersRepository extends JpaRepository<User, String> {
+public interface IUsersRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
 

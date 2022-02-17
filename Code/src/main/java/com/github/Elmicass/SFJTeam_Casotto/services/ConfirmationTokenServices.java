@@ -13,9 +13,11 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IConfirmationTokenReposito
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ConfirmationTokenServices implements EntityServices<ConfirmationToken, String> {
+@Transactional
+public class ConfirmationTokenServices implements EntityServices<ConfirmationToken> {
 
     @Autowired
     private IConfirmationTokenRepository ctRepository;
@@ -55,7 +57,6 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
                 token, LocalDateTime.now());
     }
 
-    @Override
     public ConfirmationToken getInstance(String token) throws EntityNotFoundException {
         return ctRepository.findByToken(token).get();
     }
@@ -65,7 +66,6 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
         return ctRepository.findAll();
     }
 
-    @Override
     public boolean delete(String token) {
         if (token.isBlank()) throw new IllegalArgumentException("The token is empty");
         if (!(exists(token))) throw new EntityNotFoundException("The token: " + token + "does not exist.");
@@ -73,10 +73,28 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
         return !exists(token);
     }
 
-    @Override
     public boolean exists(String token) {
         if (token.isBlank()) throw new IllegalArgumentException("The token is empty");
         return ctRepository.existsByToken(token);
+    }
+
+    @Override
+    public ConfirmationToken getInstance(Integer id) throws EntityNotFoundException {
+        return ctRepository.findById(id).get();
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank()) throw new IllegalArgumentException("The token is empty");
+        if (!(exists(id))) throw new EntityNotFoundException("The token with ID: " + id + "does not exist.");
+        ctRepository.deleteById(id);
+        return !exists(id);
+    }
+
+    @Override
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank()) throw new IllegalArgumentException("The token ID is empty");
+        return ctRepository.existsById(id);
     }
     
 }

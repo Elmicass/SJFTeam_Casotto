@@ -13,5 +13,7 @@ public interface Printer<T extends Object> {
     void printShortVersion(T object);
 
     void printFullVersion(T object);
+
+    void clearConsoleScreen();
     
 }

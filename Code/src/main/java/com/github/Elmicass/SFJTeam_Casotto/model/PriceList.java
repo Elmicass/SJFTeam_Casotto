@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -16,15 +17,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "PriceList")
 @NoArgsConstructor
-public class PriceList {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class PriceList implements Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Name", nullable = false)
     private String name;
@@ -42,7 +40,6 @@ public class PriceList {
     private double LargeSunshadeHourlyPrice;
 
     public PriceList(String name, double sunbedHourly, double smallSunSHourly, double medSunSHourly, double largeSunSHourly) throws IllegalArgumentException {
-        this.ID = String.valueOf(count);
         setName(name);
         setSingleSunbedHourlyPrice(sunbedHourly);
         setSmallSunshadeHourlyPrice(smallSunSHourly);
@@ -50,8 +47,8 @@ public class PriceList {
         setLargeSunshadeHourlyPrice(largeSunSHourly);
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public String getName() {

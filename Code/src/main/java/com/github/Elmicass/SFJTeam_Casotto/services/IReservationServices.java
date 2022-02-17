@@ -1,6 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
@@ -13,7 +14,14 @@ import com.github.Elmicass.SFJTeam_Casotto.model.User;
  * 
  * 
  */
-public interface IReservationServices extends EntityServices<Reservation, String> {
+public interface IReservationServices extends EntityServices<Reservation> {
+
+    /**
+     * 
+     * @param type
+     * @return
+     */
+    List<Reservation> getByType(BookableEntityType type);
 
     /**
      * 
@@ -38,14 +46,14 @@ public interface IReservationServices extends EntityServices<Reservation, String
      * @return
      * @throws AlreadyExistingException
      */
-    boolean booking(String type, User user, LocalDateTime start, LocalDateTime end, String entityID) throws AlreadyExistingException, IllegalStateException, EntityNotFoundException;
+    boolean booking(String type, User user, LocalDateTime start, LocalDateTime end, Integer entityID) throws AlreadyExistingException, IllegalStateException, EntityNotFoundException;
 
     /**
      * 
      * @param reservationID
      * @return
      */
-    boolean cancelBooking(String reservationID);
+    boolean cancelBooking(Integer reservationID);
 
 
 

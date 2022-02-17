@@ -1,9 +1,8 @@
 package com.github.Elmicass.SFJTeam_Casotto.login;
 
-import javax.security.auth.login.LoginContext;
+import javax.annotation.PostConstruct;
 
-import com.github.Elmicass.SFJTeam_Casotto.model.User;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,9 +10,12 @@ public class LoginContextHolder {
 
     private static boolean userLogged = false;
 
-    private static LoginContext currentLoginContext;
+    private static ThreadLocal<UserDetails> currentAppUser;
 
-    private static ThreadLocal<User> currentAppUser;
+    @PostConstruct
+    private void initialize() {
+        currentAppUser = new ThreadLocal<>();
+    }
 
     public static boolean isUserLogged() {
         return userLogged;
@@ -23,25 +25,16 @@ public class LoginContextHolder {
         userLogged = status;
     }
 
-    public static LoginContext getCurrentLoginContext() {
-        return currentLoginContext;
-    }
-
-    public static void setCurrentLoginContext(LoginContext loginContext) {
-        currentLoginContext = loginContext;
-    }
-
-    public static User getCurrentAppUser() {
+    public static UserDetails getCurrentAppUser() {
         return currentAppUser.get();
     }
 
-    public static void setCurrentAppUser(User user) {
+    public static void setCurrentAppUser(UserDetails user) {
         currentAppUser.set(user);
     }
 
     public static void clear() {
         currentAppUser.remove();
-        currentLoginContext = null;
     }
     
 }

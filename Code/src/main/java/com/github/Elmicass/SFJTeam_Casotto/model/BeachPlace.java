@@ -1,12 +1,15 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,27 +33,24 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "BeachPlace")
 @NoArgsConstructor
-public class BeachPlace implements Comparable<BeachPlace>, IEntity {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class BeachPlace implements Comparable<BeachPlace>, IEntity, Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "SeaRow", referencedColumnName = "SeaRowNumber")
     private SeaRow seaRow;
 
     @Column(name = "SeaRowPosition")
-    private int seaRowPosition;
+    private Integer seaRowPosition;
 
     @Column(name = "SeaRowPrice")
-    private double seaRowFixedPrice;
+    private Double seaRowFixedPrice;
 
-    @OneToOne(mappedBy = "currentlyUsedIn")
+    @OneToOne(mappedBy = "beachPlace", cascade = CascadeType.ALL)
     @JoinColumn(name = "Sunshade")
     private Sunshade sunshade;
 
@@ -58,37 +58,38 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
     @Column(name = "Type")
     private SunshadeType type;
 
-    @OneToMany(mappedBy = "currentlyUsedIn")
+    @OneToMany(mappedBy = "currentlyUsedIn", cascade = CascadeType.ALL)
     @Column(name = "Sunbeds")
     private Set<Sunbed> sunbeds;
 
     @Column(name = "SunbedsNumber")
-    private int sunbedsNumber;
+    private Integer sunbedsNumber;
 
     @Column(name = "HourlyPrice")
-    private double hourlyPrice;
+    private Double hourlyPrice;
 
     @OneToMany(mappedBy = "bpReference")
     @Column(name = "Reservations")
-    @OrderBy("Timeslot ASC, UserEmail ASC")
+    @OrderBy("Timeslot ASC, User_Email ASC")
     private SortedSet<Reservation> reservations;
 
-    public BeachPlace(SeaRow seaRow, int position, PriceList priceList, String sunshadeType, int sunbedsNumber)
+    public BeachPlace(SeaRow seaRow, Integer position, PriceList priceList, String sunshadeType, Integer sunbedsNumber)
             throws IllegalArgumentException, WriterException, IOException, IllegalStateException, ReachedLimitOfObjects {
-        this.ID = String.valueOf(count);
         this.reservations = new TreeSet<Reservation>();
+        this.sunshade = new Sunshade();
         setSeaRow(seaRow);
         setPosition(position);
         setSeaRowFixedPrice();
         setType(sunshadeType);
-        setSunshade(this.type, priceList);
         setSunbedsNumber(sunbedsNumber);
-        setSunbeds(this.sunbedsNumber, priceList);
+        this.sunbeds = new HashSet<>();
+        setSunbeds(sunbedsNumber, priceList);
         this.seaRow.addBeachPlace(this);
+        setHourlyPrice(priceList);
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public SeaRow getSeaRow() {
@@ -101,18 +102,18 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
         this.seaRow = seaRow;
     }
 
-    public int getPosition() {
+    public Integer getPosition() {
         return seaRowPosition;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Integer position) {
         if (Objects.requireNonNull(position, "Position value is null.").intValue() > seaRow.getMaxBeachPlacesInThisRow()-1)
             throw new IllegalArgumentException("The given position value is not valid. Valid values go from 0 to " + (seaRow.getMaxBeachPlacesInThisRow()-1) + ".");
         this.seaRowPosition = position;
     
     }
 
-    public double getSeaRowFixedPrice() {
+    public Double getSeaRowFixedPrice() {
         return seaRowFixedPrice;
     }
 
@@ -125,11 +126,10 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
         return sunshade;
     }
 
-    public void setSunshade(SunshadeType type, PriceList priceList)
+    public void setSunshade(Sunshade sunshade)
             throws IllegalArgumentException, WriterException, IOException {
         if (Objects.requireNonNull(type, "Sunshade type value is null.").toString().isBlank())
             throw new IllegalArgumentException("The sunshade type value is empty.");
-        Sunshade sunshade = new Sunshade(type, this, priceList);
         this.sunshade = sunshade;
     }
 
@@ -159,24 +159,26 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
         return sunbeds;
     }
 
-    public void setSunbeds(int sunbedsNumber, PriceList priceList) {
-        for (int s = 0; s < sunbedsNumber; s++) {
-            Sunbed bed = Objects.requireNonNull(new Sunbed(this, priceList), "The created sunbed is null.");
-            this.sunbeds.add(bed);
+    public void setSunbeds(Integer sunbedsNumber, PriceList priceList) {
+        Integer count = 0;
+        while(count < sunbedsNumber) {
+            Sunbed sunbed = new Sunbed(this, priceList);
+            sunbeds.add(sunbed);
+            count++;
         }
     }
 
-    public int getSunbedsNumber() {
+    public Integer getSunbedsNumber() {
         return sunbedsNumber;
     }
 
-    public void setSunbedsNumber(int sunbedsNumber) {
-        if (Objects.requireNonNull(sunbedsNumber, "Sunbeds number value is null.").intValue() == 0)
-            throw new IllegalArgumentException("The sunbeds number value is 0.");
+    public void setSunbedsNumber(Integer sunbedsNumber) throws IllegalArgumentException {
+        if (Objects.requireNonNull(sunbedsNumber, "Sunbeds number value is null.").intValue() <= 0)
+            throw new IllegalArgumentException("The sunbeds number value is equal or less than 0.");
         this.sunbedsNumber = sunbedsNumber;
     }
 
-    public double getHourlyPrice() {
+    public Double getHourlyPrice() {
         return hourlyPrice;
     }
 
@@ -238,8 +240,8 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((seaRow == null) ? 0 : seaRow.hashCode());
-        result = prime * result + seaRowPosition;
+        result = prime * result + ((seaRow == null) ? 0 : seaRow.getSeaRowNumber().hashCode());
+        result = prime * result + ((seaRowPosition == null) ? 0 : seaRowPosition.hashCode());
         return result;
     }
 
@@ -255,9 +257,12 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity {
         if (seaRow == null) {
             if (other.seaRow != null)
                 return false;
-        } else if (!seaRow.equals(other.seaRow))
+        } else if (!seaRow.getSeaRowNumber().equals(other.seaRow.getSeaRowNumber()))
             return false;
-        if (seaRowPosition != other.seaRowPosition)
+        if (seaRowPosition == null) {
+            if (other.seaRowPosition != null)
+                return false;
+        } else if (!seaRowPosition.equals(other.seaRowPosition))
             return false;
         return true;
     }

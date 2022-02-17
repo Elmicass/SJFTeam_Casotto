@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -7,6 +8,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,20 +29,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Activity")
 @NoArgsConstructor
-public class Activity implements Comparable<Activity>, IEntity {
-
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Activity implements Comparable<Activity>, IEntity, Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
 	@Column(name = "Name")
 	private String name;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "Timeslot", referencedColumnName = "Start")
 	private TimeSlot timeslot;
 
@@ -56,23 +55,23 @@ public class Activity implements Comparable<Activity>, IEntity {
 
 	@OneToMany(mappedBy = "actReference")
 	@Column(name = "Reservations")
-	@OrderBy("Timeslot ASC, UserEmail ASC")
+	@OrderBy("Timeslot ASC, User_Email ASC")
 	private SortedSet<Reservation> reservations;
 
 	public Activity(String name, String description, Integer maxEntries, LocalDateTime start, LocalDateTime end,
 			Set<Equipment> equipments)
-			throws IllegalArgumentException, NullPointerException, IllegalStateException {
-		this.ID = String.valueOf(count);
+			throws IllegalArgumentException {
 		setName(name);
 		setDescription(description);
 		setMaxEntries(maxEntries);
+		this.equipments = new HashSet<>();
 		setEquipments(equipments);
 		this.reservations = new TreeSet<Reservation>();
 		setTimeSlot(start, end);
 	}
 
-	public String getID() {
-		return ID;
+	public Integer getID() {
+		return id;
 	}
 
 	public String getName() {
@@ -111,7 +110,8 @@ public class Activity implements Comparable<Activity>, IEntity {
 	public void setMaxEntries(Integer maxEntries) {
 		if (Objects.requireNonNull(maxEntries, "Max entries value is null.").intValue() == 0)
 			this.maxEntries = Integer.MAX_VALUE;
-		this.maxEntries = maxEntries;
+		else 
+			this.maxEntries = maxEntries;
 	}
 
 	public Set<Equipment> getEquipments() {
@@ -119,8 +119,7 @@ public class Activity implements Comparable<Activity>, IEntity {
 	}
 
 	public void setEquipments(Set<Equipment> equipments) {
-		if (Objects.requireNonNull(equipments, "Equipments are null.").isEmpty())
-			this.equipments = new HashSet<>();
+		Objects.requireNonNull(equipments, "Equipments are null.");
 		for (Equipment e : equipments)
 			Objects.requireNonNull(e, "The equipments set contains a null object.");
 		this.equipments = equipments;
@@ -165,7 +164,7 @@ public class Activity implements Comparable<Activity>, IEntity {
 	public int compareTo(Activity act) {
 		Objects.requireNonNull(act, "The passed activity is null.");
 		if (this.timeslot.equals(act.timeslot)) {
-			return this.ID.compareTo(act.ID);
+			return this.id.compareTo(act.id);
 		} else {
 			return this.timeslot.compareTo(act.timeslot);
 		}

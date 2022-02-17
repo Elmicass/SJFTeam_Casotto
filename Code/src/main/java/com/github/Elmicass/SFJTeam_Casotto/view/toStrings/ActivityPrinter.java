@@ -9,9 +9,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Equipment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Component
+@Transactional
 public class ActivityPrinter implements Printer<Activity> {
 
     @Autowired
@@ -25,10 +27,10 @@ public class ActivityPrinter implements Printer<Activity> {
         String returnValue;
         String maxEntries;
         if (act.getMaxEntries() == Integer.MAX_VALUE)
-            maxEntries = "∞";
+            maxEntries = "No limit";
         else
             maxEntries = String.valueOf(act.getMaxEntries());
-        returnValue = "◉ - [ID: " + act.getID() + " | Name: " + act.getName() + " | Timetable: "
+        returnValue = "- [ID: " + act.getID().toString() + " | Name: " + act.getName() + " | Timetable: "
                 + tsPrinter.shortToStringVersion(act.getTimeSlot()) + " | "
                 + act.getReservations().size() + "/" + maxEntries + " ]";
         return returnValue;
@@ -39,20 +41,16 @@ public class ActivityPrinter implements Printer<Activity> {
         String returnValue;
         String maxEntries;
         if (act.getMaxEntries() == Integer.MAX_VALUE)
-            maxEntries = "∞";
+            maxEntries = "No limit";
         else
             maxEntries = String.valueOf(act.getMaxEntries());
-        String firstLine = String.format("%-271s", new String("┌")) + "┐";
-        String secondLine = String.format("%-271s",
-                new String(
-                        "| [ID: " + act.getID() + " - Activity name: " + act.getName() + " - Timetable: "
+        String firstLine = String.format("%-215s", new String("+")) + "+";
+        String secondLine = String.format("%-215s", new String("| [ID: " + act.getID() + " - Activity name: " + act.getName() + " - Timetable: "
                                 + tsPrinter.shortToStringVersion(act.getTimeSlot()) + " - "
-                                + act.getReservations().size() + "/" + maxEntries + " ]"))
-                + "|";
-        String thirdLine = String.format("%-271s", new String("| Description: " + act.getDescription())) + "|";
-        String fourthLine = String.format("%-271s", new String("| Equipment used:" + activityEquipmentsUsed(act)))
-                + "|";
-        String fifthLine = String.format("%-271s", new String("└")) + "┘";
+                                + act.getReservations().size() + "/" + maxEntries + " ]")) + "|";
+        String thirdLine = String.format("%-215s", new String("| Description: " + act.getDescription())) + "|";
+        String fourthLine = String.format("%-215s", new String("| Equipment used:" + activityEquipmentsUsed(act))) + "|";
+        String fifthLine = String.format("%-215s", new String("+")) + "+\n";
         returnValue = firstLine + "\n" + secondLine + "\n" + thirdLine + "\n" + fourthLine + "\n" + fifthLine;
         return returnValue;
     }
@@ -64,8 +62,9 @@ public class ActivityPrinter implements Printer<Activity> {
                 System.out.println(shortToStringVersion(activity));
                 System.out.flush();
             }
-        } else
+        } else {
             System.out.println("[No activities exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -81,12 +80,21 @@ public class ActivityPrinter implements Printer<Activity> {
         System.out.flush();
     }
 
+    @Override
+    public void clearConsoleScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
     public String activityEquipmentsUsed(Activity activity) {
         String returnValue = "";
         for (Equipment eq : activity.getEquipments()) {
             returnValue = returnValue + " " + eq.getName() + ", ";
         }
-        returnValue = returnValue.substring(0, returnValue.length() - 2);
+        if (returnValue.length() == 0)
+            return returnValue;
+        else
+            returnValue = returnValue.substring(0, (returnValue.length() - 2));
         return returnValue;
     }
 

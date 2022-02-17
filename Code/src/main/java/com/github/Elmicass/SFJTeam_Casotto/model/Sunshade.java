@@ -1,8 +1,9 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,14 +16,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.google.zxing.WriterException;
-
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Sunshade")
 @NoArgsConstructor
-public class Sunshade {
+public class Sunshade implements Serializable {
 
     public enum SunshadeType {
         Small,
@@ -30,13 +29,10 @@ public class Sunshade {
         Large;
     }
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
-
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "Type")
     @Enumerated(EnumType.STRING)
@@ -51,23 +47,22 @@ public class Sunshade {
 
     @OneToOne
     @JoinColumn(name = "BeachPlace", referencedColumnName = "ID")
-    private BeachPlace currentlyUsedIn;
+    private BeachPlace beachPlace;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "QrCode", referencedColumnName = "ID")
     private QrCode qrCode;
 
-    public Sunshade(SunshadeType type, BeachPlace beachPlace, PriceList priceList) throws IllegalArgumentException, WriterException, IOException {
-        this.ID = String.valueOf(count);
+    public Sunshade(SunshadeType type, BeachPlace beachPlace, PriceList priceList) throws IllegalArgumentException {
         setType(type);
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);
-        setHourlyPrice(); 
-        setQrCode();
+        setHourlyPrice();
+        this.qrCode = new QrCode();
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public SunshadeType getType() {
@@ -101,21 +96,48 @@ public class Sunshade {
     }
 
     public BeachPlace getCurrentlyUsedIn() {
-        return currentlyUsedIn;
+        return beachPlace;
     }
 
     public void setCurrentlyUsedIn(BeachPlace currentlyUsedIn) {
         Objects.requireNonNull(currentlyUsedIn,"The associated beach place is null");
-        this.currentlyUsedIn = currentlyUsedIn;
+        this.beachPlace = currentlyUsedIn;
     }
 
     public QrCode getQrCode() {
         return qrCode;
     }
 
-    public void setQrCode() throws WriterException, IOException {
-        this.qrCode = Objects.requireNonNull(new QrCode(this),"The created QrCode is null");
+    public void setQrCode(QrCode qrCode) {
+        this.qrCode = qrCode;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((beachPlace == null) ? 0 : beachPlace.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Sunshade other = (Sunshade) obj;
+        if (beachPlace == null) {
+            if (other.beachPlace != null)
+                return false;
+        } else if (!beachPlace.equals(other.beachPlace))
+            return false;
+        return true;
+    }
+
+    
 
     
 

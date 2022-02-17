@@ -3,6 +3,7 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -37,15 +38,14 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 @Entity
 @Table(name = "QrCode")
-public class QrCode {
+public class QrCode implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+    public final static String QRCODE_DEFAULT_FILE_NAME = "Sunshade_n" + "%s" + ".png";
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Column(name = "File")
     private final File qrcodeFile;
@@ -75,15 +75,26 @@ public class QrCode {
     @Transient
     private final Map hintMap;
 
+    public QrCode() {
+        this.name = "";
+        this.path = "";
+        this.string = "";
+        this.hintMap = null;
+        this.qrcodeFile = null;
+    }
+
     public QrCode(Sunshade sunshade) throws WriterException, IOException {
-        this.ID = String.valueOf(count);
         setSunshade(sunshade);
         this.hintMap = new HashMap<>();
-        this.name = "Sunshade_n" + sunshade.getID() + ".png";
+        this.name = String.format(QRCODE_DEFAULT_FILE_NAME, sunshade.getID());
         this.path = "./src/main/resources/" + name;
         this.string = "This QrCode refers to the sunshade number: " + sunshade.getID()
                 + ", currently used in beach place number: " + sunshade.getCurrentlyUsedIn().getID() + ".";
         this.qrcodeFile = createQRCode(string, path, charset, hintMap, qrCodeheight, qrCodewidth);
+    }
+
+    public Integer getID() {
+        return id;
     }
 
     public Sunshade getSunshade() {
@@ -99,7 +110,7 @@ public class QrCode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qrcodeFile == null) ? 0 : qrcodeFile.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
@@ -112,10 +123,10 @@ public class QrCode {
         if (getClass() != obj.getClass())
             return false;
         QrCode other = (QrCode) obj;
-        if (qrcodeFile == null) {
-            if (other.qrcodeFile != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!qrcodeFile.equals(other.qrcodeFile))
+        } else if (!name.equals(other.name))
             return false;
         return true;
     }
@@ -159,6 +170,8 @@ public class QrCode {
     public static boolean delete(QrCode qrCode) {
         return qrCode.qrcodeFile.delete();
     }
+
+    
 
 
 

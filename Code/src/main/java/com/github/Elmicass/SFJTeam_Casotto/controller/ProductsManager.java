@@ -3,6 +3,7 @@ package com.github.Elmicass.SFJTeam_Casotto.controller;
 import java.util.List;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Product;
 import com.github.Elmicass.SFJTeam_Casotto.services.IProductServices;
 
@@ -16,7 +17,7 @@ public class ProductsManager implements IProductManager {
     private IProductServices services;
 
     @Override
-    public Product getInstance(String productID) {
+    public Product getInstance(Integer productID) {
         return services.getInstance(productID);
     }
 
@@ -26,32 +27,37 @@ public class ProductsManager implements IProductManager {
     }
 
     @Override
+    public List<Product> getAvailableProducts() {
+        return services.getAvailableProducts();
+    }
+
+    @Override
     public boolean createNewProduct(String name, String description, double unitPrice, int quantity) throws AlreadyExistingException {
         return services.createProduct(name, description, unitPrice, quantity);
     }
 
     @Override
-    public boolean addProduct(String productID, int quantity) {
+    public boolean addProduct(Integer productID, int quantity) {
         return services.addProduct(productID, quantity);
     }
 
     @Override
-    public boolean subtractProduct(String productID, int quantity) {
+    public boolean subtractProduct(Integer productID, int quantity) {
         return services.subtractProduct(productID, quantity);
     }
 
     @Override
-    public int getProductQuantity(String productID) {
+    public int getProductQuantity(Integer productID) {
         return services.getProductQuantity(productID);
     }
 
     @Override
-    public boolean delete(String productID) {
+    public boolean delete(Integer productID) throws EntityNotFoundException, IllegalArgumentException {
         return services.delete(productID);
     }
 
     @Override
-    public boolean exists(String productID) {
+    public boolean exists(Integer productID) {
         return services.exists(productID);
     }
 

@@ -11,10 +11,12 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IProductsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class OrderServices implements IOrderServices {
 
     @Autowired
@@ -24,7 +26,7 @@ public class OrderServices implements IOrderServices {
     private IProductsRepository productsRepository;
 
     @Override
-    public Order getInstance(String id) throws EntityNotFoundException {
+    public Order getInstance(Integer id) throws EntityNotFoundException {
         return ordersRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No order found with the given id: " + id));
     }
 
@@ -40,8 +42,8 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank())
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The order ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The order with ID: " + id + " does not exist");
@@ -50,21 +52,21 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank())
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The order ID value is empty");
         return ordersRepository.existsById(id);
     }
 
     @Override
-    public boolean addProduct(String orderID, String productID, int quantity) {
+    public boolean addProduct(Integer orderID, Integer productID, int quantity) {
         boolean result = getInstance(orderID).addProduct(productsRepository.getById(productID), quantity);
         ordersRepository.save(getInstance(orderID));
         return result;
     }
 
     @Override
-    public boolean removeProduct(String orderID, String productID) {
+    public boolean removeProduct(Integer orderID, Integer productID) {
         boolean result = getInstance(orderID).removeProduct(productsRepository.getById(productID));
         ordersRepository.save(getInstance(orderID));
         return result;

@@ -1,9 +1,7 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,27 +13,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.NoArgsConstructor;
 
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "AppUser")
 @NoArgsConstructor
-public class User implements UserDetails {
-
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class User implements Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 	
 	@Column(name = "Name")
 	private String name;
@@ -66,7 +57,6 @@ public class User implements UserDetails {
 	private Set<Role> roles;
 
 	public User(String name, String surname, String email, String password) {
-		this.ID = String.valueOf(count);
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
@@ -76,8 +66,8 @@ public class User implements UserDetails {
 		this.locked = false;
 	}
 
-	public String getID() {
-		return ID;
+	public Integer getID() {
+		return id;
 	}
 
 	public String getName() {
@@ -161,12 +151,6 @@ public class User implements UserDetails {
         return true;
     }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return getGrantedAuthorities(getPrivileges(this.getRoles()));
-	}
-
-	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -177,51 +161,24 @@ public class User implements UserDetails {
 		this.password = encodedPassword;
 	}
 
-	@Override
 	public String getUsername() {
 		return email;
 	}
 
-	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
-	@Override
 	public boolean isAccountNonLocked() {
 		return !locked;
 	}
 
-	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 
-	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
-	private List<String> getPrivileges(Collection<Role> roles) {
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
-        for (Role role : roles) {
-            privileges.add(role.getName());
-            collection.addAll(role.getPrivileges());
-        }
-        for (Privilege item : collection) {
-            privileges.add(item.getName());
-        }
-        return privileges;
-    }
-
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : privileges) {
-            authorities.add(new SimpleGrantedAuthority(privilege));
-        }
-        return authorities;
-    }
-
-	
 }

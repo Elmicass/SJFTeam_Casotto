@@ -17,7 +17,7 @@ public class SeaRowsManager implements ISeaRowManager {
     private SeaRowServices services;
 
     @Override
-    public SeaRow getInstance(String id) throws EntityNotFoundException {
+    public SeaRow getInstance(Integer id) throws EntityNotFoundException {
         return services.getInstance(id);
     }
 
@@ -33,12 +33,12 @@ public class SeaRowsManager implements ISeaRowManager {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
     

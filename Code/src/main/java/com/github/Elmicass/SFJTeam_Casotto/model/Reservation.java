@@ -1,9 +1,11 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -24,15 +26,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Reservation")
 @NoArgsConstructor
-public class Reservation implements Comparable<Reservation> {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Reservation implements Comparable<Reservation>, Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Type")
@@ -57,7 +56,7 @@ public class Reservation implements Comparable<Reservation> {
     @JoinColumn(name = "JobOfferID", referencedColumnName = "ID")
     private JobOffer joReference;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Timeslot", referencedColumnName = "ID")
     private TimeSlot timeslot;
 
@@ -66,7 +65,6 @@ public class Reservation implements Comparable<Reservation> {
 
     public Reservation(BookableEntityType type, User user, LocalDateTime start, LocalDateTime end, IEntity object)
             throws IllegalArgumentException {
-        this.ID = String.valueOf(count);
         this.entityObject = object;
         setType(type);
         setEntityObject(object);
@@ -78,8 +76,8 @@ public class Reservation implements Comparable<Reservation> {
             this.price = 0.00;
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public BookableEntityType getType() {
@@ -90,7 +88,7 @@ public class Reservation implements Comparable<Reservation> {
         return user;
     }
 
-    public String getEntityID() {
+    public Integer getEntityID() {
         switch (type) {
             case BeachPlace:
                 return bpReference.getID();
@@ -99,7 +97,7 @@ public class Reservation implements Comparable<Reservation> {
             case JobOffer:
                 return joReference.getID();
             default:
-                return "";
+                return null;
         }
     }
 

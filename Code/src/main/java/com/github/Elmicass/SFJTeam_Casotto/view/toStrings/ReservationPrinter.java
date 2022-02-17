@@ -11,9 +11,11 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Component
+@Transactional
 public class ReservationPrinter implements Printer<Reservation> {
 
     @Autowired
@@ -49,7 +51,7 @@ public class ReservationPrinter implements Printer<Reservation> {
                 when = timeSlotPrinter.shortToStringVersion(reservation.getTimeSlot());
                 break;
         }
-        returnValue = "◉ - [ID: " + reservation.getID() + " | Customer username: " + reservation.getUser()
+        returnValue = "- [ID: " + reservation.getID() + " | Customer username: " + reservation.getUser()
                 + " | Reservation type: " + reservation.getType().name() + " | " + reservation.getType().name()
                 + " ID: " + reservation.getEntityID() + " | When: " + when + " ]";
         return returnValue;
@@ -73,8 +75,8 @@ public class ReservationPrinter implements Printer<Reservation> {
                 when = timeSlotPrinter.shortToStringVersion(reservation.getTimeSlot());
                 break;
         }
-        String firstLine = String.format("%-271s", new String("┌")) + "┐";
-        String secondLine = String.format("%-271s",
+        String firstLine = String.format("%-215s", new String("+")) + "+";
+        String secondLine = String.format("%-215s",
                 new String(
                         "| [ID: " + reservation.getID() + " - Customer username: " + reservation.getUser()
                         + " - Reservation type: " + reservation.getType().name() + " - " + reservation.getType().name()
@@ -91,7 +93,7 @@ public class ReservationPrinter implements Printer<Reservation> {
                 thirdLine = joPrinter.fullToStringVersion((JobOffer)reservation.getEntityObject()); 
                 break;
         }
-        String fourthLine = String.format("%-271s", new String("└")) + "┘";
+        String fourthLine = String.format("%-215s", new String("+")) + "+";
         returnValue = firstLine + "\n" + secondLine + "\n" + thirdLine + "\n" + fourthLine;
         return returnValue;
     }
@@ -103,8 +105,9 @@ public class ReservationPrinter implements Printer<Reservation> {
                 System.out.println(shortToStringVersion(reservation));
                 System.out.flush();
             }
-        } else
+        } else {
             System.out.println("[No reservations exists at the moment!]");
+        }
         System.out.flush();
     }
 
@@ -117,6 +120,12 @@ public class ReservationPrinter implements Printer<Reservation> {
     @Override
     public void printFullVersion(Reservation res) {
         System.out.println(fullToStringVersion(res));
+        System.out.flush();
+    }
+
+    @Override
+    public void clearConsoleScreen() {
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 

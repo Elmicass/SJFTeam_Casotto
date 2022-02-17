@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,17 +19,14 @@ import javax.persistence.Table;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "Ordination")
 @NoArgsConstructor
-public class Order {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Order implements Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
@@ -38,7 +36,7 @@ public class Order {
     @JoinColumn(name = "UserCurrentSunshade", referencedColumnName = "String")
     private QrCode orderQrCode;
 
-    @OneToMany
+    @OneToMany()
     @JoinColumn(name = "Products")
     private List<Product> products;
 
@@ -52,7 +50,6 @@ public class Order {
     private boolean open;
 
     public Order(User customer) {
-        this.ID = String.valueOf(count);
         setCustomer(customer);
         this.products = new LinkedList<Product>();
         this.dueAmount = 0.00;
@@ -60,8 +57,8 @@ public class Order {
         this.open = true;
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public User getCustomer() {

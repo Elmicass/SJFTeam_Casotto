@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
 
-public interface EntityManager<T, I> {
+public interface EntityManager<T> {
 
-    T getInstance(I id) throws EntityNotFoundException;
+    T getInstance(Integer id) throws EntityNotFoundException;
 
     List<T> getAll();
 
-    boolean delete(I id);
+    boolean delete(Integer id) throws EntityNotFoundException, IllegalArgumentException;
 
-    boolean exists(I id);
+    boolean exists(Integer id);
     
 }

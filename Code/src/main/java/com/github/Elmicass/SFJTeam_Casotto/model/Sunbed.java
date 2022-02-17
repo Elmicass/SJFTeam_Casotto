@@ -1,5 +1,6 @@
 package com.github.Elmicass.SFJTeam_Casotto.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -16,15 +17,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Sunbed")
 @NoArgsConstructor
-public class Sunbed {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Count")
-	private Integer count;
+public class Sunbed implements Serializable {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false, unique = true)
-	private String ID;
+	private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "PriceList", referencedColumnName = "Name")
@@ -38,14 +36,13 @@ public class Sunbed {
     private BeachPlace currentlyUsedIn;
 
     public Sunbed(BeachPlace beachPlace, PriceList priceList) {
-        this.ID = String.valueOf(count);
         setCurrentlyUsedIn(beachPlace);
         setPriceList(priceList);
         setHourlyPrice();
     }
 
-    public String getID() {
-        return ID;
+    public Integer getID() {
+        return id;
     }
 
     public BeachPlace getCurrentlyUsedIn() {

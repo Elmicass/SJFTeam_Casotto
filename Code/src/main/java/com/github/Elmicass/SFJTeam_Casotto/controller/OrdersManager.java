@@ -16,7 +16,7 @@ public class OrdersManager implements IOrderManager {
     private IOrderServices services;
   
     @Override
-    public Order getInstance(String orderID) {
+    public Order getInstance(Integer orderID) {
         return services.getInstance(orderID);
     }
 
@@ -31,22 +31,22 @@ public class OrdersManager implements IOrderManager {
     }
 
     @Override
-    public boolean addProduct(String  orderID, String productID, int quantity) {
+    public boolean addProduct(Integer orderID, Integer productID, int quantity) {
         return services.addProduct(orderID, productID, quantity);
     }
 
     @Override
-    public boolean removeProduct(String orderID, String productID) {
+    public boolean removeProduct(Integer orderID, Integer productID) {
         return services.removeProduct(orderID, productID);
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
 

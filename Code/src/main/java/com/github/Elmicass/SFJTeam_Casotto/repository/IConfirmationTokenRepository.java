@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional(readOnly = true)
-public interface IConfirmationTokenRepository extends JpaRepository<ConfirmationToken, String> {
+public interface IConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Integer> {
 
     Optional<ConfirmationToken> findByToken(String token);
 

@@ -4,14 +4,14 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
-public interface EntityServices<T,I extends CharSequence> {
+public interface EntityServices<T> {
 
-    T getInstance(I id) throws EntityNotFoundException;
+    T getInstance(Integer id) throws EntityNotFoundException;
 
     List<T> getAll();
 
-    boolean delete(I id);
+    boolean delete(Integer id);
 
-    boolean exists(I id);
+    boolean exists(Integer id);
     
 }

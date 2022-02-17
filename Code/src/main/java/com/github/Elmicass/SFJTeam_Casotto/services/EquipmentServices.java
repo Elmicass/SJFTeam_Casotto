@@ -11,17 +11,19 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class EquipmentServices implements IEquipmentServices {
 
     @Autowired
     private IEquipmentsRepository eqRepository;
 
     @Override
-    public Equipment getInstance(String id) throws EntityNotFoundException {
+    public Equipment getInstance(Integer id) throws EntityNotFoundException {
         return eqRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No equipment found with the given id: " + id));
     }
 
@@ -40,8 +42,8 @@ public class EquipmentServices implements IEquipmentServices {
     }
     
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank())
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The equipment ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The equipment with ID: " + id + " does not exist");
@@ -50,8 +52,8 @@ public class EquipmentServices implements IEquipmentServices {
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank())
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The equipment ID value is empty");
         return eqRepository.existsById(id);
     }

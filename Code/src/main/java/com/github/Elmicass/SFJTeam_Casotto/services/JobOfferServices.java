@@ -14,10 +14,12 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class JobOfferServices implements IJobOfferServices {
 
     @Autowired
@@ -25,10 +27,10 @@ public class JobOfferServices implements IJobOfferServices {
 
     @Autowired
     @Lazy
-    private ReservationServices reservationServices;
+    private IReservationServices reservationServices;
 
     @Override
-    public JobOffer getInstance(String id) throws EntityNotFoundException {
+    public JobOffer getInstance(Integer id) throws EntityNotFoundException {
         return joRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No job offer found with the given id: " + id));
     }
 
@@ -51,8 +53,8 @@ public class JobOfferServices implements IJobOfferServices {
     }
 
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank())
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The job offer ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The job offer with ID: " + id + " does not exist");
@@ -64,8 +66,8 @@ public class JobOfferServices implements IJobOfferServices {
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank())
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The job offer ID value is empty");
         return joRepository.existsById(id);
     }
@@ -78,7 +80,7 @@ public class JobOfferServices implements IJobOfferServices {
         return true;
     }
 
-    public boolean application(String jobOfferID, Reservation reservation) {
+    public boolean application(Integer jobOfferID, Reservation reservation) {
         JobOffer jo = getInstance(jobOfferID);
         if (jo.addReservation(reservation)) {
             joRepository.save(jo);
@@ -86,7 +88,8 @@ public class JobOfferServices implements IJobOfferServices {
         } else return false;
     }
 
-    public boolean cancelBooking(Reservation toCancel, String jobOfferID) {
+    @Override
+    public boolean cancelApplication(Reservation toCancel, Integer jobOfferID) {
         JobOffer jo = getInstance(jobOfferID);
         if (jo.removeReservation(toCancel)) {
             joRepository.save(jo);

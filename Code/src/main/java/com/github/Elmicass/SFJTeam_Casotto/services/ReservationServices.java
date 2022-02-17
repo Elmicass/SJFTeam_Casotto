@@ -15,26 +15,28 @@ import com.github.Elmicass.SFJTeam_Casotto.repository.IReservationsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
 @Service
+@Transactional
 public class ReservationServices implements IReservationServices {
 
     @Autowired
     private IReservationsRepository resRepository;
 
     @Autowired
-    private BeachPlaceServices bpServices;
+    private IBeachPlaceServices bpServices;
 
     @Autowired
-    private ActivityServices actServices;
+    private IActivityServices actServices;
 
     @Autowired
-    private JobOfferServices joServices;
+    private IJobOfferServices joServices;
 
     @Override
-    public Reservation getInstance(@NonNull String id) throws EntityNotFoundException {
+    public Reservation getInstance(@NonNull Integer id) throws EntityNotFoundException {
         return resRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No reservations found with the given id: " + id));
     }
@@ -42,6 +44,11 @@ public class ReservationServices implements IReservationServices {
     @Override
     public List<Reservation> getAll() {
         return resRepository.findAll();
+    }
+
+    @Override
+    public List<Reservation> getByType(BookableEntityType type) {
+        return resRepository.findByType(type);
     }
 
     @Override
@@ -55,8 +62,8 @@ public class ReservationServices implements IReservationServices {
     }
 
     @Override
-    public boolean delete(String id) {
-        if (id.isBlank())
+    public boolean delete(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The reservation ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The reservation with ID: " + id + " does not exist");
@@ -65,8 +72,8 @@ public class ReservationServices implements IReservationServices {
     }
 
     @Override
-    public boolean exists(String id) {
-        if (id.isBlank())
+    public boolean exists(Integer id) {
+        if (id.toString().isBlank())
             throw new IllegalArgumentException("The reservation ID value is empty");
         return resRepository.existsById(id);
     }
@@ -80,7 +87,7 @@ public class ReservationServices implements IReservationServices {
     }
 
     public boolean booking(@NonNull String entityType, @NonNull User user,
-            @NonNull LocalDateTime start, @NonNull LocalDateTime end, String entityID)
+            @NonNull LocalDateTime start, @NonNull LocalDateTime end, Integer entityID)
             throws EntityNotFoundException, AlreadyExistingException, IllegalStateException {
         BookableEntityType type = BookableEntityType.valueOf(entityType);
         switch (type) {
@@ -112,7 +119,7 @@ public class ReservationServices implements IReservationServices {
         return false;
     }
 
-    public boolean cancelBooking(@NonNull String reservationID) {
+    public boolean cancelBooking(@NonNull Integer reservationID) {
         Reservation toCancel = getInstance(reservationID);
         BookableEntityType type = toCancel.getType();
         switch (type) {
@@ -129,7 +136,7 @@ public class ReservationServices implements IReservationServices {
                 }
                 break;
             case JobOffer:
-                if (joServices.cancelBooking(toCancel, toCancel.getEntityID())) {
+                if (joServices.cancelApplication(toCancel, toCancel.getEntityID())) {
                     resRepository.deleteById(reservationID);
                     return !exists(reservationID);
                 }

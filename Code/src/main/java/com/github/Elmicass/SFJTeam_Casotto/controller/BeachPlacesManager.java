@@ -3,6 +3,7 @@ package com.github.Elmicass.SFJTeam_Casotto.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.BeachPlace;
@@ -19,7 +20,7 @@ public class BeachPlacesManager implements IBeachPlaceManager {
     private IBeachPlaceServices services;
 
     @Override
-    public BeachPlace getInstance(String id) throws EntityNotFoundException {
+    public BeachPlace getInstance(Integer id) throws EntityNotFoundException {
         return services.getInstance(id);
     }
 
@@ -31,17 +32,17 @@ public class BeachPlacesManager implements IBeachPlaceManager {
     @Override
     public boolean createBeachPlace(int seaRowNumber, int position, String priceListName,
             String sunshadeType, int sunbedsNumber) throws IllegalArgumentException,
-            IllegalStateException, WriterException, IOException, ReachedLimitOfObjects {
+            IllegalStateException, WriterException, IOException, ReachedLimitOfObjects, AlreadyExistingException {
         return services.createBeachPlace(seaRowNumber, position, priceListName, sunshadeType, sunbedsNumber);
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         return services.delete(id);
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean exists(Integer id) {
         return services.exists(id);
     }
 
