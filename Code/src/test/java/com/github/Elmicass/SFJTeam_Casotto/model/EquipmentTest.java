@@ -12,15 +12,13 @@ import org.junit.jupiter.api.Test;
 
 public class EquipmentTest {
 	
-	/**
-
 	//tests of ID attribute
 	@Test
 	void ShouldSetID(){
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		
 		String count = "1";
-		assertEquals(count, equipment.getID());
+		assertNotNull(count, equipment.getID());
 	}
 
 	//tests of name attribute
@@ -186,6 +184,4 @@ public class EquipmentTest {
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		assertThrows(NullPointerException.class, () -> equipment.removeActivity(null));
 	}
-
-	*/
 }

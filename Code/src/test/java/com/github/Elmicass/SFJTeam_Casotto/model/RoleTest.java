@@ -10,7 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 
 public class RoleTest {
     
-	/**
+	
 
 	//tests of name attribute
 	@Test
@@ -29,7 +29,7 @@ public class RoleTest {
 	@Test
 	void shouldGetUsers(){
 		Role role = new Role("test name");
-		User user = new User("test name","test surname","test email");
+		User user = new User("test name","test surname","test email","test password");
 
 		assertTrue(role.getUsers().isEmpty());
 		role.addUser(user);
@@ -40,7 +40,7 @@ public class RoleTest {
 	@Test
 	void shouldSetUsers(){
 		Set<User> users = new HashSet<User>();
-		users.add(new User("test name","test surname","test email"));
+		users.add(new User("test name","test surname","test email","test password"));
 
 		Role role = new Role("test name");
 		role.setUsers(users);
@@ -88,14 +88,14 @@ public class RoleTest {
 		Role role = new Role("test name");
 
 		assertTrue(role.getUsers().isEmpty());
-		User user = new User("test name","test surname","test email");
+		User user = new User("test name","test surname","test email","test password");
 		role.addUser(user);
 		assertTrue(role.getUsers().contains(user));
 	}
 	@Test
 	void shouldThrowISExceptionWhenAddSameUser(){
 		Role role = new Role("test name");
-		User user = new User("test name","test surname","test email");
+		User user = new User("test name","test surname","test email","test password");
 		role.addUser(user);
 		assertThrows(IllegalStateException.class, () -> role.addUser(user));
 	}
@@ -110,7 +110,7 @@ public class RoleTest {
 	void shouldRemoveUser(){
 		Role role = new Role("test role");
 
-		User user = new User("test name","test surname","test email");
+		User user = new User("test name","test surname","test email","test password");
 		role.addUser(user);
 		assertTrue(role.getUsers().contains(user));
 
@@ -119,8 +119,8 @@ public class RoleTest {
 	}
 	@Test
 	void shouldThrowISExceptionWhenRemoveDifferentUser(){
-		User user1 = new User("test name1","test surname1","test email1");
-		User user2 = new User("test name2","test surname2","test email2");
+		User user1 = new User("test name1","test surname1","test email1","test password1");
+		User user2 = new User("test name2","test surname2","test email2","test password2");
 
 		Role role = new Role("test role");
 
@@ -181,6 +181,6 @@ public class RoleTest {
 		assertThrows(NullPointerException.class, () -> role.removePrivilege(null));
 	}
 
-	*/
+	
 
 }
