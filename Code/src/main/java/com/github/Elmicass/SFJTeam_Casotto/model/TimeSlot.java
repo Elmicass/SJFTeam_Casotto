@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID", nullable = false, unique = true)
 	private Integer id;
 
@@ -30,15 +30,19 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 	public static final int MINUTES_OF_TOLERANCE_FOR_OVERLAPPING = 10;
 
 	// orario di inizio di una prenotazione
-	@Column(name = "Start")
+	@Column(name = "Start", unique = false)
 	private LocalDateTime start;
 
 	// orario di fine di una prenotazione
-	@Column(name = "Stop")
+	@Column(name = "Stop", unique = false)
 	private LocalDateTime stop;
 
-	public TimeSlot(LocalDateTime start, LocalDateTime stop) throws IllegalArgumentException {
+	@Transient
+	private Object referencedObject;
+
+	public TimeSlot(LocalDateTime start, LocalDateTime stop, Object obj) throws IllegalArgumentException {
 		setStartStop(start, stop);
+		setReferencedObject(obj);
 	}
 
 	public Integer getID() {
@@ -49,8 +53,16 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 		return start;
 	}
 
+	public void setStart(LocalDateTime start) {
+		this.start = start;
+	}
+
 	public LocalDateTime getStop() {
 		return stop;
+	}
+
+	public void setStop(LocalDateTime stop) {
+		this.stop = stop;
 	}
 
 	public void setStartStop(LocalDateTime start, LocalDateTime stop) {
@@ -62,6 +74,15 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 					"Attempt to create a timeslot with starting time equal to, or after ending time");	
 		this.start = start;
 		this.stop = stop;
+	}
+
+	public Object getReferencedObject() {
+		return referencedObject;
+	}
+
+	public void setReferencedObject(Object referencedObject) {
+		Objects.requireNonNull(referencedObject, "The associated object is null");
+		this.referencedObject = referencedObject;
 	}
 
 	@Override

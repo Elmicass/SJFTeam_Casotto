@@ -60,6 +60,11 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     }
 
     @Override
+    public BeachPlace save(BeachPlace bp) {
+        return bpRepository.save(bp);
+    }
+
+    @Override
     public boolean createBeachPlace(@NonNull Integer seaRowNumber, @NonNull Integer position, @NonNull String priceListName,
             @NonNull String sunshadeType, @NonNull Integer sunbedsNumber) throws IllegalArgumentException,
             IllegalStateException, WriterException, IOException, ReachedLimitOfObjects, AlreadyExistingException {
@@ -67,11 +72,11 @@ public class BeachPlaceServices implements IBeachPlaceServices {
                 sunbedsNumber);
         BeachPlace beachPlace = new BeachPlace(srRepository.findBySeaRowNumber(seaRowNumber).get(), position, priceList,
                 sunshadeType, sunbedsNumber);
-        bpRepository.save(beachPlace).setSunshade(sunshadeServices.saveSunshade(sunshadeServices.createSunshade(SunshadeType.valueOf(sunshadeType), beachPlace, priceList)));
+        save(beachPlace).setSunshade(sunshadeServices.generateQrCode(sunshadeServices.createSunshade(SunshadeType.valueOf(sunshadeType), beachPlace, priceList)));
         for (Sunbed sunbed : beachPlace.getSunbeds()) {
-            sunbedServices.saveSunbed(sunbed);
+            sunbedServices.save(sunbed);
         }
-        bpRepository.save(beachPlace);
+        save(beachPlace);
         return true;
     }
 
@@ -117,7 +122,7 @@ public class BeachPlaceServices implements IBeachPlaceServices {
     public boolean booking(Integer beachPlaceID, Reservation reservation) throws IllegalStateException {
         BeachPlace bp = getInstance(beachPlaceID);
         if (bp.addReservation(reservation)) {
-            return !bpRepository.save(bp).getReservations().contains(reservation);
+            return true;
         } else return false;
     }
 

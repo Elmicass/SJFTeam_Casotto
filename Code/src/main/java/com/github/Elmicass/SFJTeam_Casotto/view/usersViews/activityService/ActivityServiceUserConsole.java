@@ -139,6 +139,10 @@ public class ActivityServiceUserConsole implements IConsoleView {
             while (waiting2.get()) {
                 processCommand(command);
                 addCommand("BACK", c -> waiting2.set(false));
+                addCommand("B", c -> bookActivity(Integer.valueOf(command)));
+                System.out.println(
+                        "\nType " + ConsoleColors.GREEN + "B" + ConsoleColors.RESET + " to book this activity.\n");
+                System.out.flush();
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the activities list.");
                 System.out.flush();
@@ -151,44 +155,53 @@ public class ActivityServiceUserConsole implements IConsoleView {
         commands.clear();
     }
 
-    public void bookBeachPlace(Integer command) {
-        commands.clear();
+    public void bookActivity(Integer idString) {
         AtomicReference<Boolean> waiting = new AtomicReference<>(true);
+        AtomicReference<Boolean> booking = new AtomicReference<>(false);
         while (waiting.get()) {
             addCommand("STOP", c -> waiting.set(false));
+            addCommand("BOOK", c -> booking.set(true));
             clearConsoleScreen();
             System.out.println("+-----------------------------------------------------------------------+");
-            System.out.println("|                     " + ConsoleColors.YELLOW + "Activity reservation procedure"
+            System.out.println("|                     " + ConsoleColors.PURPLE + "Activity reservation procedure"
                     + ConsoleColors.RESET + "                   |");
             System.out.println("+-----------------------------------------------------------------------+");
             System.out.println("|                                                                       |");
-            System.out.println("| Booking period entry fields:                                          |");
+            System.out.println("| Activity reservation:                                                 |");
             System.out.println("|                                                                       |");
-            System.out.println("| [Please enter dates fields in the following format: \"" + ConsoleColors.GREEN
-                    + "dd-mm-yy hh:mm" + ConsoleColors.RESET + "\"]   |");
+            System.out.println("| [Please confirm the reservation by typing: \"" + ConsoleColors.GREEN
+                    + "BOOK" + ConsoleColors.RESET + "\"                   ] |");
             System.out.println("| [Or enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET
-                    + "\" to abort the operation                           ] |");
+                    + "\" to abort the operation                             ] |");
             System.out.println("|                                                                       |");
-            try {
-                reservationsManager.booking(BookableEntityType.Activity.name(),
-                        usersManager.getUserByEmail(LoginContextHolder.getCurrentAppUser().getUsername()), command,
-                        actManager.getInstance(command).getTimeSlot().getStart(), actManager.getInstance(command).getTimeSlot().getStop());
-                System.out.println("\n" + ConsoleColors.GREEN + "YOU SUCCESSFULLY BOOKED!" + ConsoleColors.RESET + "\n");
-                System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (booking.get()) {
                 try {
-                    Thread.sleep(3000);
-                } catch (Exception e) {}
-                processCommand("STOP");
-            } catch (IllegalStateException ise) {
-                System.err.println(ise.getMessage());
-                break;
-            } catch (AlreadyExistingException | EntityNotFoundException exceptions) {
-                System.err.println(exceptions.getMessage());
-                break;
+                    reservationsManager.booking(BookableEntityType.Activity.name(),
+                            usersManager.getUserByEmail(LoginContextHolder.getCurrentAppUser().getUsername()), idString,
+                            null, null);
+                    System.out.println("\n" + ConsoleColors.GREEN + "YOU SUCCESSFULLY BOOKED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (IllegalStateException ise) {
+                    System.err.println(ise.getMessage());
+                    break;
+                } catch (AlreadyExistingException | EntityNotFoundException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    break;
+                }
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
     

@@ -25,6 +25,11 @@ public class EquipmentsManager implements IEquipmentManager {
     public List<Equipment> getAll() {
         return services.getAll();
     }
+
+    @Override
+    public Equipment save(Equipment object) {
+        return services.save(object);
+    }
     
     @Override
     public boolean createEquipment(String name, String description, String type) {

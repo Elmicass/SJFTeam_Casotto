@@ -44,10 +44,6 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
         return confirmationToken;
     }
 
-    public void saveConfirmationToken(ConfirmationToken token) {
-        ctRepository.save(token);
-    }
-
     public Optional<ConfirmationToken> getToken(String token) {
         return ctRepository.findByToken(token);
     }
@@ -64,6 +60,11 @@ public class ConfirmationTokenServices implements EntityServices<ConfirmationTok
     @Override
     public List<ConfirmationToken> getAll() {
         return ctRepository.findAll();
+    }
+
+    @Override
+    public ConfirmationToken save(ConfirmationToken ct) {
+        return ctRepository.save(ct);
     }
 
     public boolean delete(String token) {

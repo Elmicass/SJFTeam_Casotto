@@ -30,7 +30,7 @@ public class JobOfferPrinter implements Printer<JobOffer> {
         else
             open = "Closed";
         returnValue = "- [ID: " + offer.getID() + " | Name: " + offer.getName()
-                + " | Expiration: " + timePrinter.localDateTimeToString(offer.getExpiration().getStop()) + " | "
+                + " | Expiration: " + timePrinter.localDateTimeToString(offer.gettimeslot().getStop()) + " | "
                 + open + " ]";
         return returnValue;
     }
@@ -45,7 +45,7 @@ public class JobOfferPrinter implements Printer<JobOffer> {
             open = "Closed";
         String firstLine = String.format("%-215s", new String("+")) + "+";
         String secondLine = String.format("%-215s", new String("| [ID: " + offer.getID() + " - Name: " + offer.getName()
-                                + " - Expiration: " + timePrinter.localDateTimeToString(offer.getExpiration().getStop())
+                                + " - Expiration: " + timePrinter.localDateTimeToString(offer.gettimeslot().getStop())
                                 + " - " + open + " ]")) + "|";
         String thirdLine = String.format("%-215s", new String("| Description: " + offer.getDescription())) + "|";
         String fourthLine = String.format("%-215s", new String("+")) + "+";

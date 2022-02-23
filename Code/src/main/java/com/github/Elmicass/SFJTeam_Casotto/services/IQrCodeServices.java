@@ -17,11 +17,4 @@ public interface IQrCodeServices extends EntityServices<QrCode> {
      */
     QrCode createQrCode(Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException;
 
-    /**
-     * 
-     * @param qrCode
-     * @return
-     */
-    QrCode saveQrCode(QrCode qrCode);
-    
 }

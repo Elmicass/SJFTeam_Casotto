@@ -38,7 +38,7 @@ public class Reservation implements Comparable<Reservation>, Serializable {
     private BookableEntityType type;
 
     @ManyToOne
-    @JoinColumn(name = "UserEmail", referencedColumnName = "Email")
+    @JoinColumn(name = "User", referencedColumnName = "Email")
     private User user;
 
     @Transient
@@ -102,7 +102,16 @@ public class Reservation implements Comparable<Reservation>, Serializable {
     }
 
     public Object getEntityObject() throws NullPointerException {
-        return entityObject;
+        switch (type) {
+            case BeachPlace:
+                return bpReference;
+            case Activity:
+                return actReference;
+            case JobOffer:
+                return joReference;
+            default:
+                return null;
+        }
     }
 
     public TimeSlot getTimeSlot() {
@@ -124,7 +133,7 @@ public class Reservation implements Comparable<Reservation>, Serializable {
 
     public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
         this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
-                Objects.requireNonNull(end, "Ending time is null")), "The created timeslot is null");
+                Objects.requireNonNull(end, "Ending time is null"), this), "The created timeslot is null");
     }
 
     public void setUserMail(User user) throws IllegalArgumentException {
@@ -209,10 +218,13 @@ public class Reservation implements Comparable<Reservation>, Serializable {
     @Override
     public int compareTo(Reservation res) {
         Objects.requireNonNull(res, "The passed reservation is null");
-        if (this.timeslot.equals(res.timeslot)) {
-            return this.user.getEmail().compareTo(res.user.getEmail());
+        if (this.getTimeSlot().getStart().equals(res.getTimeSlot().getStart())) {
+            if (this.getTimeSlot().getStop().equals(res.getTimeSlot().getStop()))
+                return this.user.getEmail().compareTo(res.user.getEmail());
+            else
+                return this.getTimeSlot().getStop().compareTo(res.getTimeSlot().getStop());
         } else {
-            return this.timeslot.compareTo(res.timeslot);
+            return this.getTimeSlot().getStart().compareTo(res.getTimeSlot().getStart());
         }
     }
 

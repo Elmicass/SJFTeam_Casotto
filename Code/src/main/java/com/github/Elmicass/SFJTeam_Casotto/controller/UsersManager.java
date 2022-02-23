@@ -31,6 +31,11 @@ public class UsersManager implements IUserManager {
     public List<User> getAll() {
         return services.getAll();
     }
+
+    @Override
+    public User save(User object) {
+        return services.save(object);
+    }
     
     @Override
     public boolean delete(Integer id) {

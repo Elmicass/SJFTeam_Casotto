@@ -8,7 +8,6 @@ import javax.persistence.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
-import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IJobOffersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +39,19 @@ public class JobOfferServices implements IJobOfferServices {
     }
 
     @Override
+    public JobOffer save(JobOffer jo) {
+        return joRepository.save(jo);
+    }
+
+    @Override
     public boolean createJobOffer(@NonNull String name, @NonNull String description, @NonNull LocalDateTime start, @NonNull LocalDateTime expiration) throws AlreadyExistingException {
         if (jobOfferCreationErrorsChecking(start, expiration)) {
             JobOffer jobOffer = new JobOffer(name, description, start, expiration);
-            if (joRepository.findByNameAndExpiration(name, new TimeSlot(start, expiration)).equals(jobOffer))
+            if (joRepository.findByNameAndTimeslot(name, start, expiration).isPresent())
             throw new AlreadyExistingException(
                     "The activity you are trying to create already exists, with the same name: " + name
                             + " and same timeslot: " + start.toString() + " / " + expiration.toString());
-            joRepository.save(jobOffer);
+            save(jobOffer);
             return true;
         } else return false;
     }
@@ -83,7 +87,6 @@ public class JobOfferServices implements IJobOfferServices {
     public boolean application(Integer jobOfferID, Reservation reservation) {
         JobOffer jo = getInstance(jobOfferID);
         if (jo.addReservation(reservation)) {
-            joRepository.save(jo);
             return true;
         } else return false;
     }
@@ -92,7 +95,7 @@ public class JobOfferServices implements IJobOfferServices {
     public boolean cancelApplication(Reservation toCancel, Integer jobOfferID) {
         JobOffer jo = getInstance(jobOfferID);
         if (jo.removeReservation(toCancel)) {
-            joRepository.save(jo);
+            save(jo);
             return true;
         } else return false;
     }

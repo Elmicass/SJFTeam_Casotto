@@ -27,6 +27,11 @@ public class SeaRowsManager implements ISeaRowManager {
     }
 
     @Override
+    public SeaRow save(SeaRow object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean createSeaRow(Integer seaRowNumber, Integer maxBPs, Double price)
             throws AlreadyExistingException {
         return services.createSeaRow(seaRowNumber, maxBPs, price);

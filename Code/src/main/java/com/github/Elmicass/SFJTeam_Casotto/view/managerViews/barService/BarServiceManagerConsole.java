@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import com.github.Elmicass.SFJTeam_Casotto.controller.IOrderManager;
 import com.github.Elmicass.SFJTeam_Casotto.controller.IProductManager;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Order;
 import com.github.Elmicass.SFJTeam_Casotto.model.Product;
 import com.github.Elmicass.SFJTeam_Casotto.view.ConsoleColors;
@@ -167,7 +168,7 @@ public class BarServiceManagerConsole implements IConsoleView {
             addCommand("BACK", c -> waiting1.set(false));
             System.out.println("\nType the corresponding product ID number to select");
             System.out.println("\nType " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
-                    + " when you want to go back to the activity service menu.");
+                    + " when you want to go back to the bar service menu.");
             System.out.flush();
             System.out.print(" > ");
             System.out.flush();
@@ -176,6 +177,9 @@ public class BarServiceManagerConsole implements IConsoleView {
             while (waiting2.get()) {
                 processCommand(command);
                 addCommand("BACK", c -> waiting2.set(false));
+                addCommand("DELETE", c -> { deleteProduct(command); waiting2.set(false); });
+                System.out.println("\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this product.\n");
+                System.out.flush();
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the products list.");
                 System.out.flush();
@@ -189,7 +193,6 @@ public class BarServiceManagerConsole implements IConsoleView {
     }
 
     private void createProduct() {
-        commands.clear();
         AtomicReference<Boolean> prodCreation = new AtomicReference<>(true);
         while (prodCreation.get()) {
             addCommand("STOP", c -> prodCreation.set(false));
@@ -304,7 +307,6 @@ public class BarServiceManagerConsole implements IConsoleView {
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
     private void barOrdinationsView() {
@@ -341,6 +343,52 @@ public class BarServiceManagerConsole implements IConsoleView {
             }
         }
         commands.clear();
+    }
+
+    private void deleteProduct(String idString) {
+        AtomicReference<Boolean> prCancellation = new AtomicReference<>(true);
+        AtomicReference<Boolean> delete = new AtomicReference<>(false);
+        while (prCancellation.get()) {
+            addCommand("STOP", c -> prCancellation.set(false));
+            addCommand("DELETE", c -> delete.set(true));
+            clearConsoleScreen();
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                      " + ConsoleColors.RED + "Product elimination procedure"
+                    + ConsoleColors.RESET + "                    |");
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                                                                       |");
+            System.out.println("| Product elimination:                                                  |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET + "\" NOW to abort the operation.                           ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Or confirm the operation by typing \"" + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + "\".                       ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (delete.get()) {
+                try {
+                    Integer id = Integer.valueOf(idString);
+                    prodManager.delete(id);
+                    System.out.println("\n" + ConsoleColors.GREEN + "SUCCESSFULLY DELEATED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (EntityNotFoundException | IllegalArgumentException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    try {
+                        Thread.sleep(4000);
+                    } catch (Exception e) {}
+                    break;
+                }
+            }
+        }
     }
     
 }

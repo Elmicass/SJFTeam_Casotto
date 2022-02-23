@@ -36,6 +36,11 @@ public class QrCodeServices implements IQrCodeServices {
     }
 
     @Override
+    public QrCode save(QrCode qr) {
+        return qrRepository.save(qr);
+    }
+
+    @Override
     public boolean delete(@NonNull Integer id) throws EntityNotFoundException {
         if (!(exists(id)))
             throw new EntityNotFoundException("The qrcode with ID: " + id + " does not exist");
@@ -55,14 +60,9 @@ public class QrCodeServices implements IQrCodeServices {
     public QrCode createQrCode(@NonNull Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException {
         String name = String.format(QrCode.QRCODE_DEFAULT_FILE_NAME, sunshade.getID());
         if (qrRepository.findByName(name).isPresent())
-            throw new AlreadyExistingException("The activity you are trying to create already exists, with the same name: " + name);
+            throw new AlreadyExistingException("The qrcode you are trying to create already exists, with the same name: " + name);
         QrCode qrCode = new QrCode(sunshade);
         return qrCode;
-    }
-
-    @Override
-    public QrCode saveQrCode(QrCode qrCode) {
-        return qrRepository.save(qrCode);
     }
 
 }

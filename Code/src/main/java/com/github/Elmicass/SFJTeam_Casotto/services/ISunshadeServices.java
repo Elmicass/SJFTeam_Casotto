@@ -32,8 +32,7 @@ public interface ISunshadeServices extends EntityServices<Sunshade> {
      * @throws IOException
      * @throws WriterException
      */
-    Sunshade saveSunshade(Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException;
-
+    Sunshade generateQrCode(Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException;
 
 
     

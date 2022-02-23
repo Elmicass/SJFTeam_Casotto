@@ -29,6 +29,11 @@ public class JobOffersManager implements IJobOfferManager {
     }
 
     @Override
+    public JobOffer save(JobOffer object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean createJobOffer(String name, String description, LocalDateTime start, LocalDateTime expiration)
             throws AlreadyExistingException {
         return services.createJobOffer(name, description, start, expiration);

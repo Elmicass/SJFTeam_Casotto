@@ -27,6 +27,11 @@ public class ActivitiesManager implements IActivityManager {
     public List<Activity> getAll() {
         return services.getAll();
     }
+
+    @Override
+    public Activity save(Activity object) {
+        return services.save(object);
+    }
     
     @Override
     public boolean createNewActivity(String name, String description, int maxEntries, LocalDateTime startTime,

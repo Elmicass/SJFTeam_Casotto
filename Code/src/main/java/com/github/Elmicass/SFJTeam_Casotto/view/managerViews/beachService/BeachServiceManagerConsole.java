@@ -166,6 +166,13 @@ public class BeachServiceManagerConsole implements IConsoleView {
                         "\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this beach place and all bookings to it.\n");
                     System.out.flush();
                 }
+                if (command.startsWith("SR")) {
+                    String id = command.substring(2);
+                    addCommand("DELETE", c -> { deleteSeaRow(id); waiting2.set(false); });
+                    System.out.println(
+                        "\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this sea row (only if empty).\n");
+                    System.out.flush();
+                }
                 addCommand("BACK", c -> waiting2.set(false));
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the beach places list.");
@@ -217,7 +224,6 @@ public class BeachServiceManagerConsole implements IConsoleView {
     }
 
     private void createSeaRow() {
-        commands.clear();
         AtomicReference<Boolean> srCreation = new AtomicReference<>(true);
         while (srCreation.get()) {
             addCommand("STOP", c -> srCreation.set(false));
@@ -303,7 +309,7 @@ public class BeachServiceManagerConsole implements IConsoleView {
                     try {
                         Thread.sleep(3000);
                     } catch (Exception e) {}
-                    input = "STOP";
+                    processCommand("STOP");
                 } catch (AlreadyExistingException | IllegalStateException exceptions) {
                     System.err.println(exceptions.getMessage());
                     try {
@@ -314,11 +320,9 @@ public class BeachServiceManagerConsole implements IConsoleView {
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
     private void createBeachPlace() {
-        commands.clear();
         AtomicReference<Boolean> bpCreation = new AtomicReference<>(true);
         while (bpCreation.get()) {
             addCommand("STOP", c -> bpCreation.set(false));
@@ -469,7 +473,6 @@ public class BeachServiceManagerConsole implements IConsoleView {
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
     private void beachReservationsView() {
@@ -512,7 +515,6 @@ public class BeachServiceManagerConsole implements IConsoleView {
     }
 
     private void deleteBeachPlace(String idString) {
-        commands.clear();
         AtomicReference<Boolean> bpCancellation = new AtomicReference<>(true);
         AtomicReference<Boolean> delete = new AtomicReference<>(false);
         while (bpCancellation.get()) {
@@ -556,7 +558,52 @@ public class BeachServiceManagerConsole implements IConsoleView {
                 }
             }
         }
-        commands.clear();
+    }
+
+    private void deleteSeaRow(String idString) {
+        AtomicReference<Boolean> srCancellation = new AtomicReference<>(true);
+        AtomicReference<Boolean> delete = new AtomicReference<>(false);
+        while (srCancellation.get()) {
+            addCommand("STOP", c -> srCancellation.set(false));
+            addCommand("DELETE", c -> delete.set(true));
+            clearConsoleScreen();
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                     " + ConsoleColors.RED + "Sea row elimination procedure"
+                    + ConsoleColors.RESET + "                     |");
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                                                                       |");
+            System.out.println("| Sea row elimination:                                                  |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET + "\" NOW to abort the operation.                           ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Or confirm the operation by typing \"" + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + "\".                       ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (delete.get()) {
+                try {
+                    Integer id = Integer.valueOf(idString);
+                    srManager.delete(id);
+                    System.out.println("\n" + ConsoleColors.GREEN + "SUCCESSFULLY DELEATED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (EntityNotFoundException | IllegalArgumentException | IllegalStateException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    try {
+                        Thread.sleep(4000);
+                    } catch (Exception e) {}
+                    break;
+                }
+            }
+        }
     }
 
 }

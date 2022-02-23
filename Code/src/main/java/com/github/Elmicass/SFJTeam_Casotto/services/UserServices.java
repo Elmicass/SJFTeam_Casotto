@@ -56,6 +56,11 @@ public class UserServices implements IUserServices, UserDetailsService {
     }
 
     @Override
+    public User save(User user) {
+        return usersRepository.save(user);
+    }
+
+    @Override
     public User getUserByUsername(String email) throws UsernameNotFoundException {
         User user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
@@ -129,7 +134,7 @@ public class UserServices implements IUserServices, UserDetailsService {
         user.setPassword(encodedPassword);
         usersRepository.save(user);
         ConfirmationToken confirmationToken = tokensServices.createConfirmationToken(user);
-        tokensServices.saveConfirmationToken(confirmationToken);
+        tokensServices.save(confirmationToken);
         return confirmationToken.getToken();
     }
 

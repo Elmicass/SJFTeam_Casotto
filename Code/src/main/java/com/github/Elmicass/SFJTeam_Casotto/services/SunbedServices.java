@@ -31,9 +31,8 @@ public class SunbedServices implements ISunbedServices {
     }
 
     @Override
-    public boolean saveSunbed(@NonNull Sunbed sunbed) {
-        sunbedsRepository.save(sunbed);
-        return true;
+    public Sunbed save(@NonNull Sunbed sunbed) {
+        return sunbedsRepository.save(sunbed);
     }
 
     @Override

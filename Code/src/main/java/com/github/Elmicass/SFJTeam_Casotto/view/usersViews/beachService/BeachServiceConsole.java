@@ -158,7 +158,7 @@ public class BeachServiceConsole implements IConsoleView {
                 System.out.println(
                         "\nType " + ConsoleColors.GREEN + "B" + ConsoleColors.RESET + " to book this beach place.\n");
                 System.out.flush();
-                System.out.println("Type " + ConsoleColors.RED + "back" + ConsoleColors.RESET
+                System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the beach places list.");
                 System.out.flush();
                 System.out.print(" > ");
@@ -172,7 +172,6 @@ public class BeachServiceConsole implements IConsoleView {
     }
 
     public void bookBeachPlace(Integer idString) {
-        commands.clear();
         AtomicReference<Boolean> booking = new AtomicReference<>(true);
         while (booking.get()) {
             addCommand("STOP", c -> booking.set(false));
@@ -253,7 +252,6 @@ public class BeachServiceConsole implements IConsoleView {
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
 

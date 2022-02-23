@@ -27,6 +27,11 @@ public class PriceListsManager implements IPriceListManager {
     }
 
     @Override
+    public PriceList save(PriceList object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean createPriceList(String name, Double sunbedHourly, Double smallSunSHourly, Double medSunSHourly,
             Double largeSunSHourly) throws AlreadyExistingException {
         return services.createPriceList(name, sunbedHourly, smallSunSHourly, medSunSHourly, largeSunSHourly);

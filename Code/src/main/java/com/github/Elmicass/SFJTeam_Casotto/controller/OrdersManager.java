@@ -26,6 +26,11 @@ public class OrdersManager implements IOrderManager {
     }
 
     @Override
+    public Order save(Order object) {
+        return services.save(object);
+    }
+
+    @Override
     public Order createNewOrder(User customer) {
         return services.createOrder(customer);
     }

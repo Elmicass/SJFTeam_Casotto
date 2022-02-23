@@ -30,6 +30,11 @@ public class BeachPlacesManager implements IBeachPlaceManager {
     }
 
     @Override
+    public BeachPlace save(BeachPlace object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean createBeachPlace(int seaRowNumber, int position, String priceListName,
             String sunshadeType, int sunbedsNumber) throws IllegalArgumentException,
             IllegalStateException, WriterException, IOException, ReachedLimitOfObjects, AlreadyExistingException {

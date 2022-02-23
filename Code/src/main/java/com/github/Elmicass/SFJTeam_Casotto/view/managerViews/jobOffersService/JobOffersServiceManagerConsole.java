@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import com.github.Elmicass.SFJTeam_Casotto.controller.IJobOfferManager;
 import com.github.Elmicass.SFJTeam_Casotto.controller.IReservationManager;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+import com.github.Elmicass.SFJTeam_Casotto.exception.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.model.JobOffer;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
 import com.github.Elmicass.SFJTeam_Casotto.model.IEntity.BookableEntityType;
@@ -182,6 +183,9 @@ public class JobOffersServiceManagerConsole implements IConsoleView {
             while (waiting2.get()) {
                 processCommand(command);
                 addCommand("BACK", c -> waiting2.set(false));
+                addCommand("DELETE", c -> { deleteJobOffer(command); waiting2.set(false); });
+                System.out.println("\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this job offer and all applications to it.\n");
+                System.out.flush();
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the job offers list.");
                 System.out.flush();
@@ -201,7 +205,7 @@ public class JobOffersServiceManagerConsole implements IConsoleView {
             addCommand("STOP", c -> joCreation.set(false));
             clearConsoleScreen();
             System.out.println("+-----------------------------------------------------------------------+");
-            System.out.println("|                       " + ConsoleColors.PURPLE + "Job offer creation procedure"
+            System.out.println("|                       " + ConsoleColors.WHITE + "Job offer creation procedure"
                     + ConsoleColors.RESET + "                      |");
             System.out.println("+-----------------------------------------------------------------------+");
             System.out.println("|                                                                       |");
@@ -357,6 +361,52 @@ public class JobOffersServiceManagerConsole implements IConsoleView {
             }
         }
         commands.clear();
+    }
+
+    private void deleteJobOffer(String idString) {
+        AtomicReference<Boolean> joCancellation = new AtomicReference<>(true);
+        AtomicReference<Boolean> delete = new AtomicReference<>(false);
+        while (joCancellation.get()) {
+            addCommand("STOP", c -> joCancellation.set(false));
+            addCommand("DELETE", c -> delete.set(true));
+            clearConsoleScreen();
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                    " + ConsoleColors.RED + "Job offer elimination procedure"
+                    + ConsoleColors.RESET + "                    |");
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                                                                       |");
+            System.out.println("| Job offer elimination:                                                |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET + "\" NOW to abort the operation.                           ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Or confirm the operation by typing \"" + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + "\".                       ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (delete.get()) {
+                try {
+                    Integer id = Integer.valueOf(idString);
+                    joManager.delete(id);
+                    System.out.println("\n" + ConsoleColors.GREEN + "SUCCESSFULLY DELEATED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (EntityNotFoundException | IllegalArgumentException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    try {
+                        Thread.sleep(4000);
+                    } catch (Exception e) {}
+                    break;
+                }
+            }
+        }
     }
 
     

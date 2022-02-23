@@ -12,7 +12,6 @@ import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.Activity;
 import com.github.Elmicass.SFJTeam_Casotto.model.Equipment;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
-import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IActivitiesRepository;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IEquipmentsRepository;
 
@@ -49,16 +48,22 @@ public class ActivityServices implements IActivityServices {
     }
 
     @Override
+    public Activity save(Activity activity) {
+        return actRepository.save(activity);
+    }
+
+
+    @Override
     public boolean createActivity(@NonNull String name, @NonNull String description, @NonNull Integer maxEntries,
             @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, @NonNull String[] equipmentsName)
             throws AlreadyExistingException {
         Set<Equipment> equipments = activityCreationErrorsChecking(startTime, endTime, equipmentsName);
         Activity activity = new Activity(name, description, maxEntries, startTime, endTime, equipments);
-        if (actRepository.findByNameAndTimeslot(name, new TimeSlot(startTime, endTime)).get().equals(activity))
+        if (actRepository.findByNameAndTimeslot(name, startTime, endTime).isPresent())
             throw new AlreadyExistingException(
                     "The activity you are trying to create already exists, with the same name: " + name
                             + " and same timeslot: " + startTime.toString() + " / " + endTime.toString());
-        actRepository.save(activity);
+        save(activity);
         return true;
     }
 
@@ -87,7 +92,6 @@ public class ActivityServices implements IActivityServices {
     public boolean booking(Integer activityID, Reservation reservation) throws IllegalStateException, AlreadyExistingException {
         Activity activity = getInstance(activityID);
         if (activity.addReservation(reservation)) {
-            actRepository.save(activity);
             return true;
         } else return false;
     }

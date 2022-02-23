@@ -51,7 +51,7 @@ public class ReservationPrinter implements Printer<Reservation> {
                 when = timeSlotPrinter.shortToStringVersion(reservation.getTimeSlot());
                 break;
         }
-        returnValue = "- [ID: " + reservation.getID() + " | Customer username: " + reservation.getUser()
+        returnValue = "- [ID: " + reservation.getID() + " | Customer username: " + reservation.getUser().getEmail()
                 + " | Reservation type: " + reservation.getType().name() + " | " + reservation.getType().name()
                 + " ID: " + reservation.getEntityID() + " | When: " + when + " ]";
         return returnValue;
@@ -78,7 +78,7 @@ public class ReservationPrinter implements Printer<Reservation> {
         String firstLine = String.format("%-215s", new String("+")) + "+";
         String secondLine = String.format("%-215s",
                 new String(
-                        "| [ID: " + reservation.getID() + " - Customer username: " + reservation.getUser()
+                        "| [ID: " + reservation.getID() + " - Customer username: " + reservation.getUser().getEmail()
                         + " - Reservation type: " + reservation.getType().name() + " - " + reservation.getType().name()
                         + " ID: " + reservation.getEntityID() + " - When: " + when + " ]")) + "|";
         String thirdLine = "";

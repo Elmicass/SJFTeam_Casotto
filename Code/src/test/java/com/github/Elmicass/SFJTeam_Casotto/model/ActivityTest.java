@@ -85,13 +85,12 @@ public class ActivityTest {
 	void shouldGetTimeSlot(){
 		LocalDateTime ldtStart = LocalDateTime.now();
 		LocalDateTime ldtEnd = ldtStart.plusHours(3);
-		TimeSlot timeSlot = new TimeSlot(ldtStart,ldtEnd);
-
+		
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		Set<Equipment> equipments = new HashSet<Equipment>();
 		equipments.add(equipment);
 		Activity activity = new Activity("test name","test description",10,ldtStart,ldtEnd,equipments);
-		
+		TimeSlot timeSlot = new TimeSlot(ldtStart,ldtEnd,activity);
 		assertEquals(timeSlot,activity.getTimeSlot());
 	}
 
@@ -103,14 +102,14 @@ public class ActivityTest {
 		LocalDateTime ldtStart2 = LocalDateTime.now().plusHours(1);
 		LocalDateTime ldtEnd2 = ldtStart2.plusHours(5);
 
-		TimeSlot timeSlot2 = new TimeSlot(ldtStart2,ldtEnd2);
+		
 
 		Equipment equipment = new Equipment("test name","test description","Indoor");
 		Set<Equipment> equipments = new HashSet<Equipment>();
 		equipments.add(equipment);
 		Activity activity = new Activity("test name","test description",10,ldtStart1,ldtEnd1,equipments);
 		activity.setTimeSlot(ldtStart2,ldtEnd2);
-
+		TimeSlot timeSlot2 = new TimeSlot(ldtStart2,ldtEnd2, activity);
 		assertEquals(timeSlot2,activity.getTimeSlot());
 	}
 

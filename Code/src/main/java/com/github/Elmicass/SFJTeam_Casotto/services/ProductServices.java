@@ -43,11 +43,16 @@ public class ProductServices implements IProductServices {
     }
 
     @Override
+    public Product save(Product pr) {
+        return productsRepository.save(pr);
+    }
+
+    @Override
     public boolean createProduct(@NonNull String name, @NonNull String description, @NonNull Double unitPrice, @NonNull Integer quantity) throws AlreadyExistingException {
         Product product = new Product(name, description, unitPrice, quantity);
         if (productsRepository.findByName(name).isPresent())
             throw new AlreadyExistingException("The product you are trying to create already exists, with the same name: " + name);
-        productsRepository.save(product);
+        save(product);
         return true;
     }
 

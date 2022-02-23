@@ -15,8 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SortNatural;
 
 import lombok.NoArgsConstructor;
 
@@ -37,12 +38,12 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "Timeslot", referencedColumnName = "Stop")
-    private TimeSlot expiration;
+    @JoinColumn(name = "Timeslot", referencedColumnName = "ID")
+    private TimeSlot timeslot;
 
     @OneToMany(mappedBy = "joReference")
     @Column(name = "Applications")
-    @OrderBy("Timeslot ASC, User_Email ASC")
+    @SortNatural
     private SortedSet<Reservation> applications;
 
     @Column(name = "IsOpen")
@@ -51,7 +52,7 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
     public JobOffer(String name, String description, LocalDateTime start, LocalDateTime end) throws IllegalArgumentException {
         setName(name);
         setDescription(description);
-        setExpiration(start, end);
+        settimeslot(start, end);
         this.open = true;
         this.applications = new TreeSet<Reservation>();
     }
@@ -80,13 +81,13 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
         this.description = description;
     }
 
-    public TimeSlot getExpiration() {
-        return expiration;
+    public TimeSlot gettimeslot() {
+        return timeslot;
     }
 
-    public void setExpiration(LocalDateTime start, LocalDateTime end) {
-        this.expiration = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
-                Objects.requireNonNull(end, "Ending time is null")), "The created timeslot is null");
+    public void settimeslot(LocalDateTime start, LocalDateTime end) {
+        this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null"),
+                Objects.requireNonNull(end, "Ending time is null"), this), "The created timeslot is null");
     }
 
     public SortedSet<Reservation> getApplications() {
@@ -104,10 +105,10 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
     @Override
     public int compareTo(JobOffer jo) {
         Objects.requireNonNull(jo,"The passed activity is null");
-        if (this.expiration.equals(jo.expiration)) {
+        if (this.timeslot.equals(jo.timeslot)) {
             return this.id.compareTo(jo.id);
         } else {
-            return this.expiration.compareTo(jo.expiration);
+            return this.timeslot.compareTo(jo.timeslot);
         }
     }
 
@@ -115,7 +116,7 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
+        result = prime * result + ((timeslot == null) ? 0 : timeslot.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
@@ -129,10 +130,10 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
         if (getClass() != obj.getClass())
             return false;
         JobOffer other = (JobOffer) obj;
-        if (expiration == null) {
-            if (other.expiration != null)
+        if (timeslot == null) {
+            if (other.timeslot != null)
                 return false;
-        } else if (!expiration.equals(other.expiration))
+        } else if (!timeslot.equals(other.timeslot))
             return false;
         if (name == null) {
             if (other.name != null)
@@ -144,8 +145,10 @@ public class JobOffer implements Comparable<JobOffer>, IEntity, Serializable {
 
     @Override
     public boolean addReservation(Reservation app) {
-        if (applications.contains(app))
+        if (!(applications.isEmpty())) {
+			if (applications.contains(app))
             throw new IllegalStateException("The user has already applied to this job offer");
+		}
         return applications.add(Objects.requireNonNull(app, "The application is null"));
     }
 

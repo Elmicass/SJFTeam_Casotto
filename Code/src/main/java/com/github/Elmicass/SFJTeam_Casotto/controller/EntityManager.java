@@ -10,6 +10,8 @@ public interface EntityManager<T> {
 
     List<T> getAll();
 
+    T save(T object);
+
     boolean delete(Integer id) throws EntityNotFoundException, IllegalArgumentException;
 
     boolean exists(Integer id);

@@ -166,6 +166,7 @@ public class PriceListsManagerConsole implements IConsoleView {
             while (waiting2.get()) {
                 processCommand(command);
                 addCommand("BACK", c -> waiting2.set(false));
+                
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the price lists.");
                 System.out.flush();

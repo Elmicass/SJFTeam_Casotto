@@ -21,7 +21,7 @@ import javax.persistence.JoinColumn;
 @Entity
 @Table(name = "AppUser")
 @NoArgsConstructor
-public class User implements Serializable {
+public class User implements Comparable<User>, Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -137,7 +137,16 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
-
+	
+	public int compareTo(User user) {
+        Objects.requireNonNull(user, "The passed user is null");
+        if (this.name.equals(user.name)) {
+            return this.surname.compareTo(user.surname);
+        } else {
+            return this.name.compareTo(user.name);
+        }
+    }
+	
 	public boolean addRole(Role role) {
         if (roles.contains(role))
             throw new IllegalStateException("This user is already associated to the given role");
@@ -180,5 +189,7 @@ public class User implements Serializable {
 	public boolean isEnabled() {
 		return enabled;
 	}
+
+    
 
 }

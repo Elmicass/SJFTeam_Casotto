@@ -32,6 +32,11 @@ public class ProductsManager implements IProductManager {
     }
 
     @Override
+    public Product save(Product object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean createNewProduct(String name, String description, double unitPrice, int quantity) throws AlreadyExistingException {
         return services.createProduct(name, description, unitPrice, quantity);
     }

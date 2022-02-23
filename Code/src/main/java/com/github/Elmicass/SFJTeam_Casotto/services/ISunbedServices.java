@@ -8,12 +8,6 @@ import com.github.Elmicass.SFJTeam_Casotto.model.Sunbed;
  */
 public interface ISunbedServices extends EntityServices<Sunbed> {
 
-    /**
-     * 
-     * @param sunbed
-     * @return
-     */
-    boolean saveSunbed (Sunbed sunbed);
     
     
 }

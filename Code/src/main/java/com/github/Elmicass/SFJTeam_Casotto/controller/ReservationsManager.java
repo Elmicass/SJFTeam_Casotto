@@ -35,6 +35,11 @@ public class ReservationsManager implements IReservationManager {
     }
 
     @Override
+    public Reservation save(Reservation object) {
+        return services.save(object);
+    }
+
+    @Override
     public boolean booking(String entityType, User user, Integer entityID,
             LocalDateTime start, LocalDateTime end) throws EntityNotFoundException, AlreadyExistingException, IllegalStateException {
         return services.booking(entityType, user, start, end, entityID);

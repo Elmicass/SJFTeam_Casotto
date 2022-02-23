@@ -3,7 +3,6 @@ package com.github.Elmicass.SFJTeam_Casotto.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -21,12 +20,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.ReachedLimitOfObjects;
 import com.github.Elmicass.SFJTeam_Casotto.model.Sunshade.SunshadeType;
 import com.google.zxing.WriterException;
+
+import org.hibernate.annotations.SortNatural;
 
 import lombok.NoArgsConstructor;
 
@@ -70,7 +70,7 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity, Serializable
 
     @OneToMany(mappedBy = "bpReference")
     @Column(name = "Reservations")
-    @OrderBy("Timeslot ASC, User_Email ASC")
+    @SortNatural
     private SortedSet<Reservation> reservations;
 
     public BeachPlace(SeaRow seaRow, Integer position, PriceList priceList, String sunshadeType, Integer sunbedsNumber)
@@ -196,19 +196,22 @@ public class BeachPlace implements Comparable<BeachPlace>, IEntity, Serializable
     }
     
     public boolean isFree(TimeSlot timeSlot) {
-        Iterator<Reservation> free = reservations.iterator();
-        while (free.hasNext()) {
-            if (free.next().getEntityObject().equals(this) && free.next().getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null.")))
-                return false;
+        if (!(reservations.isEmpty())) {
+            for (Reservation reservation : reservations) {
+                if (reservation.getTimeSlot().overlapsWith(Objects.requireNonNull(timeSlot,"The given timeslot is null."))) {
+                    return false;
+                }
+            }
+            return true;
         }
         return true;
     }
 
     @Override
     public boolean addReservation(Reservation res) throws IllegalStateException {
-        if (isFree(res.getTimeSlot()))
+        if (isFree(res.getTimeSlot())) {
             return reservations.add(Objects.requireNonNull(res, "The reservation is null."));
-        else
+        } else
             throw new IllegalStateException(
                     "This beach place is already booked for the time slot provided.");   
     }

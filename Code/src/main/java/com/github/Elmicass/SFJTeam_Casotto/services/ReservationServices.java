@@ -8,7 +8,6 @@ import javax.persistence.EntityNotFoundException;
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
 import com.github.Elmicass.SFJTeam_Casotto.model.IEntity;
 import com.github.Elmicass.SFJTeam_Casotto.model.Reservation;
-import com.github.Elmicass.SFJTeam_Casotto.model.TimeSlot;
 import com.github.Elmicass.SFJTeam_Casotto.model.User;
 import com.github.Elmicass.SFJTeam_Casotto.model.IEntity.BookableEntityType;
 import com.github.Elmicass.SFJTeam_Casotto.repository.IReservationsRepository;
@@ -52,13 +51,21 @@ public class ReservationServices implements IReservationServices {
     }
 
     @Override
+    public Reservation save(Reservation res) {
+        return resRepository.save(res);
+    }
+
+    @Override
     public Reservation createReservation(@NonNull BookableEntityType type, @NonNull User user,
             @NonNull LocalDateTime start, @NonNull LocalDateTime end,
             @NonNull IEntity object) throws AlreadyExistingException {
-        Reservation reservation = new Reservation(type, user, start, end, object);
-        if (resRepository.findByTimeslotAndUserEmail(new TimeSlot(start, end), user).contains(reservation))
-            throw new AlreadyExistingException("You are already booked to this: " + type);
-        return resRepository.save(reservation);
+        if (reservationCreationErrorsChecking(start, end)) {
+            Reservation reservation = new Reservation(type, user, start, end, object);
+            if (resRepository.findByUserAndTimeslot(user, start, end).get().contains(reservation))
+                throw new AlreadyExistingException("You are already booked to this: " + type);
+            return reservation;
+        } else throw new IllegalArgumentException(
+                    "You are trying to create an activity with starting or ending time before than the current time");
     }
 
     @Override
@@ -81,34 +88,40 @@ public class ReservationServices implements IReservationServices {
     public boolean reservationCreationErrorsChecking(LocalDateTime startTime, LocalDateTime endTime) {
         LocalDateTime currentTime = LocalDateTime.now();
         if (startTime.isBefore(currentTime) || endTime.isBefore(currentTime))
-            throw new IllegalArgumentException(
-                    "You are trying to create an activity with starting or ending time before than the current time");
+            return false;
         return true;
     }
 
     public boolean booking(@NonNull String entityType, @NonNull User user,
-            @NonNull LocalDateTime start, @NonNull LocalDateTime end, Integer entityID)
+            LocalDateTime inputStart, LocalDateTime inputEnd, Integer entityID)
             throws EntityNotFoundException, AlreadyExistingException, IllegalStateException {
         BookableEntityType type = BookableEntityType.valueOf(entityType);
         switch (type) {
             case BeachPlace:
-                Reservation bpRes = createReservation(type, user, start, end, bpServices.getInstance(entityID));
+                Reservation bpRes = createReservation(type, user, inputStart, inputEnd, bpServices.getInstance(entityID));
                 if (bpServices.booking(bpRes.getEntityID(), bpRes)) {
-                    resRepository.save(bpRes);
+                    save(bpRes);
+                    bpServices.save(bpServices.getInstance(entityID));
                     return true;
                 }
                 break;
             case Activity:
-                Reservation actRes = createReservation(type, user, start, end, actServices.getInstance(entityID));
+                LocalDateTime actStart = actServices.getInstance(entityID).getTimeSlot().getStart();
+                LocalDateTime actEnd = actServices.getInstance(entityID).getTimeSlot().getStop();
+                Reservation actRes = createReservation(type, user, actStart, actEnd, actServices.getInstance(entityID));
                 if (actServices.booking(actRes.getEntityID(), actRes)) {
-                    resRepository.save(actRes);
+                    save(actRes);
+                    actServices.save(actServices.getInstance(entityID));
                     return true;
                 }
                 break;
             case JobOffer:
-                Reservation joRes = createReservation(type, user, start, end, joServices.getInstance(entityID));
+                LocalDateTime joStart = actServices.getInstance(entityID).getTimeSlot().getStart();
+                LocalDateTime joEnd = actServices.getInstance(entityID).getTimeSlot().getStop();
+                Reservation joRes = createReservation(type, user, joStart, joEnd, joServices.getInstance(entityID));
                 if (joServices.application(joRes.getEntityID(), joRes)) {
-                    resRepository.save(joRes);
+                    save(joRes);
+                    joServices.save(joServices.getInstance(entityID));
                     return true;
                 }
                 break;

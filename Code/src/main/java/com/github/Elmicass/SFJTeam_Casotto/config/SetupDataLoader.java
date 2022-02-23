@@ -65,13 +65,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("ROLE_CUSTOMER", customersPrivileges);
         createRoleIfNotFound("ROLE_USER", usersPrivileges);
         createManagerUserIfNotFound();
-        createDefaultPriceListIfNotFound("DEFAULT");
+        createDefaultPriceListIfNotFound();
         alreadySetup = true;
     }
 
     @Transactional
     Privilege createPrivilegeIfNotFound(String name) {
-        Privilege privilege = privilegeRepository.findByName(name).get();
+        Privilege privilege = null;
+        if (privilegeRepository.findByName(name).isPresent()) { privilege = privilegeRepository.findByName(name).get(); }
         if (privilege == null) {
             privilege = new Privilege(name);
             privilegeRepository.save(privilege);
@@ -81,7 +82,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     Role createRoleIfNotFound(String name, Set<Privilege> privileges) {
-        Role role = roleRepository.findByName(name).get();
+        Role role = null;
+        if (roleRepository.findByName(name).isPresent()) { role = roleRepository.findByName(name).get(); }
         if (role == null) {
             role = new Role(name);
             role.setPrivileges(privileges);
@@ -91,10 +93,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    PriceList createDefaultPriceListIfNotFound(String name) {
-        PriceList defaultList = priceListRepository.findByName("DEFAULT").get();
+    PriceList createDefaultPriceListIfNotFound() {
+        PriceList defaultList = null;
+        if (priceListRepository.findByName("DEFAULT").isPresent()) { defaultList = priceListRepository.findByName("DEFAULT").get(); }
         if (defaultList == null) {
-            defaultList = new PriceList(name, 2.00, 2.50, 5.00, 10.00);
+            defaultList = new PriceList("DEFAULT", 2.00, 2.50, 5.00, 10.00);
             priceListRepository.save(defaultList);
         }
         return defaultList;
@@ -102,8 +105,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     User createManagerUserIfNotFound() {
-        User manager = userRepository.findByEmail("casottosmartchalet@gmail.com").get();
-        Role managerRole = roleRepository.findByName("ROLE_MANAGER").get();
+        User manager = null;
+        if (userRepository.findByEmail("casottosmartchalet@gmail.com").isPresent()) { manager = userRepository.findByEmail("casottosmartchalet@gmail.com").get(); }
+        Role managerRole = null; 
+        if (roleRepository.findByName("ROLE_MANAGER").isPresent()) { managerRole = roleRepository.findByName("ROLE_MANAGER").get(); }
         if (manager == null && managerRole != null) {
             manager = new User("managerName","managerSurname","casottosmartchalet@gmail.com","IdSProject");
             manager.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(manager.getPassword()));

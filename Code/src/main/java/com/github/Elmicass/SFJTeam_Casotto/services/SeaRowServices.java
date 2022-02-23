@@ -33,6 +33,11 @@ public class SeaRowServices implements ISeaRowServices {
     }
 
     @Override
+    public SeaRow save(SeaRow sr) {
+        return seaRowRepository.save(sr);
+    }
+
+    @Override
     public boolean createSeaRow(@NonNull Integer seaRowNumber, @NonNull Integer maxBPs, @NonNull Double price)
             throws AlreadyExistingException {
         SeaRow seaRow = new SeaRow(seaRowNumber, maxBPs, price);
@@ -40,16 +45,18 @@ public class SeaRowServices implements ISeaRowServices {
             throw new AlreadyExistingException(
                 "The sea row you are trying to create already exists, with the same row number: "
                         + seaRowNumber.toString());
-        seaRowRepository.save(seaRow);
+        save(seaRow);
         return true;
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(Integer id) throws EntityNotFoundException, IllegalStateException {
         if (id.toString().isBlank())
             throw new IllegalArgumentException("The sea row ID is empty");
         if (!(exists(id)))
             throw new EntityNotFoundException("The sea row with ID: " + id + " does not exist");
+        if (!(getInstance(id).getBeachPlaces().isEmpty()) || !(getInstance(id).getSeaRowMap().isEmpty()))
+            throw new IllegalStateException("It is not possible to delete a sea row which contains beach places yet!");
         seaRowRepository.deleteById(id);
         return !exists(id);
     }

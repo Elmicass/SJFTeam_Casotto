@@ -58,6 +58,7 @@ public class JobOffersServiceUserConsole implements IConsoleView {
 
     @Override
     public void open() throws IOException {
+        commands.clear();
         this.open = true;
         while (open) {
             addCommand(("J"), c -> jobOfferListView());
@@ -116,6 +117,7 @@ public class JobOffersServiceUserConsole implements IConsoleView {
     }
 
     private void jobOfferListView() {
+        commands.clear();
         AtomicReference<Boolean> waiting1 = new AtomicReference<>(true);
         AtomicReference<Boolean> waiting2 = new AtomicReference<>(false);
         while (waiting1.get()) {
@@ -138,6 +140,10 @@ public class JobOffersServiceUserConsole implements IConsoleView {
             while (waiting2.get()) {
                 processCommand(command);
                 addCommand("BACK", c -> waiting2.set(false));
+                addCommand("B", c -> bookJobOffer(Integer.valueOf(command)));
+                System.out.println(
+                        "\nType " + ConsoleColors.GREEN + "B" + ConsoleColors.RESET + " to apply to this job offer.\n");
+                System.out.flush();
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the job offers list.");
                 System.out.flush();
@@ -150,38 +156,50 @@ public class JobOffersServiceUserConsole implements IConsoleView {
         commands.clear();
     }
 
-    public void bookJobOffer(Integer command) {
+    public void bookJobOffer(Integer id) {
         AtomicReference<Boolean> waiting = new AtomicReference<>(true);
+        AtomicReference<Boolean> booking = new AtomicReference<>(false);
         while (waiting.get()) {
             addCommand("STOP", c -> waiting.set(false));
+            addCommand("BOOK", c -> booking.set(true));
             clearConsoleScreen();
             System.out.println("+-----------------------------------------------------------------------+");
-            System.out.println("|                     " + ConsoleColors.YELLOW + "Job offer reservation procedure"
+            System.out.println("|                     " + ConsoleColors.WHITE + "Job offer application procedure"
                     + ConsoleColors.RESET + "                   |");
             System.out.println("+-----------------------------------------------------------------------+");
             System.out.println("|                                                                       |");
-            System.out.println("| Booking period entry fields:                                          |");
+            System.out.println("| Job offer application:                                                |");
             System.out.println("|                                                                       |");
-            System.out.println("| [Please enter dates fields in the following format: \"" + ConsoleColors.GREEN
-                    + "dd-mm-yy hh:mm" + ConsoleColors.RESET + "\"]   |");
+            System.out.println("| [Please confirm the reservation by typing: \"" + ConsoleColors.GREEN
+                    + "BOOK" + ConsoleColors.RESET + "\"                   ] |");
             System.out.println("| [Or enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET
-                    + "\" to abort the operation                           ] |");
+                    + "\" to abort the operation                             ] |");
             System.out.println("|                                                                       |");
-            try {
-                reservationsManager.booking(BookableEntityType.JobOffer.name(),
-                        usersManager.getUserByEmail(LoginContextHolder.getCurrentAppUser().getUsername()), command,
-                        jobOfferManager.getInstance(command).getExpiration().getStart(), jobOfferManager.getInstance(command).getExpiration().getStop());
-                System.out.println("\n" + ConsoleColors.GREEN + "YOU SUCCESSFULLY BOOKED!" + ConsoleColors.RESET + "\n");
-                System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (booking.get()) {
                 try {
-                    Thread.sleep(3000);
-                } catch (Exception e) {}
-            } catch (IllegalStateException ise) {
-                System.err.println(ise.getMessage());
-                break;
-            } catch (AlreadyExistingException | EntityNotFoundException exceptions) {
-                System.err.println(exceptions.getMessage());
-                break;
+                    reservationsManager.booking(BookableEntityType.JobOffer.name(),
+                            usersManager.getUserByEmail(LoginContextHolder.getCurrentAppUser().getUsername()), id,
+                            jobOfferManager.getInstance(id).gettimeslot().getStart(), jobOfferManager.getInstance(id).gettimeslot().getStop());
+                    System.out.println("\n" + ConsoleColors.GREEN + "YOU SUCCESSFULLY APPLIED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (IllegalStateException ise) {
+                    System.err.println(ise.getMessage());
+                    break;
+                } catch (AlreadyExistingException | EntityNotFoundException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    break;
+                }
             }
         }
         System.out.flush();

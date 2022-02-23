@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IBeachPlacesRepository extends JpaRepository<BeachPlace, Integer> {
-
-    
     
     @Query("select b from BeachPlace b left join fetch b.reservations")
     List<BeachPlace> findAll();

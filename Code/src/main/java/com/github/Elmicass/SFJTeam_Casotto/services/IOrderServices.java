@@ -40,11 +40,4 @@ public interface IOrderServices extends EntityServices<Order> {
      */
     void checkOrder(Order order);
 
-    /**
-     * 
-     * @param order
-     * @return
-     */
-    boolean saveOrder(Order order);
-
 }

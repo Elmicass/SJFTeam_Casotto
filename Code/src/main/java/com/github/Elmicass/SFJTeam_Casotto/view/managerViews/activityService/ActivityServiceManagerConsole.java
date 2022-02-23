@@ -113,7 +113,7 @@ public class ActivityServiceManagerConsole implements IConsoleView {
         commands.put(key, command);
     }
 
-    public void menu() {
+    private void menu() {
         clearConsoleScreen();
         System.out.println("+----------------------------------------------------------------------+");
         System.out.println("| Casotto Smart Chalet                                                 |");
@@ -168,7 +168,7 @@ public class ActivityServiceManagerConsole implements IConsoleView {
         }
         commands.clear();
     }
-
+    
     private void activityListView() {
         commands.clear();
         AtomicReference<Boolean> waiting1 = new AtomicReference<>(true);
@@ -206,6 +206,13 @@ public class ActivityServiceManagerConsole implements IConsoleView {
                         "\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this activity and all bookings to it.\n");
                     System.out.flush();
                 }
+                if (command.startsWith("EQ")) {
+                    String id = command.substring(2);
+                    addCommand("DELETE", c -> { deleteEquipment(id); waiting2.set(false); });
+                    System.out.println(
+                        "\nType " + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + " to eliminate this equipment (only if no activities are scheduled to use it).\n");
+                    System.out.flush();
+                }
                 addCommand("BACK", c -> waiting2.set(false));
                 System.out.println("Type " + ConsoleColors.RED + "BACK" + ConsoleColors.RESET
                         + " when you want to go back to the activities list.");
@@ -220,7 +227,6 @@ public class ActivityServiceManagerConsole implements IConsoleView {
     }
 
     private void createEquipment() {
-        commands.clear();
         AtomicReference<Boolean> eqCreation = new AtomicReference<>(true);
         while (eqCreation.get()) {
             addCommand("STOP", c -> eqCreation.set(false));
@@ -319,11 +325,9 @@ public class ActivityServiceManagerConsole implements IConsoleView {
 
         }    
         System.out.flush();
-        commands.clear();
     }
 
     private void createActivity() {
-        commands.clear();
         AtomicReference<Boolean> actCreation = new AtomicReference<>(true);
         while (actCreation.get()) {
             addCommand("STOP", c -> actCreation.set(false));
@@ -355,7 +359,7 @@ public class ActivityServiceManagerConsole implements IConsoleView {
                     break;
                 } catch (Exception e) {
                     System.err.println("\nPlese enter a valid value or enter the STOP keyword.");
-                    System.out.println("| - Equipment name >                                                    |");
+                    System.out.println("| - Activity name >                                                    |");
                     command = in.nextLine();
                 }
             }
@@ -490,7 +494,6 @@ public class ActivityServiceManagerConsole implements IConsoleView {
             }
         }
         System.out.flush();
-        commands.clear();
     }
 
     private void activityReservationsView() {
@@ -533,7 +536,6 @@ public class ActivityServiceManagerConsole implements IConsoleView {
     }
 
     private void deleteActivity(String idString) {
-        commands.clear();
         AtomicReference<Boolean> actCancellation = new AtomicReference<>(true);
         AtomicReference<Boolean> delete = new AtomicReference<>(false);
         while (actCancellation.get()) {
@@ -577,13 +579,53 @@ public class ActivityServiceManagerConsole implements IConsoleView {
                 }
             }
         }
-        commands.clear();
     }
     
-
-
-
-
+    private void deleteEquipment(String idString) {
+        AtomicReference<Boolean> eqCancellation = new AtomicReference<>(true);
+        AtomicReference<Boolean> delete = new AtomicReference<>(false);
+        while (eqCancellation.get()) {
+            addCommand("STOP", c -> eqCancellation.set(false));
+            addCommand("DELETE", c -> delete.set(true));
+            clearConsoleScreen();
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                    " + ConsoleColors.RED + "Equipment elimination procedure"
+                    + ConsoleColors.RESET + "                    |");
+            System.out.println("+-----------------------------------------------------------------------+");
+            System.out.println("|                                                                       |");
+            System.out.println("| Equipment elimination:                                                |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Enter \"" + ConsoleColors.RED + "STOP" + ConsoleColors.RESET + "\" NOW to abort the operation.                           ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| [Or confirm the operation by typing \"" + ConsoleColors.RED + "DELETE" + ConsoleColors.RESET + "\".                       ] |");
+            System.out.println("|                                                                       |");
+            System.out.println("| ->                                                                    |");
+            String command = in.nextLine();
+            if (command.equals("STOP")) {
+                processCommand(command);
+                break;
+            }
+            processCommand(command);
+            if (delete.get()) {
+                try {
+                    Integer id = Integer.valueOf(idString);
+                    eqManager.delete(id);
+                    System.out.println("\n" + ConsoleColors.GREEN + "SUCCESSFULLY DELEATED!" + ConsoleColors.RESET + "\n");
+                    System.out.println("+-----------------------------------------------------------------------+");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {}
+                    processCommand("STOP");
+                } catch (EntityNotFoundException | IllegalArgumentException | IllegalStateException exceptions) {
+                    System.err.println(exceptions.getMessage());
+                    try {
+                        Thread.sleep(4000);
+                    } catch (Exception e) {}
+                    break;
+                }
+            }
+        }
+    }
 
     
 }

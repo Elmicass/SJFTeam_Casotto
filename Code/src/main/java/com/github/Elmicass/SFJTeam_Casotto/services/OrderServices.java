@@ -36,6 +36,11 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
+    public Order save(Order order) {
+        return ordersRepository.save(order);
+    }
+
+    @Override
     public Order createOrder(@NonNull User customer) {
         Order order = new Order(customer);
         return order;
@@ -61,14 +66,14 @@ public class OrderServices implements IOrderServices {
     @Override
     public boolean addProduct(Integer orderID, Integer productID, int quantity) {
         boolean result = getInstance(orderID).addProduct(productsRepository.getById(productID), quantity);
-        ordersRepository.save(getInstance(orderID));
+        save(getInstance(orderID));
         return result;
     }
 
     @Override
     public boolean removeProduct(Integer orderID, Integer productID) {
         boolean result = getInstance(orderID).removeProduct(productsRepository.getById(productID));
-        ordersRepository.save(getInstance(orderID));
+        save(getInstance(orderID));
         return result;
     }
 
@@ -76,14 +81,7 @@ public class OrderServices implements IOrderServices {
     public void checkOrder(Order order) {
         if (order.getProducts().isEmpty())
             delete(order.getID());
-        else saveOrder(order);
+        else save(order);
     }
-
-    @Override
-    public boolean saveOrder(Order order) {
-        ordersRepository.save(order);
-        return true;
-    }
-    
     
 }

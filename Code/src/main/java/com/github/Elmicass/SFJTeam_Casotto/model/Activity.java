@@ -19,10 +19,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.github.Elmicass.SFJTeam_Casotto.exception.AlreadyExistingException;
+
+import org.hibernate.annotations.SortNatural;
 
 import lombok.NoArgsConstructor;
 
@@ -40,7 +41,7 @@ public class Activity implements Comparable<Activity>, IEntity, Serializable {
 	private String name;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "Timeslot", referencedColumnName = "Start")
+    @JoinColumn(name = "Timeslot", referencedColumnName = "ID")
 	private TimeSlot timeslot;
 
 	@Column(name = "Description")
@@ -55,7 +56,7 @@ public class Activity implements Comparable<Activity>, IEntity, Serializable {
 
 	@OneToMany(mappedBy = "actReference")
 	@Column(name = "Reservations")
-	@OrderBy("Timeslot ASC, User_Email ASC")
+	@SortNatural
 	private SortedSet<Reservation> reservations;
 
 	public Activity(String name, String description, Integer maxEntries, LocalDateTime start, LocalDateTime end,
@@ -90,7 +91,7 @@ public class Activity implements Comparable<Activity>, IEntity, Serializable {
 
 	public void setTimeSlot(LocalDateTime start, LocalDateTime end) {
 		this.timeslot = Objects.requireNonNull(new TimeSlot(Objects.requireNonNull(start, "Starting time is null."),
-				Objects.requireNonNull(end, "Ending time is null.")), "The created timeslot is null.");
+				Objects.requireNonNull(end, "Ending time is null."), this), "The created timeslot is null.");
 	}
 
 	public String getDescription() {
@@ -185,8 +186,10 @@ public class Activity implements Comparable<Activity>, IEntity, Serializable {
 	}
 
 	public boolean addReservation(Reservation res) throws AlreadyExistingException, IllegalStateException {
-		if (reservations.contains(res)) {
-			throw new AlreadyExistingException("The user is already booked to this activity.");	}
+		if (!(reservations.isEmpty())) {
+			if (reservations.contains(res)) {
+				throw new AlreadyExistingException("The user is already booked to this activity.");	}
+		}
 		if (reservations.size() >= maxEntries)
 			throw new IllegalStateException("The maximum number of bookings for this activity has been reached.");
 		return reservations.add(Objects.requireNonNull(res, "The reservation is null."));

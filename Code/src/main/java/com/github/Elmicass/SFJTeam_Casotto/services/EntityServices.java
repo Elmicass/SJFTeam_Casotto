@@ -10,6 +10,8 @@ public interface EntityServices<T> {
 
     List<T> getAll();
 
+    T save(T object);
+
     boolean delete(Integer id);
 
     boolean exists(Integer id);

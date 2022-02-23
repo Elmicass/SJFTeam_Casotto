@@ -41,6 +41,11 @@ public class SunshadeServices implements ISunshadeServices {
     }
 
     @Override
+    public Sunshade save(Sunshade sunshade) {
+        return sunshadeRepository.save(sunshade);
+    }
+
+    @Override
     public Sunshade createSunshade(SunshadeType type, BeachPlace bp, PriceList pl) throws AlreadyExistingException {
         if (sunshadeRepository.findByBeachPlace(bp).isPresent())
             throw new AlreadyExistingException("The sunshade you are trying to create already exists, used in the same beach place: " + bp.getID());
@@ -49,10 +54,10 @@ public class SunshadeServices implements ISunshadeServices {
     }
 
     @Override
-    public Sunshade saveSunshade(@NonNull Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException {
-        Sunshade saved = sunshadeRepository.save(sunshade);
-        saved.setQrCode(qrCodeServices.saveQrCode(qrCodeServices.createQrCode(saved)));
-        return sunshadeRepository.save(saved);
+    public Sunshade generateQrCode(@NonNull Sunshade sunshade) throws WriterException, IOException, AlreadyExistingException {
+        Sunshade saved = save(sunshade);
+        saved.setQrCode(qrCodeServices.save(qrCodeServices.createQrCode(saved)));
+        return save(saved);
     }
 
     @Override
